@@ -16,8 +16,8 @@ public class BasicMecanumDrive extends LinearOpMode {
         DcMotor motorFR = hardwareMap.dcMotor.get("motorFR");
         DcMotor motorBR = hardwareMap.dcMotor.get("motorBR");
 
-//        motorFR.setDirection(DcMotorSimple.Direction.REVERSE);
-//        motorBL.setDirection(DcMotorSimple.Direction.REVERSE);
+        motorFR.setDirection(DcMotorSimple.Direction.REVERSE);
+        motorBL.setDirection(DcMotorSimple.Direction.REVERSE);
 
         waitForStart();
         if(isStopRequested()) return;
