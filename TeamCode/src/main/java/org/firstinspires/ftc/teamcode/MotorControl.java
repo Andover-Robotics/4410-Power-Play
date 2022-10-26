@@ -2,10 +2,18 @@ package org.firstinspires.ftc.teamcode;
 
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.hardware.DcMotor;
+import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 
+@TeleOp(name = "DriveBetter", group = "Testing")
 public class MotorControl extends LinearOpMode{
     @Override
     public void runOpMode() throws InterruptedException{
+
+        waitForStart();
+        if(isStopRequested()) return;
+
+        while (opModeIsActive())
+        {
         DcMotor motorFrontLeft = hardwareMap.dcMotor.get("motorFrontLeft");
         DcMotor motorBackLeft = hardwareMap.dcMotor.get("motorBackLeft");
         DcMotor motorFrontRight = hardwareMap.dcMotor.get("motorFrontRight");
