@@ -23,7 +23,8 @@ public class MainTeleOp {
 
     if(rightY > 0.0) {
             bot.slide.extendSlide();
-        } else {
+        }
+    else {
             bot.slide.retractSlide();
         }
 
