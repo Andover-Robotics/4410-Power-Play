@@ -1,8 +1,8 @@
-4410 CHANGELOG
+## 4410 CHANGELOG
 
 **Changes Wed, 10/26**
 
-AUTO:
+AUTO: N/A
 TELEOP:
 - Wrote strafing code 
 - Created MainTeleOp, assigned controls, devised subsystem methods
