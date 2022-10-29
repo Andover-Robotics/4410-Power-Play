@@ -3,11 +3,12 @@ package org.firstinspires.ftc.teamcode.opmodes.auto;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 
 import org.openftc.apriltag.AprilTagDetection;
+import org.firstinspires.ftc.teamcode.opmodes.auto.AprilTagDetectionPipeline;
 import org.openftc.easyopencv.OpenCvCamera;
 import org.openftc.easyopencv.OpenCvCameraFactory;
 import org.openftc.easyopencv.OpenCvInternalCamera;
 
-public class easyopencv extends LinearOpMode {
+abstract class easyopencv extends LinearOpMode {
     OpenCvCamera camera = OpenCvCameraFactory.getInstance().createInternalCamera(OpenCvInternalCamera.CameraDirection.BACK, cameraMonitorViewId);
 
     AprilTagDetectionPipeline aprilTagDetectionPipeline;
