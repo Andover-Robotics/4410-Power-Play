@@ -26,6 +26,13 @@ public class MainTeleOp {
         }
     }
 
+    if(gamepad1.wasJustPressed(gamepad1.x))
+    {
+        bot.realIntake.runIntake();
+        return;
+    }
+}
+
         // Gamepad 2
         double rightY = gamepad2.right_stick_y;
         double leftY = gamepad2.left_stick_y;
