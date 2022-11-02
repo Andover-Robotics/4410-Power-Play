@@ -19,7 +19,7 @@ public class slide {
     }
 
     public void retractSlide() {
-        double y = -gamepad2.right_stick_y;
+        double y = gamepad2.right_stick_y;
         if(y < 0.0) {
             slideMotor.setPower(y);
         }

@@ -33,9 +33,10 @@ public class MainTeleOp {
     if(rightY > 0.0) {
             bot.slide.extendSlide();
         }
-    else {
-            bot.slide.retractSlide();
-        }
+    else if(rightY < 0.0)
+    {
+        bot.slide.retractSlide();
+    }
 
 //    if(leftY > 0.0) {
 //            bot.turret.rotateLeft();

@@ -1,9 +1,8 @@
-package org.firstinspires.ftc.teamcode.opmodes.auto;
+package org.firstinspires.ftc.teamcode.opmodes.auto.vision;
 
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 
-import org.openftc.apriltag.AprilTagDetection;
-import org.firstinspires.ftc.teamcode.opmodes.auto.AprilTagDetectionPipeline;
+import org.firstinspires.ftc.teamcode.opmodes.auto.vision.AprilTagDetectionPipeline;
 import org.openftc.easyopencv.OpenCvCamera;
 import org.openftc.easyopencv.OpenCvCameraFactory;
 import org.openftc.easyopencv.OpenCvInternalCamera;
