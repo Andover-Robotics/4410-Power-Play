@@ -4,6 +4,7 @@ import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.hardware.DcMotorSimple;
 
+@TeleOp(name = "MainTeleOp", group = "Competition")
 public class MoveRobot extends LinearOpMode {
     @Override
     public void runOpMode() throws InterruptedException{
