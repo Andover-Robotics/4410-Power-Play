@@ -27,7 +27,7 @@ public class MoveRobot extends LinearOpMode {
             motorFrontLeft.setPower(yleftright+xleftright);
             motorFrontRight.setPower(xleftright+yleftright);
             motorBackLeft.setPower(-xleftright-yleftright);
-            motorBackRight.setPower(-yleftright-xleftright;
+            motorBackRight.setPower(-yleftright-xleftright);
         }
     }
 }

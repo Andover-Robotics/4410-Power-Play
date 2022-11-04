@@ -8,48 +8,54 @@
 //
 //import org.firstinspires.ftc.teamcode.opmodes.teleop.subsystems.Bot;
 //import org.firstinspires.ftc.teamcode.opmodes.teleop.subsystems.Claw;
+//import org.firstinspires.ftc.teamcode.opmodes.teleop.subsystems.RealIntake;
+//import org.firstinspires.ftc.teamcode.opmodes.teleop.subsystems.Slide;
+//
 //
 //@TeleOp(name = "MainTeleOp", group = "Competition")
 //public class MainTeleOp extends LinearOpMode {
 //    @Override
-//    Gamepad gamepad1 = new Gamepad(gamepad1);
-//    Gamepad gamepad2 = new Gamepad(gamepad2);
-//    Claw claw = new Claw();
+//    public void runOpMode() throws InterruptedException {
+//       GamepadEx gamepad2 = new GamepadEx(gamepad2);
+//       GamepadEx gamepad1;
+//       gamepad1 = new GamepadEx(gamepad1);
 //
-//    Bot bot = new Bot();
-//
-//    if(gamepad1.wasJustPressed(gamepad1.a)) {
-//        Claw.openClaw();
-//        if(gamepad1.a) {
+//        if((gamepad1.wasJustPressed(GamepadKeys.Button.A))) {
+//           Claw.openClaw();
+//            if(gamepad1.wasJustReleased(GamepadKeys.Button.A))
 //            Claw.closeClaw();
 //            return;
-//        }
-//    }
+//           }
+//       }
 //
-//    if(gamepad1.wasJustPressed(gamepad1.x))
-//    {
-//        bot.realIntake.runIntake();
-//        return;
-//    }
-//}
+//       if((gamepad1.wasJustPressed(GamepadKeys.Button.X))
+//        {
+//            RealIntake.runIntake();
+//          return;
+//        }
 //
 //        // Gamepad 2
 //        double rightY = gamepad2.right_stick_y;
 //        double leftY = gamepad2.left_stick_y;
 //
-//    if(rightY > 0.0) {
-//            bot.slide.extendSlide();
-//        }
-//    else if(rightY < 0.0)
-//    {
-//        bot.slide.retractSlide();
+//       if(rightY > 0.0)
+//
+//        {
+//            Slide.extendSlide();
+//       }
+//
+//        else if(rightY < 0.0)
+//       {
+//           Slide.retractSlide();
+//       }
+//
+////          if(leftY > 0.0) {
+////            bot.turret.rotateLeft();
+////      } else {////            bot.turret.rotateRight();
+////       }
+//
+//
 //    }
 //
-////    if(leftY > 0.0) {
-////            bot.turret.rotateLeft();
-////        } else {
-////            bot.turret.rotateRight();
-////        }
-////
-////    }
-////}
+//    }
+//}
