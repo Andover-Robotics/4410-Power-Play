@@ -12,7 +12,7 @@ import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 
 @Autonomous(name="Test", group="Practice")
-public class MainAuto extends LinearOpMode{
+public class PurePursuitTrial extends LinearOpMode{
 
     public static final double WHEEL_DIAMETER= 4.0;
     //change diameter
