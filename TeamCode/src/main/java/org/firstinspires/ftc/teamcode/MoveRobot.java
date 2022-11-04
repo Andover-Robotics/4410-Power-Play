@@ -1,13 +1,13 @@
-package org.firstinspires.ftc.teamcode.opmodes.teleop;
+package org.firstinspires.ftc.teamcode;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.hardware.DcMotorSimple;
 
-@TeleOp(name = "Drive2", group = "Bruh")
-public class MotorControl extends LinearOpMode {
+@TeleOp(name = "MainTeleOp", group = "Competition")
+public class MoveRobot extends LinearOpMode {
     @Override
-    public void runOpMode() {
+    public void runOpMode() throws InterruptedException{
         DcMotor motorFrontLeft = hardwareMap.dcMotor.get("motorFrontLeft");
         DcMotor motorBackLeft = hardwareMap.dcMotor.get("motorBackLeft");
         DcMotor motorFrontRight = hardwareMap.dcMotor.get("motorFrontRight");
@@ -27,7 +27,9 @@ public class MotorControl extends LinearOpMode {
             motorFrontLeft.setPower(yleftright+xleftright);
             motorFrontRight.setPower(xleftright+yleftright);
             motorBackLeft.setPower(-xleftright-yleftright);
-            motorBackRight.setPower(-yleftright-xleftright);
+            motorBackRight.setPower(-yleftright-xleftright;
         }
     }
 }
+
+
