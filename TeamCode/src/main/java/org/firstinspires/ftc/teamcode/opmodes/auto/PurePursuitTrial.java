@@ -12,9 +12,9 @@ import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 
 @Autonomous(name="Test", group="Practice")
-public class MainAuto extends LinearOpMode{
+public class PurePursuitTrial extends LinearOpMode{
 
-    public static final double WHEEL_DIAMETER= 2.0;
+    public static final double WHEEL_DIAMETER= 4.0;
     //change diameter
     public static final double TICKS_PER_REV=8192;
     //change to reflects accuracy
@@ -30,9 +30,6 @@ public class MainAuto extends LinearOpMode{
 
     @Override
     public void runOpMode() throws InterruptedException {
-
-
-
         Waypoint start= new StartWaypoint(0,0);
         Waypoint middle= new GeneralWaypoint(2,2);
         Waypoint middle2= new GeneralWaypoint(3,2);
@@ -57,9 +54,9 @@ public class MainAuto extends LinearOpMode{
                 TRACKWIDTH, CENTER_WHEEL_OFFSET);
 
         waitForStart();
-        if(isStopRequested()) return;
 
-        while (!path.isFinished()) {
+    /*    while (!path.isFinished()) {
+            if(isStopRequested()) return;
             if (path.timedOut())
                 throw new InterruptedException("Timed out");
 
@@ -70,12 +67,8 @@ public class MainAuto extends LinearOpMode{
             mecanumDrive.driveWithMotorPowers(speeds[0], speeds[1], speeds[2], speeds[3]);
             odometry.updatePose();
         }
+     */
         mecanumDrive.stop();
-
-
-        //path.followPath(mecanumDrive, odometry);
-
-
 
     }
 }
