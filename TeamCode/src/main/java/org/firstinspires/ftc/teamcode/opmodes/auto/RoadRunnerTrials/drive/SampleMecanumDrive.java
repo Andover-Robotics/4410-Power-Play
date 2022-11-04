@@ -28,7 +28,7 @@ import com.qualcomm.robotcore.hardware.configuration.typecontainers.MotorConfigu
 
 import org.firstinspires.ftc.teamcode.opmodes.auto.RoadRunnerTrials.trajectorysequence.TrajectorySequence;
 import org.firstinspires.ftc.teamcode.opmodes.auto.RoadRunnerTrials.trajectorysequence.TrajectorySequenceBuilder;
-import org.firstinspires.ftc.teamcode.trajectorysequence.TrajectorySequenceRunner;
+import org.firstinspires.ftc.teamcode.opmodes.auto.RoadRunnerTrials.trajectorysequence.TrajectorySequenceRunner;
 import org.firstinspires.ftc.teamcode.opmodes.auto.RoadRunnerTrials.util.LynxModuleUtil;
 
 import java.util.ArrayList;
