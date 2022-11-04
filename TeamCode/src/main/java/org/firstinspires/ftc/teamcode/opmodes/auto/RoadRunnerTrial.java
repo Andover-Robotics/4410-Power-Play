@@ -14,8 +14,12 @@ import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
      */
     @Autonomous(group = "drive")
     public class RoadRunnerTrial extends LinearOpMode {
-
         @Override
+        public void runOpMode() throws InterruptedException {
+
+        }
+
+     /*   @Override
         public void runOpMode() throws InterruptedException {
             RRMecanumDrive drive = new RRMecanumDrive(hardwareMap);
 
@@ -40,5 +44,7 @@ import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
             );
         }
     }
+
+      */
 
 }
