@@ -1,16 +1,15 @@
 package org.firstinspires.ftc.teamcode.opmodes.teleop.subsystems;
 
 import static org.firstinspires.ftc.robotcore.external.BlocksOpModeCompanion.gamepad2;
+import static org.firstinspires.ftc.robotcore.external.BlocksOpModeCompanion.hardwareMap;
 
 import com.qualcomm.robotcore.hardware.DcMotor;
 import com.arcrobotics.ftclib.gamepad.GamepadEx;
 import com.qualcomm.robotcore.hardware.Gamepad;
-import com.qualcomm.robotcore.hardware.HardwareMap;
 
 public class Slide {
 
-    public HardwareMap hardwareMap;
-    DcMotor slideMotor = hardwareMap.dcMotor.get("slideMotor");
+    static DcMotor slideMotor = hardwareMap.dcMotor.get("slideMotor");
 
     public static void extendSlide() {
         double y = gamepad2.right_stick_y;

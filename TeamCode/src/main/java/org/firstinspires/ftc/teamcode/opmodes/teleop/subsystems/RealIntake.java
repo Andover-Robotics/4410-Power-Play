@@ -13,8 +13,8 @@ import com.arcrobotics.ftclib.gamepad.GamepadEx;
 import com.qualcomm.robotcore.hardware.Gamepad;
 
     public class RealIntake {
-        DcMotorSimple motorRight = hardwareMap.dcMotor.get("motorR");
-        DcMotorSimple motorLeft = hardwareMap.dcMotor.get("motorL");
+        static DcMotorSimple motorRight = hardwareMap.dcMotor.get("motorR");
+        static DcMotorSimple motorLeft = hardwareMap.dcMotor.get("motorL");
 
         public static void runIntake() {
             motorRight.setPower(0.2);

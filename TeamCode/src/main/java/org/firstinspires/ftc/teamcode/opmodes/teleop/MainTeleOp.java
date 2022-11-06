@@ -1,3 +1,5 @@
+//TODO: fix whatever this mess of commented out code is
+
 //package org.firstinspires.ftc.teamcode.opmodes.teleop;
 //
 //import com.arcrobotics.ftclib.gamepad.GamepadEx;
