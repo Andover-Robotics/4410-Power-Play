@@ -122,10 +122,13 @@ public class SampleMecanumDrive extends MecanumDrive {
         rightFront = hardwareMap.get(DcMotorEx.class, "motorFL");
 
         */
-        DcMotorEx leftFront = (DcMotorEx) hardwareMap.dcMotor.get("motorFL");
-        DcMotorEx leftRear= (DcMotorEx) hardwareMap.dcMotor.get("motorBL");
-        DcMotorEx rightRear = (DcMotorEx) hardwareMap.dcMotor.get("motorFR");
-        DcMotorEx rightFront = (DcMotorEx) hardwareMap.dcMotor.get("motorBR");
+        leftFront = (DcMotorEx) hardwareMap.dcMotor.get("motorFL");
+        leftRear = (DcMotorEx) hardwareMap.dcMotor.get("motorBL");
+        rightRear = (DcMotorEx) hardwareMap.dcMotor.get("motorFR");
+        rightFront = (DcMotorEx) hardwareMap.dcMotor.get("motorBR");
+        if(leftFront == null || leftRear == null || rightRear == null || rightFront == null){
+            throw new RuntimeException("el bozo, a motor came back as null");
+        }
 
         motors = Arrays.asList(leftFront, leftRear, rightRear, rightFront);
 

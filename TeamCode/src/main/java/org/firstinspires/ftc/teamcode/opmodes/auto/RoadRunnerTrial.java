@@ -14,17 +14,19 @@ import org.firstinspires.ftc.teamcode.opmodes.auto.RoadRunnerTrials.drive.Sample
     @Autonomous(group = "drive")
     public class RoadRunnerTrial extends LinearOpMode {
 
-        private static final int X1=2;
-        private static final int Y1=2;
+        private static final int X1=20;
+        private static final int Y1=20;
 
         @Override
         public void runOpMode() throws InterruptedException {
+
             Pose2d startPose = new Pose2d(0, 0, 0);
             SampleMecanumDrive drive = new SampleMecanumDrive(hardwareMap);
             drive.setPoseEstimate(startPose);
             Trajectory traj = drive.trajectoryBuilder(new Pose2d())
                     .splineTo(new Vector2d(X1, Y1), 0)
                     .build();
+            waitForStart();
             drive.followTrajectory(traj);
         }
 }
