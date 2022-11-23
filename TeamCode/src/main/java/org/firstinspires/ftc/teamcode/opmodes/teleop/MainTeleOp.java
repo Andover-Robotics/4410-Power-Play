@@ -1,4 +1,4 @@
- TODO: fix whatever this mess of commented out code is
+// TODO: fix whatever this mess of commented out code is
 
 package org.firstinspires.ftc.teamcode.opmodes.teleop;
 
@@ -19,13 +19,12 @@ public class MainTeleOp extends LinearOpMode {
     @Override
     public void runOpMode() throws InterruptedException {
        GamepadEx gamepad2 = new GamepadEx(gamepad2);
-       GamepadEx gamepad1;
-       gamepad1 = new GamepadEx(gamepad1);
+       GamepadEx gamepad1 = new GamepadEx(gamepad1);
 
-        while((gamepad1.isDown(GamepadKeys.Button.A))) {
+        while(gamepad1.isDown(GamepadKeys.Button.A)) {
            Claw.openClaw();
             if(gamepad1.wasJustReleased(GamepadKeys.Button.A))
-            Claw.closeClaw();
+                Claw.closeClaw();
             return;
            }
        }
