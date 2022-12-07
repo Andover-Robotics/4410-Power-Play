@@ -2,12 +2,19 @@ package org.firstinspires.ftc.teamcode.auto.opmodes;
 
 //import com.acmerobotics.dashboard.FtcDashboard;
 //import com.acmerobotics.dashboard.telemetry.TelemetryPacket;
+import static org.firstinspires.ftc.robotcontroller.external.samples.RobotAutoDriveByEncoder_Linear.encoderDrive;
+
+import com.arcrobotics.ftclib.hardware.motors.Motor;
 import com.arcrobotics.ftclib.hardware.motors.MotorEx;
 import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
+import com.qualcomm.robotcore.eventloop.opmode.Disabled;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
+import com.qualcomm.robotcore.hardware.DcMotor;
+import com.qualcomm.robotcore.hardware.DcMotorSimple;
+import com.qualcomm.robotcore.util.ElapsedTime;
 
-import static java.lang.Thread.sleep;
 
+import org.firstinspires.ftc.robotcontroller.external.samples.RobotAutoDriveByEncoder_Linear;
 import org.firstinspires.ftc.robotcore.external.Telemetry;
 import org.firstinspires.ftc.teamcode.auto.vision.OpenCVPipeline;
 import org.openftc.easyopencv.OpenCvCamera;
@@ -22,27 +29,20 @@ public class TestCV extends LinearOpMode {
 //    FtcDashboard dashboard = FtcDashboard.getInstance();
 //    TelemetryPacket packet= new TelemetryPacket();
 
+    public void toParkSquare1() throws InterruptedException {
+        encoderDrive(0.5, 47, 47, 5);
+    }
+    public void toParkSquare2() throws InterruptedException {
+        encoderDrive(0.5, 84, 47, 5);
+    }
+    public void toParkSquare3() throws InterruptedException{
+        encoderDrive(0.5, 120, 47, 5);
+    }
+
     MotorEx frontLeft= new MotorEx(hardwareMap, "motorFL");
     MotorEx backLeft= new MotorEx(hardwareMap, "motorBL");
     MotorEx backRight= new MotorEx(hardwareMap, "motorBR");
     MotorEx frontRight= new MotorEx(hardwareMap, "motorFR");
-
-
-    public void strafeRight(double power, int sleepTime) throws InterruptedException {
-        frontLeft.set(power);
-        backLeft.set(-power);
-        frontRight.set(power);
-        backRight.set(-power);
-        sleep(sleepTime);
-    }
-    public void straight(double power, int sleepTime) throws InterruptedException {
-        frontLeft.set(power);
-        backLeft.set(power);
-        frontRight.set(power);
-        backRight.set(power);
-        sleep(sleepTime);
-    }
-
 
     public void runOpMode() throws InterruptedException{
         Telemetry telemetry1 = null;
@@ -80,17 +80,15 @@ public class TestCV extends LinearOpMode {
         waitForStart();
 
         if(pipeline.getSignalVal() == OpenCVPipeline.SignalVal.GREEN){
-            strafeRight(0.2, 1);
-            straight(0.2,1);
+            toParkSquare1();
             telemetry1.addData("The signal value is green with a percentage of", OpenCVPipeline.greenPercentage);
 
         }else if(pipeline.getSignalVal() ==OpenCVPipeline.SignalVal.YELLOW){
-            straight(0.2,1);
+            toParkSquare2();
             telemetry1.addData("The signal value is yellow with a percentage of", OpenCVPipeline.yellowPercentage);
 
         }else if(pipeline.getSignalVal() ==OpenCVPipeline.SignalVal.PINK){
-            strafeRight(-0.2,1);
-            straight(0.2,1);
+            toParkSquare3();
             telemetry1.addData("The signal value is pink with a percentage of", OpenCVPipeline.pinkPercentage);
 
         }
