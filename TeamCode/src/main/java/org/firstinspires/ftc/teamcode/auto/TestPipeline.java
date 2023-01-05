@@ -1,4 +1,4 @@
-package org.firstinspires.ftc.teamcode.opmodes.auto.vision;
+package org.firstinspires.ftc.teamcode.auto;
 
 import org.opencv.core.Point;
 import org.opencv.core.Rect;

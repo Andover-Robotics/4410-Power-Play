@@ -11,6 +11,7 @@ import com.qualcomm.robotcore.eventloop.opmode.OpMode;
 import com.qualcomm.robotcore.hardware.DcMotor;
 
 import org.firstinspires.ftc.robotcore.external.navigation.CurrentUnit;
+import org.firstinspires.ftc.teamcode.auto.SampleMecanumDrive;
 
 public class Bot {
 
@@ -21,6 +22,7 @@ public class Bot {
 
     private MotorEx fl, fr, bl, br;
     public final MecanumDrive drive;
+    public final SampleMecanumDrive rr;
 
     public OpMode opMode;
 
@@ -54,6 +56,8 @@ public class Bot {
 
         this.slide = new Slide(opMode);
         this.claw = new Claw(opMode);
+
+        this.rr = new SampleMecanumDrive(opMode.hardwareMap);
     }
 
     public void fixMotors(){
