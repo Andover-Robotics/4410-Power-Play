@@ -26,12 +26,12 @@ public class Slide {
         target = t;
     }
     public void goDown() {
-        runTo(motor.getCurrentPosition()-20);
+        runTo(target-20);
     }
 
     public void goUp()
     {
-        runTo(motor.getCurrentPosition()+40);
+        runTo(target+40);
     }
 
     public void runToTop(){
@@ -64,9 +64,11 @@ public class Slide {
         motor.setRunMode(Motor.RunMode.PositionControl);
         runTo(motor.getCurrentPosition());
     }
+
     public void runToCone(){
         runTo(110);
     }
+
     public void periodic(){
         if(motor.atTargetPosition()){
             motor.set(0.4);

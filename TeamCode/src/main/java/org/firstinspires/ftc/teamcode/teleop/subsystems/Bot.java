@@ -14,10 +14,8 @@ public class Bot {
 
     public static Bot instance;
 
-    public final Intake intake;
     public final Slide slide;
     public final Claw claw;
-    public Turret turret;
 
     private MotorEx fl, fr, bl, br;
     public final MecanumDrive drive;
@@ -52,7 +50,6 @@ public class Bot {
         //required subsystems
         this.drive = new MecanumDrive(fl, fr, bl, br);
 
-        this.intake = new Intake(opMode);
         this.slide = new Slide(opMode);
         this.claw = new Claw(opMode);
     }

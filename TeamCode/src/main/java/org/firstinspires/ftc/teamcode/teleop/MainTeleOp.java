@@ -43,40 +43,45 @@ public class MainTeleOp extends LinearOpMode {
 //                bot.intake.stop();
 //            }
 
-            if (gp2.wasJustPressed(GamepadKeys.Button.Y))
+            if (gp2.wasJustPressed(GamepadKeys.Button.Y)) {
                 bot.claw.open();
-            else if (gp2.wasJustPressed(GamepadKeys.Button.B))
+            }else if (gp2.wasJustPressed(GamepadKeys.Button.B)) {
                 bot.claw.openRight();
-            else if (gp2.wasJustPressed(GamepadKeys.Button.X))
+            }else if (gp2.wasJustPressed(GamepadKeys.Button.X)) {
                 bot.claw.openLeft();
-            else if(gp2.getButton(GamepadKeys.Button.RIGHT_STICK_BUTTON))
+            }else if(gp2.getButton(GamepadKeys.Button.RIGHT_STICK_BUTTON)) {
                 bot.claw.close();
-            else if (bot.claw.getDistance() < 100)
-                if(gp2.getButton(GamepadKeys.Button.Y))
+            }else if (bot.claw.getDistance() < 85) {
+                if (gp2.getButton(GamepadKeys.Button.Y)) {
                     bot.claw.open();
-                else if(gp2.getButton(GamepadKeys.Button.A))
+                }else if (gp2.getButton(GamepadKeys.Button.A)) {
                     bot.claw.close();
+                    bot.slide.goUp();
+                }
+            }
 
-            if (gp2.wasJustPressed(GamepadKeys.Button.DPAD_UP))
+            if (gp2.wasJustPressed(GamepadKeys.Button.DPAD_UP)) {
                 bot.slide.runToTop();
 //                bot.claw.open();
 //                bot.slide.runToBottom();
-            else if (gp2.wasJustPressed(GamepadKeys.Button.DPAD_LEFT))
+            }else if (gp2.wasJustPressed(GamepadKeys.Button.DPAD_LEFT)) {
                 bot.slide.runToMiddle();
-            else if (gp2.wasJustPressed(GamepadKeys.Button.DPAD_RIGHT))
+            }else if (gp2.wasJustPressed(GamepadKeys.Button.DPAD_RIGHT)) {
                 bot.slide.runToLow();
-            else if (gp2.wasJustPressed(GamepadKeys.Button.DPAD_DOWN))
+            }else if (gp2.wasJustPressed(GamepadKeys.Button.DPAD_DOWN)) {
                 bot.slide.runToBottom();
-
+            }
 //            }else if(gp2.wasJustPressed(GamepadKeys.Button.A)) {
 //                bot.slide.runToCone();
 //            }
 
-            if (gp2.wasJustPressed(GamepadKeys.Button.RIGHT_BUMPER))
+            if (gp2.wasJustPressed(GamepadKeys.Button.RIGHT_BUMPER)) {
                 bot.slide.goDown();
+            }
 
-            if (gp2.wasJustPressed(GamepadKeys.Button.LEFT_BUMPER))
+            if (gp2.wasJustPressed(GamepadKeys.Button.LEFT_BUMPER)) {
                 bot.slide.goUp();
+            }
 
             if(gp2.getTrigger(GamepadKeys.Trigger.LEFT_TRIGGER) > 0.1){
                 isManual = true;
