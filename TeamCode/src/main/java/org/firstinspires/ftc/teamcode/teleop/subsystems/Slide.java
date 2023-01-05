@@ -4,6 +4,8 @@ import com.arcrobotics.ftclib.hardware.motors.Motor;
 import com.arcrobotics.ftclib.hardware.motors.MotorEx;
 import com.qualcomm.robotcore.eventloop.opmode.OpMode;
 
+import org.firstinspires.ftc.robotcore.external.navigation.CurrentUnit;
+
 public class Slide {
 
     private final MotorEx motor;
@@ -80,6 +82,10 @@ public class Slide {
     }
     public double isHigh(){
         return (double)motor.getCurrentPosition()/1000;
+    }
+
+    public double getCurrent(){
+        return motor.motorEx.getCurrent(CurrentUnit.MILLIAMPS);
     }
 
 }

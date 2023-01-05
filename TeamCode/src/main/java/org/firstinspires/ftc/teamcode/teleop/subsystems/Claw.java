@@ -24,8 +24,8 @@ public class Claw {
     public void open(){
         left.setDirection(Servo.Direction.FORWARD);
         right.setDirection(Servo.Direction.FORWARD);
-        left.setPosition(0.6);
-        right.setPosition(0.24);
+        left.setPosition(0.55);
+        right.setPosition(0.29);
     }
 
     public void close(){
@@ -38,12 +38,12 @@ public class Claw {
     public void openRight()
     {
         left.setPosition(0.4);
-        right.setPosition(0.243);
+        right.setPosition(0.29);
     }
 
     public void openLeft()
     {
-        left.setPosition(0.6);
+        left.setPosition(0.55);
         right.setPosition(0.44);
     }
 

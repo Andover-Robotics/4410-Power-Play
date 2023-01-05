@@ -98,7 +98,9 @@ public class MainTeleOp extends LinearOpMode {
             // bot.turret.rotate(gp2.getLeftX());
 
             //TODO test sensor
-            telemetry.addData("semsor", bot.claw.getDistance());
+            telemetry.addData("sensor", bot.claw.getDistance());
+            telemetry.addData("drive current", bot.getCurrent());
+            telemetry.addData("slide current", bot.slide.getCurrent());
             telemetry.update();
 
             FtcDashboard dash = FtcDashboard.getInstance();

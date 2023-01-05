@@ -10,6 +10,8 @@ import com.qualcomm.hardware.lynx.LynxModule;
 import com.qualcomm.robotcore.eventloop.opmode.OpMode;
 import com.qualcomm.robotcore.hardware.DcMotor;
 
+import org.firstinspires.ftc.robotcore.external.navigation.CurrentUnit;
+
 public class Bot {
 
     public static Bot instance;
@@ -99,6 +101,10 @@ public class Bot {
         for (LynxModule mod : opMode.hardwareMap.getAll(LynxModule.class)) {
             mod.setBulkCachingMode(LynxModule.BulkCachingMode.AUTO);
         }
+    }
+
+    public double getCurrent(){
+        return fl.motorEx.getCurrent(CurrentUnit.MILLIAMPS);
     }
 }
 // non needed
