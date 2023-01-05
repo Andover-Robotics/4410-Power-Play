@@ -56,7 +56,8 @@ public class MainTeleOp extends LinearOpMode {
                     bot.claw.open();
                 }else if (gp2.getButton(GamepadKeys.Button.A)) {
                     bot.claw.close();
-                    bot.slide.goUp();
+                    Thread goUp = new Thread(() -> {sleep(1000); bot.slide.goUp();});
+                    goUp.start();
                 }
             }
 
