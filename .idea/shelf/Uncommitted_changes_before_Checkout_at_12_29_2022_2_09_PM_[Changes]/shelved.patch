@@ -1,0 +1,27 @@
+Index: TeamCode/src/main/java/org/firstinspires/ftc/teamcode/teleop/subsystems/Claw.java
+IDEA additional info:
+Subsystem: com.intellij.openapi.diff.impl.patch.BaseRevisionTextPatchEP
+<+>package org.firstinspires.ftc.teamcode.teleop.subsystems;\r\n\r\nimport com.qualcomm.robotcore.eventloop.opmode.OpMode;\r\nimport com.qualcomm.robotcore.hardware.Servo;\r\n\r\npublic class Claw {\r\n    private final Servo left, right;\r\n\r\n    public Claw(OpMode opMode){\r\n        left = opMode.hardwareMap.servo.get(\"clawLeft\");\r\n        right = opMode.hardwareMap.servo.get(\"clawRight\");\r\n        left.setDirection(Servo.Direction.FORWARD);\r\n        right.setDirection(Servo.Direction.FORWARD);\r\n    }\r\n\r\n    public void open(){\r\n        left.setDirection(Servo.Direction.FORWARD);\r\n        right.setDirection(Servo.Direction.FORWARD);\r\n        left.setPosition(0.40);\r\n        right.setPosition(0.46);\r\n    }\r\n\r\n    public void close(){\r\n        left.setDirection(Servo.Direction.FORWARD);\r\n        right.setDirection(Servo.Direction.FORWARD);\r\n        left.setPosition(0.30);\r\n        right.setPosition(0.56);\r\n    }\r\n\r\n}\r\n
+Subsystem: com.intellij.openapi.diff.impl.patch.CharsetEP
+<+>UTF-8
+===================================================================
+diff --git a/TeamCode/src/main/java/org/firstinspires/ftc/teamcode/teleop/subsystems/Claw.java b/TeamCode/src/main/java/org/firstinspires/ftc/teamcode/teleop/subsystems/Claw.java
+--- a/TeamCode/src/main/java/org/firstinspires/ftc/teamcode/teleop/subsystems/Claw.java	(revision eae499348a11188da2c1d8bae2e1f76efdcd8150)
++++ b/TeamCode/src/main/java/org/firstinspires/ftc/teamcode/teleop/subsystems/Claw.java	(date 1672340921950)
+@@ -27,4 +27,16 @@
+         right.setPosition(0.56);
+     }
+ 
++    public void openLeft()
++    {
++        left.setDirection(Servo.Direction.FORWARD);
++        left.setPosition(left.getPosition() + 0.1);
++    }
++
++    public void openRight()
++    {
++        right.setDirection(Servo.Direction.FORWARD);
++        right.setPosition(right.getPosition() + 0.1);
++    }
++
+ }

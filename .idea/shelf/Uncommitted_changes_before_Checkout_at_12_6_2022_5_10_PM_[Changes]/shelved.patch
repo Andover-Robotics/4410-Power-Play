@@ -1,0 +1,51 @@
+Index: TeamCode/src/main/java/org/firstinspires/ftc/teamcode/teleop/MainTeleOp.java
+IDEA additional info:
+Subsystem: com.intellij.openapi.diff.impl.patch.BaseRevisionTextPatchEP
+<+>//TODO: fix whatever this mess of commented out code is\r\n\r\npackage org.firstinspires.ftc.teamcode.teleop;\r\n\r\nimport com.acmerobotics.dashboard.FtcDashboard;\r\nimport com.acmerobotics.dashboard.telemetry.TelemetryPacket;\r\nimport com.arcrobotics.ftclib.gamepad.GamepadEx;\r\nimport com.arcrobotics.ftclib.gamepad.GamepadKeys;\r\nimport com.qualcomm.hardware.bosch.BNO055IMU;\r\nimport com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;\r\nimport com.qualcomm.robotcore.eventloop.opmode.TeleOp;\r\n\r\nimport org.firstinspires.ftc.teamcode.teleop.subsystems.Bot;\r\n\r\n\r\n@TeleOp(name = \"MainTeleOp\", group = \"Competition\")\r\npublic class MainTeleOp extends LinearOpMode {\r\n\r\n    private Bot bot;\r\n    private double driveSpeed = 1;\r\n\r\n    @Override\r\n    public void runOpMode() throws InterruptedException {\r\n        bot = Bot.getInstance(this);\r\n        GamepadEx gp2 = new GamepadEx(gamepad2);\r\n        GamepadEx gp1 = new GamepadEx(gamepad1);\r\n         // Retrieve the IMU from the hardware map\r\n         BNO055IMU imu = hardwareMap.get(BNO055IMU.class, \"imu\");\r\n         BNO055IMU.Parameters parameters = new BNO055IMU.Parameters();\r\n         // Technically this is the default, however specifying it is clearer\r\n         parameters.angleUnit = BNO055IMU.AngleUnit.RADIANS;\r\n         // Without this, data retrieving from the IMU throws an exception\r\n         imu.initialize(parameters);\r\n        waitForStart();\r\n\r\n        while(opModeIsActive() && !isStopRequested()){\r\n            gp1.readButtons();\r\n            gp2.readButtons();\r\n            if(gp2.getButton(GamepadKeys.Button.A)){\r\n                bot.intake.run();\r\n            }else if(gp2.getButton(GamepadKeys.Button.B)){\r\n                bot.intake.spit();\r\n            }else{\r\n                bot.intake.stop();\r\n            }\r\n\r\n            if(gp2.wasJustPressed(GamepadKeys.Button.X)){\r\n                bot.claw.close();\r\n            }else if(gp2.wasJustPressed(GamepadKeys.Button.Y)){\r\n                bot.claw.open();\r\n            }\r\n\r\n            if(gp2.wasJustPressed(GamepadKeys.Button.DPAD_UP)){\r\n                bot.slide.runToTop();\r\n            }else if(gp2.wasJustPressed(GamepadKeys.Button.DPAD_LEFT)) {\r\n                bot.slide.runToMiddle();\r\n            }else if(gp2.wasJustPressed(GamepadKeys.Button.DPAD_RIGHT)){\r\n                bot.slide.runToLow();\r\n            }else if(gp2.wasJustPressed(GamepadKeys.Button.DPAD_DOWN)){\r\n                bot.slide.runToBottom();\r\n            }\r\n            bot.slide.periodic();\r\n\r\n            FtcDashboard dash = FtcDashboard.getInstance();\r\n            TelemetryPacket packet = new TelemetryPacket();\r\n            packet.put(\"strafeSpeed\", gp1.getRightX());\r\n            packet.put(\"forwardSpeed\", gp1.getLeftY());\r\n            packet.put(\"turnSpeed\", -gp1.getLeftX());\r\n            dash.sendTelemetryPacket(packet);\r\n\r\n            driveSpeed = 1 - 0.5 * gp1.getTrigger(GamepadKeys.Trigger.RIGHT_TRIGGER);\r\n            bot.fixMotors();\r\n            bot.drive(gp1.getLeftX() * driveSpeed, gp1.getLeftY() * driveSpeed, gp1.getRightX() * driveSpeed);\r\n        }\r\n    }\r\n}\r\n
+===================================================================
+diff --git a/TeamCode/src/main/java/org/firstinspires/ftc/teamcode/teleop/MainTeleOp.java b/TeamCode/src/main/java/org/firstinspires/ftc/teamcode/teleop/MainTeleOp.java
+--- a/TeamCode/src/main/java/org/firstinspires/ftc/teamcode/teleop/MainTeleOp.java	
++++ b/TeamCode/src/main/java/org/firstinspires/ftc/teamcode/teleop/MainTeleOp.java	
+@@ -70,7 +70,7 @@
+ 
+             driveSpeed = 1 - 0.5 * gp1.getTrigger(GamepadKeys.Trigger.RIGHT_TRIGGER);
+             bot.fixMotors();
+-            bot.drive(gp1.getLeftX() * driveSpeed, gp1.getLeftY() * driveSpeed, gp1.getRightX() * driveSpeed);
++            bot.drive(gp1.getLeftX() * driveSpeed, -gp1.getLeftY() * driveSpeed, gp1.getRightX() * driveSpeed);
+         }
+     }
+ }
+Index: TeamCode/src/main/java/org/firstinspires/ftc/teamcode/teleop/subsystems/Bot.java
+IDEA additional info:
+Subsystem: com.intellij.openapi.diff.impl.patch.BaseRevisionTextPatchEP
+<+>package org.firstinspires.ftc.teamcode.teleop.subsystems;\r\n\r\nimport static org.firstinspires.ftc.robotcore.external.BlocksOpModeCompanion.gamepad1;\r\nimport static org.firstinspires.ftc.robotcore.external.BlocksOpModeCompanion.hardwareMap;\r\n\r\nimport com.arcrobotics.ftclib.drivebase.MecanumDrive;\r\nimport com.arcrobotics.ftclib.hardware.motors.Motor;\r\nimport com.arcrobotics.ftclib.hardware.motors.MotorEx;\r\nimport com.qualcomm.hardware.lynx.LynxModule;\r\nimport com.qualcomm.robotcore.eventloop.opmode.OpMode;\r\nimport com.qualcomm.robotcore.hardware.DcMotor;\r\n\r\npublic class Bot {\r\n\r\n    public static Bot instance;\r\n\r\n    public final Intake intake;\r\n    public final Slide slide;\r\n    public final Claw claw;\r\n\r\n    private MotorEx fl, fr, bl, br;\r\n    public final MecanumDrive drive;\r\n\r\n    public OpMode opMode;\r\n\r\n    public static Bot getInstance() {\r\n        if (instance == null) {\r\n            throw new IllegalStateException(\"tried to getInstance of Bot when uninitialized\");\r\n        }\r\n        return instance;\r\n    }\r\n\r\n    public static Bot getInstance(OpMode opMode){\r\n        if (instance == null) {\r\n            return instance = new Bot(opMode);\r\n        }\r\n        instance.opMode = opMode;\r\n        return instance;\r\n    }\r\n\r\n    private Bot(OpMode opMode){\r\n        this.opMode = opMode;\r\n        enableAutoBulkRead();\r\n\r\n\r\n        fl = new MotorEx(opMode.hardwareMap, \"motorFL\");\r\n        fr = new MotorEx(opMode.hardwareMap, \"motorFR\");\r\n        bl = new MotorEx(opMode.hardwareMap, \"motorBL\");\r\n        br = new MotorEx(opMode.hardwareMap, \"motorBR\");\r\n\r\n        //required subsystems\r\n        this.drive = new MecanumDrive(fl, fr, bl, br);\r\n\r\n        this.intake = new Intake(opMode);\r\n        this.slide = new Slide(opMode);\r\n        this.claw = new Claw(opMode);\r\n    }\r\n\r\n    public void fixMotors(){\r\n        drive.setRightSideInverted(true);\r\n\r\n        fl.setInverted(false);\r\n        fr.setInverted(false);\r\n        bl.setInverted(false);\r\n        br.setInverted(false);\r\n        \r\n        fl.setRunMode(Motor.RunMode.RawPower);\r\n        fr.setRunMode(Motor.RunMode.RawPower);\r\n        bl.setRunMode(Motor.RunMode.RawPower);\r\n        br.setRunMode(Motor.RunMode.RawPower);\r\n        \r\n        fl.setZeroPowerBehavior(Motor.ZeroPowerBehavior.BRAKE);\r\n        fr.setZeroPowerBehavior(Motor.ZeroPowerBehavior.BRAKE);\r\n        bl.setZeroPowerBehavior(Motor.ZeroPowerBehavior.BRAKE);\r\n        br.setZeroPowerBehavior(Motor.ZeroPowerBehavior.BRAKE);\r\n    }\r\n\r\n    public void drive(double strafeSpeed, double forwardBackSpeed, double turnSpeed){\r\n        double speeds[] = {\r\n                forwardBackSpeed-strafeSpeed-turnSpeed,\r\n                forwardBackSpeed+strafeSpeed+turnSpeed,\r\n                forwardBackSpeed+strafeSpeed-turnSpeed,\r\n                forwardBackSpeed-strafeSpeed+turnSpeed\r\n        };\r\n        double maxSpeed = 0;\r\n        for(int i = 0; i < 4; i++){\r\n            maxSpeed = Math.max(maxSpeed, speeds[i]);\r\n        }\r\n        if(maxSpeed > 1) {\r\n            for (int i = 0; i < 4; i++){\r\n                speeds[i] /= maxSpeed;\r\n            }\r\n        }\r\n        fl.set(speeds[0]);\r\n        fr.set(speeds[1]);\r\n        bl.set(speeds[2]);\r\n        br.set(speeds[3]);\r\n    }\r\n\r\n    private void enableAutoBulkRead() {\r\n        for (LynxModule mod : opMode.hardwareMap.getAll(LynxModule.class)) {\r\n            mod.setBulkCachingMode(LynxModule.BulkCachingMode.AUTO);\r\n        }\r\n    }\r\n}\r\n// non needed\r\n//        try {\r\n////      this.hubs = Pair.create(opMode.hardwareMap.get(ExpansionHubEx.class, \"Expansion Hub 1\"), // TODO: check if revextensions2 works with sdk7.0 and control hubs\r\n////          opMode.hardwareMap.get(ExpansionHubEx.class, \"Expansion Hub 2\"));\r\n//        } catch (Exception e) {\r\n//            // Avoid catastrophic errors if RevExtensions don't behave as expected. Limited trust of stability\r\n//            e.printStackTrace();\r\n//        }\r\n//
+===================================================================
+diff --git a/TeamCode/src/main/java/org/firstinspires/ftc/teamcode/teleop/subsystems/Bot.java b/TeamCode/src/main/java/org/firstinspires/ftc/teamcode/teleop/subsystems/Bot.java
+--- a/TeamCode/src/main/java/org/firstinspires/ftc/teamcode/teleop/subsystems/Bot.java	
++++ b/TeamCode/src/main/java/org/firstinspires/ftc/teamcode/teleop/subsystems/Bot.java	
+@@ -60,9 +60,9 @@
+         drive.setRightSideInverted(true);
+ 
+         fl.setInverted(false);
+-        fr.setInverted(false);
++        fr.setInverted(true);
+         bl.setInverted(false);
+-        br.setInverted(false);
++        br.setInverted(true);
+         
+         fl.setRunMode(Motor.RunMode.RawPower);
+         fr.setRunMode(Motor.RunMode.RawPower);
+@@ -77,10 +77,10 @@
+ 
+     public void drive(double strafeSpeed, double forwardBackSpeed, double turnSpeed){
+         double speeds[] = {
+-                forwardBackSpeed-strafeSpeed-turnSpeed,
+-                forwardBackSpeed+strafeSpeed+turnSpeed,
+                 forwardBackSpeed+strafeSpeed-turnSpeed,
+-                forwardBackSpeed-strafeSpeed+turnSpeed
++                forwardBackSpeed-strafeSpeed+turnSpeed,
++                -forwardBackSpeed-strafeSpeed-turnSpeed,
++                -forwardBackSpeed+strafeSpeed+turnSpeed
+         };
+         double maxSpeed = 0;
+         for(int i = 0; i < 4; i++){
