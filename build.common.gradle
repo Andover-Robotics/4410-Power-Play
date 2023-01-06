@@ -55,10 +55,9 @@ android {
         signingConfig signingConfigs.debug
         applicationId 'com.qualcomm.ftcrobotcontroller'
         minSdkVersion 24
+        multiDexEnabled true
         //noinspection ExpiredTargetSdkVersion
         targetSdkVersion 28
-        multiDexEnabled true
-
 
         /**
          * We keep the versionCode and versionName of robot controller applications in sync with
@@ -96,14 +95,14 @@ android {
             signingConfig signingConfigs.release
 
             ndk {
-                abiFilters "armeabi-v7a", "arm64-v7a"
+                abiFilters "armeabi-v7a"
             }
         }
         debug {
             debuggable true
             jniDebuggable true
             ndk {
-                abiFilters "armeabi-v7a", "arm64-v7a"
+                abiFilters "armeabi-v7a"
             }
         }
     }

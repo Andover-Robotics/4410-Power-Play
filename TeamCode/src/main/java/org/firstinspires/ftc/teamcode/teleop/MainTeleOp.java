@@ -1,5 +1,3 @@
-//TODO: fix whatever this mess of commented out code is
-
 package org.firstinspires.ftc.teamcode.teleop;
 
 import com.acmerobotics.dashboard.FtcDashboard;
@@ -18,6 +16,7 @@ public class MainTeleOp extends LinearOpMode {
 
     private Bot bot;
     private double driveSpeed = 1;
+    private boolean isManual = false;
 
     @Override
     public void runOpMode() throws InterruptedException {
@@ -33,33 +32,77 @@ public class MainTeleOp extends LinearOpMode {
         imu.initialize(parameters);
         waitForStart();
 
-        while(opModeIsActive() && !isStopRequested()){
+        while (opModeIsActive() && !isStopRequested()) {
             gp1.readButtons();
             gp2.readButtons();
-            if(gp2.getButton(GamepadKeys.Button.A)){
-                bot.intake.run();
-            }else if(gp2.getButton(GamepadKeys.Button.B)){
-                bot.intake.spit();
-            }else{
-                bot.intake.stop();
-            }
+//            if (gp2.getButton(GamepadKeys.Button.A)) {
+//                bot.intake.run();
+//            } else if (gp2.getButton(GamepadKeys.Button.B)) {
+//                bot.intake.spit();
+//            } else {
+//                bot.intake.stop();
+//            }
 
-            if(gp2.wasJustPressed(GamepadKeys.Button.X)){
-                bot.claw.close();
-            }else if(gp2.wasJustPressed(GamepadKeys.Button.Y)){
+            if (gp2.wasJustPressed(GamepadKeys.Button.Y)) {
                 bot.claw.open();
+            }else if (gp2.wasJustPressed(GamepadKeys.Button.B)) {
+                bot.claw.openRight();
+            }else if (gp2.wasJustPressed(GamepadKeys.Button.X)) {
+                bot.claw.openLeft();
+            }else if(gp2.getButton(GamepadKeys.Button.RIGHT_STICK_BUTTON)) {
+                bot.claw.close();
+            }else if (bot.claw.getDistance() < 85) {
+                if (gp2.getButton(GamepadKeys.Button.Y)) {
+                    bot.claw.open();
+                }else if (gp2.getButton(GamepadKeys.Button.A)) {
+                    bot.claw.close();
+                    Thread goUp = new Thread(() -> {sleep(1000); bot.slide.goUp();});
+                    goUp.start();
+                }
             }
 
-            if(gp2.wasJustPressed(GamepadKeys.Button.DPAD_UP)){
+            if (gp2.wasJustPressed(GamepadKeys.Button.DPAD_UP)) {
                 bot.slide.runToTop();
-            }else if(gp2.wasJustPressed(GamepadKeys.Button.DPAD_LEFT)) {
+//                bot.claw.open();
+//                bot.slide.runToBottom();
+            }else if (gp2.wasJustPressed(GamepadKeys.Button.DPAD_LEFT)) {
                 bot.slide.runToMiddle();
-            }else if(gp2.wasJustPressed(GamepadKeys.Button.DPAD_RIGHT)){
+            }else if (gp2.wasJustPressed(GamepadKeys.Button.DPAD_RIGHT)) {
                 bot.slide.runToLow();
-            }else if(gp2.wasJustPressed(GamepadKeys.Button.DPAD_DOWN)){
+            }else if (gp2.wasJustPressed(GamepadKeys.Button.DPAD_DOWN)) {
                 bot.slide.runToBottom();
             }
-            bot.slide.periodic();
+//            }else if(gp2.wasJustPressed(GamepadKeys.Button.A)) {
+//                bot.slide.runToCone();
+//            }
+
+            if (gp2.wasJustPressed(GamepadKeys.Button.RIGHT_BUMPER)) {
+                bot.slide.goDown();
+            }
+
+            if (gp2.wasJustPressed(GamepadKeys.Button.LEFT_BUMPER)) {
+                bot.slide.goUp();
+            }
+
+            if(gp2.getTrigger(GamepadKeys.Trigger.LEFT_TRIGGER) > 0.1){
+                isManual = true;
+                bot.slide.runPower(gp2.getTrigger(GamepadKeys.Trigger.LEFT_TRIGGER));
+            }else{
+                if (isManual) {
+                    isManual = false;
+                    bot.slide.stopManual();
+                }
+                bot.slide.periodic();
+            }
+
+
+            // bot.turret.rotate(gp2.getLeftX());
+
+            //TODO test sensor
+            telemetry.addData("sensor", bot.claw.getDistance());
+            telemetry.addData("drive current", bot.getCurrent());
+            telemetry.addData("slide current", bot.slide.getCurrent());
+            telemetry.update();
 
             FtcDashboard dash = FtcDashboard.getInstance();
             TelemetryPacket packet = new TelemetryPacket();
@@ -68,9 +111,14 @@ public class MainTeleOp extends LinearOpMode {
             packet.put("turnSpeed", -gp1.getLeftX());
             dash.sendTelemetryPacket(packet);
 
-            driveSpeed = 1 - 0.5 * gp1.getTrigger(GamepadKeys.Trigger.RIGHT_TRIGGER);
+            driveSpeed = 0.7;
+            driveSpeed -= bot.slide.isHigh()/3;
+            driveSpeed *= 1 - 0.5 * gp1.getTrigger(GamepadKeys.Trigger.RIGHT_TRIGGER);
+            driveSpeed = Math.max(0, driveSpeed);
             bot.fixMotors();
-            bot.drive(gp1.getLeftX() * driveSpeed, gp1.getLeftY() * driveSpeed, gp1.getRightX() * driveSpeed);
+            bot.drive(gp1.getLeftX() * driveSpeed, -gp1.getLeftY() * driveSpeed, gp1.getRightX() * driveSpeed);
+            }
         }
     }
-}
+
+
