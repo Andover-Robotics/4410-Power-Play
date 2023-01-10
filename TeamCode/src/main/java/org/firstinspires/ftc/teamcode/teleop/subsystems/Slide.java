@@ -37,15 +37,15 @@ public class Slide {
     }
 
     public void runToTop(){
-        runTo(3500);
+        runTo(3700);
     }
 
     public void runToMiddle(){
-        runTo(2700);
+        runTo(2900);
     }
 
     public void runToLow(){
-        runTo(1500);
+        runTo(1700);
     }
 
     public void runToBottom(){
@@ -67,7 +67,7 @@ public class Slide {
 
     public void periodic(){
         if(motor.atTargetPosition()){
-            motor.set(0.01);
+            motor.set(0.1);
         }else if(motor.getCurrentPosition() < target){
             motor.set(0.4);
         }else{
