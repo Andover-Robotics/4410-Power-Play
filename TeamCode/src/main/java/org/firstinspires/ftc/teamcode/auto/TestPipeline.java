@@ -28,10 +28,10 @@ public class TestPipeline extends OpenCvPipeline{
         this.telemetry = telemetry;
     }
 
-    Scalar greenLowHSV= new Scalar(68,21,30);
-    Scalar greenHighHSV = new Scalar(113,203,179);
-    Scalar yellowLowHSV= new Scalar(19,48,117);
-    Scalar yellowHighHSV = new Scalar(119,134,229);
+    Scalar greenLowHSV= new Scalar(68,32,60);
+    Scalar greenHighHSV = new Scalar(142,142,222);
+    Scalar yellowLowHSV= new Scalar(0,0,117);
+    Scalar yellowHighHSV = new Scalar(72,194,229);
     Scalar pinkLowHSV= new Scalar(134,73,80);
     Scalar pinkHighHSV = new Scalar(180,225,246);
 

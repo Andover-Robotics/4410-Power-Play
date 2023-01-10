@@ -45,10 +45,6 @@ public class MainTeleOp extends LinearOpMode {
 
             if (gp2.wasJustPressed(GamepadKeys.Button.Y)) {
                 bot.claw.open();
-            }else if (gp2.wasJustPressed(GamepadKeys.Button.B)) {
-                bot.claw.openRight();
-            }else if (gp2.wasJustPressed(GamepadKeys.Button.X)) {
-                bot.claw.openLeft();
             }else if(gp2.getButton(GamepadKeys.Button.RIGHT_STICK_BUTTON)) {
                 bot.claw.close();
             }else if (bot.claw.getDistance() < 85) {
@@ -56,8 +52,6 @@ public class MainTeleOp extends LinearOpMode {
                     bot.claw.open();
                 }else if (gp2.getButton(GamepadKeys.Button.A)) {
                     bot.claw.close();
-                    Thread goUp = new Thread(() -> {sleep(1000); bot.slide.goUp();});
-                    goUp.start();
                 }
             }
 
@@ -111,12 +105,12 @@ public class MainTeleOp extends LinearOpMode {
             packet.put("turnSpeed", -gp1.getLeftX());
             dash.sendTelemetryPacket(packet);
 
-            driveSpeed = 0.7;
+            driveSpeed = 0.6;
             driveSpeed -= bot.slide.isHigh()/3;
             driveSpeed *= 1 - 0.5 * gp1.getTrigger(GamepadKeys.Trigger.RIGHT_TRIGGER);
             driveSpeed = Math.max(0, driveSpeed);
             bot.fixMotors();
-            bot.drive(gp1.getLeftX() * driveSpeed, -gp1.getLeftY() * driveSpeed, gp1.getRightX() * driveSpeed);
+            bot.drive(gp1.getLeftX() * driveSpeed, -gp1.getLeftY() * driveSpeed, gp1.getRightX() * driveSpeed/2);
             }
         }
     }

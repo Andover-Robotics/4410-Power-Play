@@ -72,7 +72,7 @@ public class MotorTesterPosition extends OpMode {
         .addData("\nY", "fine tune power")
         .addData("\nX", "run the thing");
 
-    TARGET -= (int)(gamepad1.left_stick_y * 4);
+    TARGET -= (int)(gamepad1.left_stick_y * 20);
     TOLERANCE -= gamepad1.right_stick_y * 0.25;
     motor.setPositionTolerance(TOLERANCE);
     motor.setPositionCoefficient(KP);
@@ -87,8 +87,8 @@ public class MotorTesterPosition extends OpMode {
     telemetry.addLine("\n\nMotor Data")
         .addData("\nName: ", motorSelector.selected())
         .addData("\nRPM: ", rpmSelector.selected())
-        .addData("\nRaw Power", "%.3f", motor.motor.getPower())
-        .addData("\nTarget Power", "%.3f", POWER)
+        .addData("\nMotor Raw Power", "%.3f", motor.motor.getPower())
+        .addData("\neditable========\nTarget Power", "%.3f", POWER)
         .addData("\nKP", "%.3f", KP)
         .addData("\nTolerance", "%.3f", TOLERANCE)
         .addData("\nFeedforward", "%.3f", FEEDFORWARD)
