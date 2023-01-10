@@ -2,12 +2,15 @@ package org.firstinspires.ftc.teamcode.teleop;
 
 import com.acmerobotics.dashboard.FtcDashboard;
 import com.acmerobotics.dashboard.telemetry.TelemetryPacket;
+import com.acmerobotics.roadrunner.geometry.Pose2d;
+import com.acmerobotics.roadrunner.trajectory.Trajectory;
 import com.arcrobotics.ftclib.gamepad.GamepadEx;
 import com.arcrobotics.ftclib.gamepad.GamepadKeys;
 import com.qualcomm.hardware.bosch.BNO055IMU;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 
+import org.firstinspires.ftc.teamcode.auto.SampleMecanumDrive;
 import org.firstinspires.ftc.teamcode.teleop.subsystems.Bot;
 
 
@@ -17,6 +20,8 @@ public class MainTeleOp extends LinearOpMode {
     private Bot bot;
     private double driveSpeed = 1;
     private boolean isManual = false;
+
+
 
     @Override
     public void runOpMode() throws InterruptedException {
@@ -31,6 +36,13 @@ public class MainTeleOp extends LinearOpMode {
         // Without this, data retrieving from the IMU throws an exception
         imu.initialize(parameters);
         waitForStart();
+
+        Trajectory goForward = bot.rr.trajectoryBuilder(new Pose2d(0,0,0))
+                .forward(4)
+                .addTemporalMarker(1, bot.slide::goDown)
+                .addTemporalMarker(2, bot.claw::open)
+                .addTemporalMarker(4, bot.slide::runToBottom)
+                .build();
 
         while (opModeIsActive() && !isStopRequested()) {
             gp1.readButtons();
@@ -55,10 +67,9 @@ public class MainTeleOp extends LinearOpMode {
                 }
             }
 
-            if (gp2.wasJustPressed(GamepadKeys.Button.DPAD_UP)) {
+            while (gp2.wasJustPressed(GamepadKeys.Button.DPAD_UP)) {
                 bot.slide.runToTop();
-//                bot.claw.open();
-//                bot.slide.runToBottom();
+                bot.rr.followTrajectory(goForward);
             }else if (gp2.wasJustPressed(GamepadKeys.Button.DPAD_LEFT)) {
                 bot.slide.runToMiddle();
             }else if (gp2.wasJustPressed(GamepadKeys.Button.DPAD_RIGHT)) {
