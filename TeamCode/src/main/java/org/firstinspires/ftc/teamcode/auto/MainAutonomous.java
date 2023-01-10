@@ -74,19 +74,17 @@ public class MainAutonomous extends LinearOpMode {
                 telemetry.addData("The signal is yellow with a percentage of", TestPipeline.yellowPercentage);
             }
 
-            telemetry.addData("\nDo terminal (press X to switch)", terminal);
+            /*telemetry.addData("\nDo terminal (press X to switch)", terminal);
             gp1.readButtons();
             if(gp1.wasJustPressed(GamepadKeys.Button.X)){
                 terminal = !terminal;
             }
             telemetry.update();
+             */
         }
-        Thread slidePeriodic = new Thread(new Runnable() {
-            @Override
-            public void run() {
-                while(opModeIsActive()){
-                    bot.slide.periodic();
-                }
+        Thread slidePeriodic = new Thread(() -> {
+            while(opModeIsActive()){
+                bot.slide.periodic();
             }
         });
         slidePeriodic.start();
@@ -112,16 +110,24 @@ public class MainAutonomous extends LinearOpMode {
                 .strafeLeft(28).build();
 
 
-        if(terminal) {
+
             bot.rr.followTrajectory(moveOut);
             Thread runToTop = new Thread(bot.slide::runToTop);
             runToTop.start();
+            telemetry.addData("Started slide",runToTop);
+            telemetry.update();
             sleep(3000);
             bot.rr.followTrajectory(score);
-            bot.claw.open();
+            //bot.claw.open();
+            Thread openClaw = new Thread(bot.claw::open);
+            telemetry.addData("Started claw", openClaw);
+            telemetry.update();
+            openClaw.start();
             sleep(1000);
             bot.rr.followTrajectory(goBack);
             Thread runToBottom = new Thread(bot.slide::runToBottom);
+            telemetry.addData("Started slide",runToBottom);
+            telemetry.update();
             runToBottom.start();
             sleep(3000);
             bot.rr.followTrajectory(strafeRight);
@@ -135,9 +141,9 @@ public class MainAutonomous extends LinearOpMode {
                     bot.rr.followTrajectory(parkRight);
                     break;
             }
-        }else{
-            bot.rr.followTrajectory(strafeLeftfirst);
-            switch(pipeline.getSignalVal()){//TODO figure out which one is left/center/right
+
+            /*bot.rr.followTrajectory(strafeLeftfirst);
+            switch(pipeline.getSignalVal()){
                 case GREEN://LEFT
                     bot.rr.followTrajectory(parkLeft);
                     break;
@@ -146,8 +152,9 @@ public class MainAutonomous extends LinearOpMode {
                 case YELLOW://RIGHT
                     bot.rr.followTrajectory(parkRight);
                     break;
-            }
+            */
+        slidePeriodic.interrupt();
         }
 
     }
-}
+
