@@ -79,7 +79,7 @@ public class MainAutonomous extends LinearOpMode {
             if(gp1.wasJustPressed(GamepadKeys.Button.X)){
                 terminal = !terminal;
             }
-            telemetry.update();
+         .   telemetry.update();
              */
         }
         Thread slidePeriodic = new Thread(() -> {
@@ -113,8 +113,8 @@ public class MainAutonomous extends LinearOpMode {
 
             bot.rr.followTrajectory(moveOut);
             Thread runToTop = new Thread(bot.slide::runToTop);
-            runToTop.start();
-            telemetry.addData("Started slide",runToTop);
+            bot.slide.runToTop();
+            telemetry.addLine("Started slide.");
             telemetry.update();
             sleep(3000);
             bot.rr.followTrajectory(score);
@@ -126,9 +126,9 @@ public class MainAutonomous extends LinearOpMode {
             sleep(1000);
             bot.rr.followTrajectory(goBack);
             Thread runToBottom = new Thread(bot.slide::runToBottom);
+            bot.slide.runToBottom();
             telemetry.addData("Started slide",runToBottom);
             telemetry.update();
-            runToBottom.start();
             sleep(3000);
             bot.rr.followTrajectory(strafeRight);
             switch(pipeline.getSignalVal()){//TODO figure out which one is left/center/right

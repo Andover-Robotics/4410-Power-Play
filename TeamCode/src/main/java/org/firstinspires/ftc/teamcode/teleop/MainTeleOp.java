@@ -71,8 +71,8 @@ public class MainTeleOp extends LinearOpMode {
 
             while (gp2.wasJustPressed(GamepadKeys.Button.DPAD_UP)) {
                 bot.slide.runToTop();
-                bot.rr.followTrajectory(goForward);
-            }else if (gp2.wasJustPressed(GamepadKeys.Button.DPAD_LEFT)) {
+//                bot.rr.followTrajectory(goForward);
+            } if (gp2.wasJustPressed(GamepadKeys.Button.DPAD_LEFT)) {
                 bot.slide.runToMiddle();
             }else if (gp2.wasJustPressed(GamepadKeys.Button.DPAD_RIGHT)) {
                 bot.slide.runToLow();
