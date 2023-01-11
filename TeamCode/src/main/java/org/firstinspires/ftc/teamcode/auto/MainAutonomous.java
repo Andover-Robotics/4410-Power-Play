@@ -10,6 +10,8 @@ import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.hardware.DcMotor;
 
 import org.firstinspires.ftc.robotcore.external.hardware.camera.WebcamName;
+import org.firstinspires.ftc.teamcode.auto.trajectorysequence.TrajectorySequence;
+import org.firstinspires.ftc.teamcode.auto.trajectorysequence.TrajectorySequenceBuilder;
 import org.firstinspires.ftc.teamcode.teleop.subsystems.Bot;
 import org.openftc.easyopencv.OpenCvCamera;
 import org.openftc.easyopencv.OpenCvCameraFactory;
@@ -94,17 +96,39 @@ public class MainAutonomous extends LinearOpMode {
                 bot.slide.periodic();
             }
         });
+
+        Thread openClaw = new Thread(bot.claw::open);
+        Thread slidesHigh = new Thread(bot.slide::runToTop);
+        Thread slidesLower= new Thread(bot.slide::goDown);
+
         slidePeriodic.start();
 
-        Pose2d startPose = new Pose2d();
-        Trajectory forward = bot.rr.trajectoryBuilder(startPose).forward(4).build(),
-                back = bot.rr.trajectoryBuilder(new Pose2d(4, 0)).back(4).build();
+        Pose2d startPose = new Pose2d(0,0,0);
+        TrajectorySequence forward = bot.rr.trajectorySequenceBuilder(startPose)
+                .forward(36)
+                .waitSeconds(8)
+                .build();
+        TrajectorySequence strafeRight= bot.rr.trajectorySequenceBuilder(new Pose2d(36,0,0))
+                .strafeRight(24)
+                .waitSeconds(8)
+                .build();
+        TrajectorySequence approachJunction= bot.rr.trajectorySequenceBuilder(new Pose2d(36, 24, 0))
+                .forward(4)
+                .waitSeconds(13)
+                .build();
 
-        bot.slide.runToLow();
-        bot.rr.followTrajectory(forward);
+        bot.rr.followTrajectorySequence(forward);
+        bot.rr.followTrajectorySequence(strafeRight);
+        bot.rr.followTrajectorySequence(approachJunction);
+        slidesHigh.start();
+        sleep(1000);
+        slidesLower.start();
+        sleep(1000);
+        openClaw.start();
 
-        bot.claw.open();
-        bot.rr.followTrajectory(back);
+
+
+      //  bot.rr.followTrajectory(back);
     }
 
 }
