@@ -113,7 +113,7 @@ public class MainAutonomous extends LinearOpMode {
 
             bot.rr.followTrajectory(moveOut);
             Thread runToTop = new Thread(bot.slide::runToTop);
-            bot.slide.runToTop();
+            runToTop.start();
             telemetry.addLine("Started slide.");
             telemetry.update();
             sleep(3000);
@@ -126,7 +126,7 @@ public class MainAutonomous extends LinearOpMode {
             sleep(1000);
             bot.rr.followTrajectory(goBack);
             Thread runToBottom = new Thread(bot.slide::runToBottom);
-            bot.slide.runToBottom();
+            runToBottom.start();
             telemetry.addData("Started slide",runToBottom);
             telemetry.update();
             sleep(3000);
@@ -153,7 +153,7 @@ public class MainAutonomous extends LinearOpMode {
                     bot.rr.followTrajectory(parkRight);
                     break;
             */
-        slidePeriodic.interrupt();
+        //slidePeriodic.interrupt();
         }
 
     }
