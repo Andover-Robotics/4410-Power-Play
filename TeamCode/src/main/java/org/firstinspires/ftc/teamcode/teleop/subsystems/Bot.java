@@ -54,10 +54,12 @@ public class Bot {
         //required subsystems
         this.drive = new MecanumDrive(fl, fr, bl, br);
 
+
+        this.rr = new SampleMecanumDrive(opMode.hardwareMap);
+
         this.slide = new Slide(opMode);
         this.claw = new Claw(opMode);
 
-        this.rr = new SampleMecanumDrive(opMode.hardwareMap);
     }
 
     public void fixMotors(){
