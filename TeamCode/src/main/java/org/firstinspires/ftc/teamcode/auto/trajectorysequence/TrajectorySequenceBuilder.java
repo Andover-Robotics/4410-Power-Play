@@ -65,7 +65,12 @@ public class TrajectorySequenceBuilder {
     private double lastDisplacementTraj;
 
     public TrajectorySequenceBuilder(
-            Pose2d startPose
+            Pose2d startPose,
+            Double startTangent,
+            TrajectoryVelocityConstraint baseVelConstraint,
+            TrajectoryAccelerationConstraint baseAccelConstraint,
+            double baseTurnConstraintMaxAngVel,
+            double baseTurnConstraintMaxAngAccel
     ) {
         this.baseVelConstraint = baseVelConstraint;
         this.baseAccelConstraint = baseAccelConstraint;
