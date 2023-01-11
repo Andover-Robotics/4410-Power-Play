@@ -37,23 +37,9 @@ public class MainTeleOp extends LinearOpMode {
         imu.initialize(parameters);
         waitForStart();
 
-        Trajectory goForward = bot.rr.trajectoryBuilder(new Pose2d(0,0,0))
-                .forward(4)
-                .addTemporalMarker(1, bot.slide::goDown)
-                .addTemporalMarker(2, bot.claw::open)
-                .addTemporalMarker(4, bot.slide::runToBottom)
-                .build();
-
         while (opModeIsActive() && !isStopRequested()) {
             gp1.readButtons();
             gp2.readButtons();
-//            if (gp2.getButton(GamepadKeys.Button.A)) {
-//                bot.intake.run();
-//            } else if (gp2.getButton(GamepadKeys.Button.B)) {
-//                bot.intake.spit();
-//            } else {
-//                bot.intake.stop();
-//            }
 
             if (gp2.wasJustPressed(GamepadKeys.Button.Y)) {
                 bot.claw.open();
@@ -71,7 +57,6 @@ public class MainTeleOp extends LinearOpMode {
 
             while (gp2.wasJustPressed(GamepadKeys.Button.DPAD_UP)) {
                 bot.slide.runToTop();
-//                bot.rr.followTrajectory(goForward);
             } if (gp2.wasJustPressed(GamepadKeys.Button.DPAD_LEFT)) {
                 bot.slide.runToMiddle();
             }else if (gp2.wasJustPressed(GamepadKeys.Button.DPAD_RIGHT)) {
@@ -79,9 +64,6 @@ public class MainTeleOp extends LinearOpMode {
             }else if (gp2.wasJustPressed(GamepadKeys.Button.DPAD_DOWN)) {
                 bot.slide.runToBottom();
             }
-//            }else if(gp2.wasJustPressed(GamepadKeys.Button.A)) {
-//                bot.slide.runToCone();
-//            }
 
             if (gp2.wasJustPressed(GamepadKeys.Button.RIGHT_BUMPER)) {
                 bot.slide.goDown();
