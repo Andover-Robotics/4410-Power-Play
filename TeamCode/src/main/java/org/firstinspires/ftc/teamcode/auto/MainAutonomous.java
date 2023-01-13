@@ -93,12 +93,12 @@ public class MainAutonomous extends LinearOpMode {
 
         bot.claw.close();
 
-//        Thread slidePeriodic = new Thread(() -> {
-//            while(opModeIsActive()){
-//                bot.slide.periodic();
-//            }
-//        });
-//        slidePeriodic.start();
+        Thread slidePeriodic = new Thread(() -> {
+            while(opModeIsActive()){
+                bot.slide.periodic();
+            }
+        });
+        slidePeriodic.start();
 
 
 
@@ -180,6 +180,8 @@ public class MainAutonomous extends LinearOpMode {
         bot.slide.runToLow();
         sleep(3000);
          */
+
+        slidePeriodic.interrupt();
     }
 
 }
