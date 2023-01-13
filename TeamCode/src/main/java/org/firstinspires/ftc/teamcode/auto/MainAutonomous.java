@@ -93,18 +93,18 @@ public class MainAutonomous extends LinearOpMode {
 
         bot.claw.close();
 
-//        Thread slidePeriodic = new Thread(() -> {
-//            while(opModeIsActive()){
-//                bot.slide.periodic();
-//            }
-//        });
-//        slidePeriodic.start();
+        Thread slidePeriodic = new Thread(() -> {
+            while(opModeIsActive()){
+                bot.slide.periodic();
+            }
+        });
+        slidePeriodic.start();
 
 
 
         Pose2d startPose = new Pose2d(0,0,0);
-        Pose2d park1Pose = new Pose2d(12, 0,0);
-        Pose2d park2Pose = new Pose2d(12, 12, 0);
+//        Pose2d park1Pose = new Pose2d(12, 0,0);
+//        Pose2d park2Pose = new Pose2d(12, 12, 0);
 
 
 
@@ -143,7 +143,7 @@ public class MainAutonomous extends LinearOpMode {
 
 
 
-//        slidePeriodic.interrupt();
+        slidePeriodic.interrupt();
 
             //other alliance
 
