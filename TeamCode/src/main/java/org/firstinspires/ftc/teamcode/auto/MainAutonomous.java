@@ -93,12 +93,12 @@ public class MainAutonomous extends LinearOpMode {
 
         bot.claw.close();
 
-        Thread slidePeriodic = new Thread(() -> {
-            while(opModeIsActive()){
-                bot.slide.periodic();
-            }
-        });
-        slidePeriodic.start();
+//        Thread slidePeriodic = new Thread(() -> {
+//            while(opModeIsActive()){
+//                bot.slide.periodic();
+//            }
+//        });
+//        slidePeriodic.start();
 
 
 
@@ -129,6 +129,12 @@ public class MainAutonomous extends LinearOpMode {
         Trajectory alliance2GoBack = bot.rr.trajectoryBuilder(new Pose2d(52, 12, 0))
                 .back(4)
                 .build();
+        Trajectory goToCone = bot.rr.trajectoryBuilder(new Pose2d(44,-12,0))
+                .strafeLeft(15)
+                .build();
+        Trajectory goToJunction = bot.rr.trajectoryBuilder(new Pose2d(49,-12,0))
+                .strafeRight(15)
+                .build();
 
         bot.rr.followTrajectory(forward);
 
@@ -156,6 +162,17 @@ public class MainAutonomous extends LinearOpMode {
         bot.slide.runToLow();
         sleep(3000);
 
+        bot.rr.followTrajectory(goToCone);
+        bot.slide.runTo(580);
+        sleep(1000);
+        bot.claw.close();
+        bot.slide.runToTop();
+        bot.rr.followTrajectory(goToJunction);
+        bot.rr.followTrajectory(alliance1ApproachJunction);
+        bot.slide.goDown();
+        bot.claw.open();
+
+
         /* Alliance Two
         bot.rr.followTrajectory(alliance2StrafeRight);
         bot.slide.runToTop();
@@ -180,8 +197,6 @@ public class MainAutonomous extends LinearOpMode {
         bot.slide.runToLow();
         sleep(3000);
          */
-
-        slidePeriodic.interrupt();
     }
 
 }
