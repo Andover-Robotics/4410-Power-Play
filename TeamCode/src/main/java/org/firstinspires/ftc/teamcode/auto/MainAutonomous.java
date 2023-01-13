@@ -93,66 +93,110 @@ public class MainAutonomous extends LinearOpMode {
 
         bot.claw.close();
 
-        Thread slidePeriodic = new Thread(() -> {
-            while(opModeIsActive()){
-                bot.slide.periodic();
-            }
-        });
-        slidePeriodic.start();
+//        Thread slidePeriodic = new Thread(() -> {
+//            while(opModeIsActive()){
+//                bot.slide.periodic();
+//            }
+//        });
+//        slidePeriodic.start();
 
 
 
         Pose2d startPose = new Pose2d(0,0,0);
-//        Pose2d park1Pose = new Pose2d(12, 0,0);
-//        Pose2d park2Pose = new Pose2d(12, 12, 0);
+        Pose2d park1Pose = new Pose2d(12, 0,0);
+        Pose2d park2Pose = new Pose2d(12, 12, 0);
 
 
 
         Trajectory forward = bot.rr.trajectoryBuilder(startPose)
                 .forward(48)
                 .build();
-        Trajectory strafeRight= bot.rr.trajectoryBuilder(new Pose2d(48,0,0))
+        Trajectory alliance1StrafeRight = bot.rr.trajectoryBuilder(new Pose2d(48,0,0))
                 .strafeRight(12)
                 .build();
-        Trajectory approachJunction= bot.rr.trajectoryBuilder(new Pose2d(48, -12, 0))
+        Trajectory alliance1ApproachJunction = bot.rr.trajectoryBuilder(new Pose2d(48, -12, 0))
                 .forward(4)
                 .build();
-        Trajectory strafeLeft = bot.rr.trajectoryBuilder(new Pose2d(52, -12, 0))
+        Trajectory alliance1GoBack = bot.rr.trajectoryBuilder(new Pose2d(52, -12, 0))
                 .back(4)
+                .build();
+        Trajectory alliance2StrafeLeft= bot.rr.trajectoryBuilder(new Pose2d(48,0,0))
+                .strafeLeft(12)
+                .build();
+        Trajectory alliance2ApproachJunction= bot.rr.trajectoryBuilder(new Pose2d(48, 12, 0))
+                .forward(4)
+                .build();
+        Trajectory alliance2GoBack = bot.rr.trajectoryBuilder(new Pose2d(52, 12, 0))
+                .back(4)
+                .build();
+        Trajectory goToCone = bot.rr.trajectoryBuilder(new Pose2d(44,-12,0))
+                .strafeLeft(15)
+                .build();
+        Trajectory goToJunction = bot.rr.trajectoryBuilder(new Pose2d(49,-12,0))
+                .strafeRight(15)
                 .build();
 
         bot.rr.followTrajectory(forward);
-        bot.rr.followTrajectory(strafeRight);
-        bot.slide.runToTop();
-        sleep(3000);
-        bot.rr.followTrajectory(approachJunction);
 
+        //alliance One
+        bot.rr.followTrajectory(alliance1StrafeRight);
+        bot.slide.runToTop();
+
+        sleep(3000);
+
+        bot.rr.followTrajectory(alliance1ApproachJunction);
         telemetry.addLine("Slides going up");
         telemetry.update();
         bot.slide.goDown();
+
         sleep(1000);
+
         telemetry.addLine("Slides going down");
         telemetry.update();
         bot.claw.open();
+
         sleep(1000);
-        bot.rr.followTrajectory(strafeLeft);
+        bot.rr.followTrajectory(alliance1GoBack);
         telemetry.addLine("Slides going to bottom");
         telemetry.update();
         bot.slide.runToLow();
         sleep(3000);
 
+        bot.rr.followTrajectory(goToCone);
+        bot.slide.runTo(580);
+        sleep(1000);
+        bot.claw.close();
+        bot.slide.runToTop();
+        bot.rr.followTrajectory(goToJunction);
+        bot.rr.followTrajectory(alliance1ApproachJunction);
+        bot.slide.goDown();
+        bot.claw.open();
 
 
-        slidePeriodic.interrupt();
+        /* Alliance Two
+        bot.rr.followTrajectory(alliance2StrafeRight);
+        bot.slide.runToTop();
 
-            //other alliance
+        sleep(3000);
 
-//            Trajectory strafeLeftBegin= bot.rr.trajectoryBuilder(new Pose2d(0,0,0))
-//                        .strafeLeft(12)
-//                        .build();
-//            Trajectory strafeRightScore = bot.rr.trajectoryBuilder(new Pose2d(52,-12,0))
-//                            .strafeRight(12)
-//                                    .build();
+        bot.rr.followTrajectory(alliance2ApproachJunction);
+        telemetry.addLine("Slides going up");
+        telemetry.update();
+        bot.slide.goDown();
+
+        sleep(1000);
+
+        telemetry.addLine("Slides going down");
+        telemetry.update();
+        bot.claw.open();
+
+        sleep(1000);
+        bot.rr.followTrajectory(alliance2GoBack);
+        telemetry.addLine("Slides going to bottom");
+        telemetry.update();
+        bot.slide.runToLow();
+        sleep(3000);
+         */
     }
 
 }
