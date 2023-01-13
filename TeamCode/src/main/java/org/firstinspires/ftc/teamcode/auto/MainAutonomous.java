@@ -43,145 +43,116 @@ public class MainAutonomous extends LinearOpMode {
         //CAMERA STUFF =====================
         TestPipeline pipeline = new TestPipeline(telemetry);
 
-//        WebcamName camName = hardwareMap.get(WebcamName.class, "Webcam 1");
-//        OpenCvCamera camera = OpenCvCameraFactory.getInstance().createWebcam(camName);
-//        camera.openCameraDeviceAsync(new OpenCvCamera.AsyncCameraOpenListener() {
-//            @Override
-//            public void onOpened() {
-//                camera.setPipeline(pipeline);
-//                camera.startStreaming(320 * 3, 240 * 3, OpenCvCameraRotation.UPRIGHT);
-//                telemetry.addData("Camera Status", "Opened");
-//            }
-//
-//            @Override
-//            public void onError(int errorCode) {
-//                telemetry.addData("Error Code", errorCode);
-//            }
-//        });
-//
-//
-//
-//        while(!isStarted()) {
-//            telemetry.addData("Current FPS:", camera.getFps());
-//            telemetry.addData("Current Max FPS:", camera.getCurrentPipelineMaxFps());
-//
-//            if (pipeline.getSignalVal() == TestPipeline.SignalVal.GREEN) {
-//                telemetry.addData("The signal is green with a percentage of", TestPipeline.greenPercentage);
-//            }
-//            else if(pipeline.getSignalVal() == TestPipeline.SignalVal.PINK){
-//                telemetry.addData("The signal is pink with a percentage of", TestPipeline.pinkPercentage);
-//            }
-//            else if(pipeline.getSignalVal() == TestPipeline.SignalVal.YELLOW){
-//                telemetry.addData("The signal is yellow with a percentage of", TestPipeline.yellowPercentage);
-//            }
-//
-//            gp1.readButtons();
-//            if(gp1.wasJustPressed(GamepadKeys.Button.Y)) {
-//                bot.claw.close();
-//            }
-//
-//            telemetry.update();
-//
-//        }
-//
-//        camera.stopStreaming();
-//        camera.closeCameraDevice();
+        WebcamName camName = hardwareMap.get(WebcamName.class, "Webcam 1");
+        OpenCvCamera camera = OpenCvCameraFactory.getInstance().createWebcam(camName);
+        camera.openCameraDeviceAsync(new OpenCvCamera.AsyncCameraOpenListener() {
+            @Override
+            public void onOpened() {
+                camera.setPipeline(pipeline);
+                camera.startStreaming(320 * 3, 240 * 3, OpenCvCameraRotation.UPRIGHT);
+                telemetry.addData("Camera Status", "Opened");
+            }
+
+            @Override
+            public void onError(int errorCode) {
+                telemetry.addData("Error Code", errorCode);
+            }
+        });
+
+
+
+        while(!isStarted()) {
+            telemetry.addData("Current FPS:", camera.getFps());
+            telemetry.addData("Current Max FPS:", camera.getCurrentPipelineMaxFps());
+
+            if (pipeline.getSignalVal() == TestPipeline.SignalVal.GREEN) {
+                telemetry.addData("The signal is green with a percentage of", TestPipeline.greenPercentage);
+            }
+            else if(pipeline.getSignalVal() == TestPipeline.SignalVal.PINK){
+                telemetry.addData("The signal is pink with a percentage of", TestPipeline.pinkPercentage);
+            }
+            else if(pipeline.getSignalVal() == TestPipeline.SignalVal.YELLOW){
+                telemetry.addData("The signal is yellow with a percentage of", TestPipeline.yellowPercentage);
+            }
+
+            gp1.readButtons();
+            if(gp1.wasJustPressed(GamepadKeys.Button.Y)) {
+                bot.claw.close();
+            }
+
+            telemetry.update();
+
+        }
+
+        camera.stopStreaming();
+        camera.closeCameraDevice();
 
         //END CAMERA STUFF ===============
 
         waitForStart();
 
-        Thread slidePeriodic = new Thread(() -> {
-            while(opModeIsActive()){
-                bot.slide.periodic();
-            }
-        });
+        bot.claw.close();
 
-        Thread openClaw = new Thread(bot.claw::open);
-        Thread slidesHigh = new Thread(bot.slide::runToTop);
-        Thread slidesLower= new Thread(bot.slide::goDown);
-        Thread slidesDown = new Thread(bot.slide::runToBottom);
-        Thread slidesCones = new Thread(bot.slide::runToLow);
+//        Thread slidePeriodic = new Thread(() -> {
+//            while(opModeIsActive()){
+//                bot.slide.periodic();
+//            }
+//        });
+//        slidePeriodic.start();
 
 
-        while(opModeIsActive()){
-//            slidePeriodic.start();
 
         Pose2d startPose = new Pose2d(0,0,0);
+        Pose2d park1Pose = new Pose2d(12, 0,0);
+        Pose2d park2Pose = new Pose2d(12, 12, 0);
+
+
+
         Trajectory forward = bot.rr.trajectoryBuilder(startPose)
                 .forward(48)
                 .build();
         Trajectory strafeRight= bot.rr.trajectoryBuilder(new Pose2d(48,0,0))
                 .strafeRight(12)
                 .build();
-        Trajectory approachJunction= bot.rr.trajectoryBuilder(new Pose2d(48, 12, 0))
+        Trajectory approachJunction= bot.rr.trajectoryBuilder(new Pose2d(48, -12, 0))
                 .forward(4)
                 .build();
-        Trajectory strafeLeft = bot.rr.trajectoryBuilder(new Pose2d(52, 12, 0))
-                        .back(4)
-                        .strafeLeft(4)
-                        .build();
+        Trajectory strafeLeft = bot.rr.trajectoryBuilder(new Pose2d(52, -12, 0))
+                .back(4)
+                .build();
+
+        bot.rr.followTrajectory(forward);
+        bot.rr.followTrajectory(strafeRight);
+        bot.slide.runToTop();
+        sleep(3000);
+        bot.rr.followTrajectory(approachJunction);
+
+        telemetry.addLine("Slides going up");
+        telemetry.update();
+        bot.slide.goDown();
+        sleep(1000);
+        telemetry.addLine("Slides going down");
+        telemetry.update();
+        bot.claw.open();
+        sleep(1000);
+        bot.rr.followTrajectory(strafeLeft);
+        telemetry.addLine("Slides going to bottom");
+        telemetry.update();
+        bot.slide.runToLow();
+        sleep(3000);
 
 
 
-            bot.rr.followTrajectory(forward);
-            sleep(1000);
-            bot.rr.followTrajectory(strafeRight);
-            telemetry.update();
-            bot.rr.followTrajectory(approachJunction);
-            slidesHigh.start();
-            sleep(1000);
-            telemetry.addData("Slides going up", slidesHigh);
-            slidesLower.start();
-            sleep(1000);
-            telemetry.addData("Slides going down", slidesLower);
-            openClaw.start();
-            sleep(1000);
-            telemetry.addData("Claw opening", openClaw);
-            slidesDown.start();
-            sleep(1000);
-            telemetry.addData("Slides going to bottom", slidesDown);
-            bot.rr.followTrajectory(strafeLeft);
-            slidesCones.start();
-
+//        slidePeriodic.interrupt();
 
             //other alliance
 
-            Trajectory strafeLeftBegin= bot.rr.trajectoryBuilder(new Pose2d(0,0,0))
-                        .strafeLeft(12)
-                        .build();
-            Trajectory strafeRightScore = bot.rr.trajectoryBuilder(new Pose2d(52,-12,0))
-                            .strafeRight(12)
-                                    .build();
-
-
-            /*bot.rr.followTrajectory(forward);
-            sleep(1000);
-            bot.rr.followTrajectory(strafeLeftBegin);
-            telemetry.update();
-            bot.rr.followTrajectory(approachJunction);
-            slidesHigh.start();
-            sleep(1000);
-            telemetry.addData("Slides going up", slidesHigh);
-            slidesLower.start();
-            sleep(1000);
-            telemetry.addData("Slides going down", slidesLower);
-            openClaw.start();
-            sleep(1000);
-            telemetry.addData("Claw opening", openClaw);
-            slidesDown.start();
-            sleep(1000);
-            telemetry.addData("Slides going to bottom", slidesDown);
-            bot.rr.followTrajectory(strafeRightScore);
-            slidesCones.start();
-*/
-
-
-//            slidePeriodic.interrupt();
-        }
-
-
-      //  bot.rr.followTrajectory(back);
+//            Trajectory strafeLeftBegin= bot.rr.trajectoryBuilder(new Pose2d(0,0,0))
+//                        .strafeLeft(12)
+//                        .build();
+//            Trajectory strafeRightScore = bot.rr.trajectoryBuilder(new Pose2d(52,-12,0))
+//                            .strafeRight(12)
+//                                    .build();
     }
 
 }

@@ -21,7 +21,7 @@ public class TestPipeline extends OpenCvPipeline{
         YELLOW,
         PINK
     }
-    private SignalVal signalVal;
+    private SignalVal signalVal = SignalVal.PINK;
     static Rect ROI = new Rect();
 
     public TestPipeline(Telemetry telemetry){
