@@ -111,15 +111,25 @@ public class MainAutonomous extends LinearOpMode {
         Trajectory forward = bot.rr.trajectoryBuilder(startPose)
                 .forward(48)
                 .build();
-        Trajectory alliance1StrafeRight = bot.rr.trajectoryBuilder(new Pose2d(48,0,0))
+        Trajectory alliance1StrafeRight = bot.rr.trajectoryBuilder(forward.end())
                 .strafeRight(12)
                 .build();
-        Trajectory alliance1ApproachJunction = bot.rr.trajectoryBuilder(new Pose2d(48, -12, 0))
+        Trajectory alliance1ApproachJunction = bot.rr.trajectoryBuilder(alliance1StrafeRight.end())
                 .forward(4)
                 .build();
-        Trajectory alliance1GoBack = bot.rr.trajectoryBuilder(new Pose2d(52, -12, 0))
+        Trajectory alliance1GoBack = bot.rr.trajectoryBuilder(alliance1ApproachJunction.end())
                 .back(4)
                 .build();
+
+        Trajectory goToCone = bot.rr.trajectoryBuilder(alliance1GoBack.end())
+                .strafeLeft(15)
+                .build();
+        Trajectory goToJunction = bot.rr.trajectoryBuilder(goToCone.end())
+                .strafeRight(15)
+                .build();
+
+
+        //Alliance 2 trajectories
         Trajectory alliance2StrafeLeft= bot.rr.trajectoryBuilder(new Pose2d(48,0,0))
                 .strafeLeft(12)
                 .build();
@@ -129,12 +139,7 @@ public class MainAutonomous extends LinearOpMode {
         Trajectory alliance2GoBack = bot.rr.trajectoryBuilder(new Pose2d(52, 12, 0))
                 .back(4)
                 .build();
-        Trajectory goToCone = bot.rr.trajectoryBuilder(new Pose2d(44,-12,0))
-                .strafeLeft(15)
-                .build();
-        Trajectory goToJunction = bot.rr.trajectoryBuilder(new Pose2d(49,-12,0))
-                .strafeRight(15)
-                .build();
+
 
         bot.rr.followTrajectory(forward);
 
