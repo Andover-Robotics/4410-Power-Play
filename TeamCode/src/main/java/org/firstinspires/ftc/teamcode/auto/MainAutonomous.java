@@ -104,6 +104,7 @@ public class MainAutonomous extends LinearOpMode {
             }
         });
         slidePeriodic.start();
+        bot.claw.close();
 
 
 
@@ -117,24 +118,32 @@ public class MainAutonomous extends LinearOpMode {
                 .forward(48)
                 .build();
         Trajectory alliance1StrafeRight = bot.rr.trajectoryBuilder(forward.end())
-                .strafeRight(12)
+                .strafeRight(13)
                 .build();
         Trajectory alliance1ApproachJunction = bot.rr.trajectoryBuilder(alliance1StrafeRight.end())
-                .forward(4)
+                .forward(6)
                 .build();
         Trajectory alliance1GoBack = bot.rr.trajectoryBuilder(alliance1ApproachJunction.end())
                 .back(4)
                 .build();
         Trajectory goToCone = bot.rr.trajectoryBuilder(alliance1GoBack.end())
-                .strafeLeft(15)
+                .strafeLeft(30)
                 .build();
-        Trajectory goToJunction = bot.rr.trajectoryBuilder(goToCone.end())
-                .strafeRight(15)
+
+        //change heading!! => cannot adopt pose from previous trajectory
+        Trajectory goForwardToCone = bot.rr.trajectoryBuilder(new Pose2d(goToCone.end().getX(), goToCone.end().getY(), Math.toRadians(90)))
+                .forward(6)
+                .build();
+        Trajectory goBack = bot.rr.trajectoryBuilder(goForwardToCone.end())
+                .back(6)
+                .build();
+        Trajectory goToJunction = bot.rr.trajectoryBuilder(goBack.end())
+                .strafeRight(30)
                 .build();
 
         //Alliance 2 trajectories
         Trajectory alliance2StrafeLeft= bot.rr.trajectoryBuilder(new Pose2d(48,0,0))
-                .strafeLeft(12)
+                .strafeLeft(13)
                 .build();
         Trajectory alliance2ApproachJunction= bot.rr.trajectoryBuilder(new Pose2d(48, 12, 0))
                 .forward(4)
@@ -165,15 +174,35 @@ public class MainAutonomous extends LinearOpMode {
             bot.rr.followTrajectory(alliance1GoBack);
             telemetry.addLine("Slides going to bottom");
             telemetry.update();
-            bot.slide.runToLow();
+            bot.slide.runToBottom();
             sleep(3000);
 
             bot.rr.followTrajectory(goToCone);
+            bot.rr.turn(Math.toRadians(90));
+
+
+            sleep(3000);
             bot.slide.runTo(580);
-            sleep(1000);
+            telemetry.addLine("Running slides to pick up cone");
+            telemetry.update();
+            sleep(2000);
+            bot.rr.followTrajectory(goForwardToCone);
+            telemetry.addLine("Approaching cone");
+            telemetry.update();
+            sleep(5000);
             bot.claw.close();
-            bot.slide.runToTop();
+            sleep(2000);
+            sleep(2000);
+            bot.rr.turn(-Math.toRadians(90));
+            telemetry.addLine("Turn complete");
+            telemetry.update();
+            sleep(5000);
+            bot.rr.followTrajectory(goBack);
+            sleep(1000);
             bot.rr.followTrajectory(goToJunction);
+            sleep(5000);
+            bot.slide.runToTop();
+            sleep(4000);
             bot.rr.followTrajectory(alliance1ApproachJunction);
             bot.slide.goDown();
             bot.claw.open();
