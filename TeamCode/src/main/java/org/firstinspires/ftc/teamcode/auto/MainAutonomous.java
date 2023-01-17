@@ -25,7 +25,7 @@ public class MainAutonomous extends LinearOpMode {
 
     Bot bot;
     boolean isAlliance1;
-    GamepadEx gamepad= new GamepadEx(gamepad1);
+
     @Override
     public void runOpMode() throws InterruptedException {
         telemetry.setAutoClear(true);
@@ -64,7 +64,7 @@ public class MainAutonomous extends LinearOpMode {
 
 
         while(!isStarted()) {
-            if(gamepad.wasJustPressed(GamepadKeys.Button.X)){
+            if(gp1.wasJustPressed(GamepadKeys.Button.X)){
                 isAlliance1=true;
             }
             telemetry.addData("Current FPS:", camera.getFps());
@@ -125,14 +125,12 @@ public class MainAutonomous extends LinearOpMode {
         Trajectory alliance1GoBack = bot.rr.trajectoryBuilder(alliance1ApproachJunction.end())
                 .back(4)
                 .build();
-
         Trajectory goToCone = bot.rr.trajectoryBuilder(alliance1GoBack.end())
                 .strafeLeft(15)
                 .build();
         Trajectory goToJunction = bot.rr.trajectoryBuilder(goToCone.end())
                 .strafeRight(15)
                 .build();
-
 
         //Alliance 2 trajectories
         Trajectory alliance2StrafeLeft= bot.rr.trajectoryBuilder(new Pose2d(48,0,0))
@@ -206,7 +204,7 @@ public class MainAutonomous extends LinearOpMode {
             bot.slide.runToLow();
             sleep(3000);
 
-            /*bot.rr.followTrajectorySequence(alliance2GoToCone);
+          /*  bot.rr.followTrajectorySequence(alliance2GoToCone);
             bot.slide.runTo(580);
             sleep(1000);
             bot.claw.close();
@@ -215,7 +213,9 @@ public class MainAutonomous extends LinearOpMode {
             bot.rr.followTrajectory(alliance1ApproachJunction);
             bot.slide.goDown();
             bot.claw.open();
-             */
+
+           */
+
 
         }
         slidePeriodic.interrupt();
