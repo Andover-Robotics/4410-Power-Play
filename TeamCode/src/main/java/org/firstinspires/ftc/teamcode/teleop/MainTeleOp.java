@@ -40,13 +40,6 @@ public class MainTeleOp extends LinearOpMode {
         while (opModeIsActive() && !isStopRequested()) {
             gp1.readButtons();
             gp2.readButtons();
-//            if (gp2.getButton(GamepadKeys.Button.A)) {
-//                bot.intake.run();
-//            } else if (gp2.getButton(GamepadKeys.Button.B)) {
-//                bot.intake.spit();
-//            } else {
-//                bot.intake.stop();
-//            }
 
             if (gp2.wasJustPressed(GamepadKeys.Button.Y)) {
                 bot.claw.open();
@@ -69,9 +62,6 @@ public class MainTeleOp extends LinearOpMode {
             }else if (gp2.wasJustPressed(GamepadKeys.Button.DPAD_DOWN)) {
                 bot.slide.runToBottom();
             }
-//            }else if(gp2.wasJustPressed(GamepadKeys.Button.A)) {
-//                bot.slide.runToCone();
-//            }
 
             if (gp2.wasJustPressed(GamepadKeys.Button.RIGHT_BUMPER)) {
                 bot.slide.goDown();

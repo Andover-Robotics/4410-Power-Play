@@ -138,7 +138,6 @@ public class MainAutonomous extends LinearOpMode {
                 .strafeRight(32)
                 .build();
 
-
        /* Trajectory goBack = bot.rr.trajectoryBuilder(new Pose2d(allianceOneGoToJunction.end().getX(), allianceOneGoToJunction.end().getY(), -Math.toRadians(90)))
                 .back(6)
                 .build();
