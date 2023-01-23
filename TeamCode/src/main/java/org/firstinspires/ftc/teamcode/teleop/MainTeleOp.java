@@ -28,13 +28,13 @@ public class MainTeleOp extends LinearOpMode {
         bot = Bot.getInstance(this);
         GamepadEx gp2 = new GamepadEx(gamepad2);
         GamepadEx gp1 = new GamepadEx(gamepad1);
-        // Retrieve the IMU from the hardware map
-        BNO055IMU imu = hardwareMap.get(BNO055IMU.class, "imu");
-        BNO055IMU.Parameters parameters = new BNO055IMU.Parameters();
-        // Technically this is the default, however specifying it is clearer
-        parameters.angleUnit = BNO055IMU.AngleUnit.RADIANS;
-        // Without this, data retrieving from the IMU throws an exception
-        imu.initialize(parameters);
+//        // Retrieve the IMU from the hardware map
+//        BNO055IMU imu = hardwareMap.get(BNO055IMU.class, "imu");
+//        BNO055IMU.Parameters parameters = new BNO055IMU.Parameters();
+//        // Technically this is the default, however specifying it is clearer
+//        parameters.angleUnit = BNO055IMU.AngleUnit.RADIANS;
+//        // Without this, data retrieving from the IMU throws an exception
+//        imu.initialize(parameters);
         waitForStart();
 
         while (opModeIsActive() && !isStopRequested()) {
@@ -53,11 +53,9 @@ public class MainTeleOp extends LinearOpMode {
                 }
             }
 
-            //hi
-
-            while (gp2.wasJustPressed(GamepadKeys.Button.DPAD_UP)) {
+            if (gp2.wasJustPressed(GamepadKeys.Button.DPAD_UP)) {
                 bot.slide.runToTop();
-            } if (gp2.wasJustPressed(GamepadKeys.Button.DPAD_LEFT)) {
+            } else if (gp2.wasJustPressed(GamepadKeys.Button.DPAD_LEFT)) {
                 bot.slide.runToMiddle();
             }else if (gp2.wasJustPressed(GamepadKeys.Button.DPAD_RIGHT)) {
                 bot.slide.runToLow();

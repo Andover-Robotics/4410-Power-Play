@@ -22,7 +22,7 @@ public class Slide {
         motor.setZeroPowerBehavior(Motor.ZeroPowerBehavior.BRAKE);
     }
 
-    private void runTo(int t){
+    public void runTo(int t){
         motor.setInverted(false);
         motor.setTargetPosition(t);
         target = t;
