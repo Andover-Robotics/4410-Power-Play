@@ -15,14 +15,26 @@ import org.firstinspires.ftc.teamcode.auto.SampleMecanumDrive;
 
 public class Bot {
 
+    public enum BotState{
+        INTAKE_OUT, // linkage fully extended, ready to pick up cone
+        INTAKE, // ready to intake, but linkage in
+        STORAGE, // arm up, linkage+rail in, used when moving around field
+        OUTTAKE, // ready to outtake
+        SECURE, // cone secured on junction but not let go
+        FRONTOUTTAKE, // ready to outtake from front side
+        FRONTSECURE // cone secured on junction from front side but not let go
+    }
+
     public static Bot instance;
 
     public final Slide slide;
     public final Claw claw;
+    public final Linkage linkage;
+    public final Arm arm;
 
-    private MotorEx fl, fr, bl, br;
-    public final MecanumDrive drive;
+    private final MotorEx fl, fr, bl, br;
     public final SampleMecanumDrive rr;
+    public BotState state = BotState.STORAGE;
 
     public OpMode opMode;
 
@@ -52,17 +64,73 @@ public class Bot {
         br = new MotorEx(opMode.hardwareMap, "motorBR");
 
         //required subsystems
-        this.drive = new MecanumDrive(fl, fr, bl, br);
 
         this.slide = new Slide(opMode);
         this.claw = new Claw(opMode);
+        this.arm = new Arm(opMode);
+        this.linkage = new Linkage(opMode);
 
         this.rr = new SampleMecanumDrive(opMode.hardwareMap);
     }
 
-    public void fixMotors(){
-        drive.setRightSideInverted(true);
+    public void intakeOut(){
+        state = BotState.INTAKE_OUT;
+        slide.runToBottom();
+        claw.intake();
+        arm.intake();
+        linkage.fullOut();
+    }
 
+    public void intakeIn(){
+        state = BotState.INTAKE;
+        slide.runToBottom();
+        claw.intake();
+        arm.intake();
+        linkage.intake();
+    }
+    public void storage(){
+        state = BotState.STORAGE;
+        slide.runToBottom();
+        claw.flipOuttake();
+        arm.storage();
+        linkage.outtake();
+    }
+
+    public void outtake(){ // must be combined with bot.slide.run___() in MainTeleOp
+        state = BotState.OUTTAKE;
+        claw.close();
+        claw.flipOuttake();
+        arm.outtake();
+        linkage.outtake();
+    }
+
+    public void secure(){
+        state = BotState.SECURE;
+        claw.close();
+        claw.flipOuttake();
+        arm.secure();
+        linkage.outtake();
+    }
+
+    public void frontOuttake(){
+        state = BotState.FRONTOUTTAKE;
+        claw.close();
+        claw.flipIntake();
+        arm.frontOuttake();
+        linkage.intake();
+    }
+
+    public void frontSecure(){
+        state = BotState.FRONTSECURE;
+        claw.close();
+        claw.flipIntake();
+        arm.frontSecure();
+        linkage.intake();
+    }
+
+
+
+    public void fixMotors(){
         fl.setInverted(false);
         fr.setInverted(true);
         bl.setInverted(false);
@@ -80,7 +148,7 @@ public class Bot {
     }
 
     public void drive(double strafeSpeed, double forwardBackSpeed, double turnSpeed){
-        double speeds[] = {
+        double[] speeds = {
                 forwardBackSpeed-strafeSpeed-turnSpeed,
                 forwardBackSpeed+strafeSpeed+turnSpeed,
                 forwardBackSpeed+strafeSpeed-turnSpeed,
@@ -111,11 +179,3 @@ public class Bot {
         return fl.motorEx.getCurrent(CurrentUnit.MILLIAMPS);
     }
 }
-// non needed
-//        try {
-////      this.hubs = Pair.create(opMode.hardwareMap.get(ExpansionHubEx.class, "Expansion Hub 1"), // TODO: check if revextensions2 works with sdk7.0 and control hubs
-////          opMode.hardwareMap.get(ExpansionHubEx.class, "Expansion Hub 2"));
-//        } catch (Exception e) {
-//            // Avoid catastrophic errors if RevExtensions don't behave as expected. Limited trust of stability
-//            e.printStackTrace();
-//        }

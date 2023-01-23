@@ -1,85 +1,88 @@
 package org.firstinspires.ftc.teamcode.teleop.subsystems;
 
+import com.acmerobotics.dashboard.config.Config;
+import com.arcrobotics.ftclib.controller.PDController;
+import com.arcrobotics.ftclib.controller.PIDFController;
 import com.arcrobotics.ftclib.hardware.motors.Motor;
 import com.arcrobotics.ftclib.hardware.motors.MotorEx;
+import com.arcrobotics.ftclib.hardware.motors.MotorGroup;
 import com.qualcomm.robotcore.eventloop.opmode.OpMode;
 
 import org.firstinspires.ftc.robotcore.external.navigation.CurrentUnit;
 
+@Config
 public class Slide {
 
-    private final MotorEx motor;
+    private final MotorEx motorLeft;
+    private final MotorEx motorRight;
+    private final MotorGroup motors;
+    private final PIDFController controller;
+    public static double p = 0, d = 0, f = 0, staticF = 0;
+    public static double tolerance = 0, powerUp = 0, powerDown = 0;
+    public static int MAXHEIGHT = 5000, top = 3700, mid = 2900, low = 1700, ground = 0, inc = 100, dec = 100;
 
     private int target = 0;
 
     public Slide(OpMode opMode){
-        motor = new MotorEx(opMode.hardwareMap, "slides", Motor.GoBILDA.RPM_312);
-        motor.setRunMode(Motor.RunMode.PositionControl);
-        motor.setInverted(false);
-        motor.setPositionCoefficient(0.04);
-        motor.setPositionTolerance(100);
-        motor.setTargetPosition(0);
-        motor.setZeroPowerBehavior(Motor.ZeroPowerBehavior.BRAKE);
+        motorLeft = new MotorEx(opMode.hardwareMap, "slidesLeft", Motor.GoBILDA.RPM_435);
+        motorRight = new MotorEx(opMode.hardwareMap, "slidesRight", Motor.GoBILDA.RPM_435);
+        motorRight.setInverted(true);
+        motorLeft.setInverted(false);
+        motors = new MotorGroup(motorLeft, motorRight);
+        controller = new PIDFController(p, 0, d, f);
+        controller.setTolerance(tolerance);
+        controller.setSetPoint(target);
+        motors.setRunMode(Motor.RunMode.RawPower);
+        motors.setZeroPowerBehavior(Motor.ZeroPowerBehavior.BRAKE);
     }
 
     private void runTo(int t){
-        motor.setInverted(false);
-        motor.setTargetPosition(t);
+        motorRight.setInverted(true);
+        motorLeft.setInverted(false);
+        controller.setSetPoint(t);
         target = t;
     }
     public void goDown() {
-        runTo(target-100);
+        runTo(target-dec);
     }
 
     public void goUp()
     {
-        runTo(target+100);
+        runTo(target+inc);
     }
 
     public void runToTop(){
-        runTo(3700);
+        runTo(top);
     }
 
     public void runToMiddle(){
-        runTo(2900);
+        runTo(mid);
     }
 
     public void runToLow(){
-        runTo(1700);
+        runTo(low);
     }
 
     public void runToBottom(){
-        runTo(0);
+        runTo(ground);
     }
-    public void runPower(double speed){
-        motor.setRunMode(Motor.RunMode.RawPower);
-        motor.set(speed);
-    }
-
-    public void stopManual(){
-        motor.setRunMode(Motor.RunMode.PositionControl);
-        runTo(motor.getCurrentPosition());
-    }
-
-//    public void runToCone(){
-//        runTo(110);
-//    }
 
     public void periodic(){
-        if(motor.atTargetPosition()){
-            motor.set(0.1);
-        }else if(motor.getCurrentPosition() < target){
-            motor.set(0.4);
+        controller.setPIDF(p, 0, d , f);
+        if(controller.atSetPoint()){
+            motors.set(staticF);
+        }else if(motors.getCurrentPosition() < target){
+            motors.set(powerUp * controller.calculate(motors.getCurrentPosition()));
         }else{
-            motor.set(0.1);
+            motors.set(powerDown);
         }
     }
     public double isHigh(){
-        return (double)motor.getCurrentPosition()/5000;
+        return (double) motors.getCurrentPosition()/MAXHEIGHT;
     }
 
     public double getCurrent(){
-        return motor.motorEx.getCurrent(CurrentUnit.MILLIAMPS);
+        return motorLeft.motorEx.getCurrent(CurrentUnit.MILLIAMPS) + motorRight.motorEx.getCurrent(CurrentUnit.MILLIAMPS);
     }
 
 }

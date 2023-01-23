@@ -1,5 +1,7 @@
 package org.firstinspires.ftc.teamcode.auto;
 
+import com.acmerobotics.dashboard.FtcDashboard;
+import com.acmerobotics.dashboard.telemetry.MultipleTelemetry;
 import com.acmerobotics.roadrunner.geometry.Pose2d;
 import com.acmerobotics.roadrunner.trajectory.Trajectory;
 import com.arcrobotics.ftclib.gamepad.GamepadEx;
@@ -24,6 +26,7 @@ public class MainAutonomous extends LinearOpMode {
     boolean terminal = false;
     @Override
     public void runOpMode() throws InterruptedException {
+        telemetry = new MultipleTelemetry(telemetry, FtcDashboard.getInstance().getTelemetry());
         for (Map.Entry<String, DcMotor> entry : hardwareMap.dcMotor.entrySet()) {
             entry.getValue().setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
             while (!isStopRequested() && Math.abs(entry.getValue().getCurrentPosition()) > 1) {

@@ -1,5 +1,6 @@
 package org.firstinspires.ftc.teamcode.teleop.subsystems;
 
+import com.acmerobotics.dashboard.config.Config;
 import com.qualcomm.hardware.rev.Rev2mDistanceSensor;
 import com.qualcomm.robotcore.eventloop.opmode.OpMode;
 import com.qualcomm.robotcore.hardware.DistanceSensor;
@@ -9,42 +10,39 @@ import com.qualcomm.robotcore.hardware.Servo;
 import org.firstinspires.ftc.robotcontroller.external.samples.SensorREV2mDistance;
 import org.firstinspires.ftc.robotcore.external.navigation.DistanceUnit;
 
+@Config
 public class Claw {
-    private final Servo left, right;
+    private final Servo claw, flip;
     private final DistanceSensor proxSensor;
+    public static double open = 1, close = 0, flipIntake = 1, flipOuttake = 0;
+    public static int proximityBound = 85;
 
     public Claw(OpMode opMode){
-        left = opMode.hardwareMap.servo.get("clawLeft");
-        right = opMode.hardwareMap.servo.get("clawRight");
-        left.setDirection(Servo.Direction.FORWARD);
-        right.setDirection(Servo.Direction.FORWARD);
+        claw = opMode.hardwareMap.servo.get("claw");
+        flip = opMode.hardwareMap.servo.get("flip");
+        claw.setDirection(Servo.Direction.FORWARD);
+        flip.setDirection(Servo.Direction.FORWARD);
         proxSensor = opMode.hardwareMap.get(DistanceSensor.class, "intakeSensor");
     }
 
     public void open(){
-        left.setDirection(Servo.Direction.FORWARD);
-        right.setDirection(Servo.Direction.FORWARD);
-        left.setPosition(0.55);
-        right.setPosition(0.29);
+        claw.setPosition(open);
     }
 
     public void close(){
-        left.setDirection(Servo.Direction.FORWARD);
-        right.setDirection(Servo.Direction.FORWARD);
-        left.setPosition(0.30);
-        right.setPosition(0.56);
+        claw.setPosition(close);
     }
 
-    public void openRight()
-    {
-        left.setPosition(0.4);
-        right.setPosition(0.29);
+    public void flipIntake(){
+        flip.setPosition(flipIntake);
     }
 
-    public void openLeft()
-    {
-        left.setPosition(0.55);
-        right.setPosition(0.44);
+    public void flipOuttake(){
+        flip.setPosition(flipOuttake);
+    }
+    public void intake(){
+        open();
+        flipIntake();
     }
 
     public double getDistance(){
