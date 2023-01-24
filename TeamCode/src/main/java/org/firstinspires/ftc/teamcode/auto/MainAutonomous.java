@@ -211,7 +211,7 @@ public class MainAutonomous extends LinearOpMode {
               sleep(100);
               bot.claw.open();
 
-              runTo -= 100;
+              runTo -= 70;
           }
             bot.rr.followTrajectory(alliance1GoBack);
         }
