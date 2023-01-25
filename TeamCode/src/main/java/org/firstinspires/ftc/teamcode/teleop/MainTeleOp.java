@@ -71,16 +71,7 @@ public class MainTeleOp extends LinearOpMode {
                 bot.slide.goUp();
             }
 
-            if(gp2.getTrigger(GamepadKeys.Trigger.LEFT_TRIGGER) > 0.1){
-                isManual = true;
-                bot.slide.runPower(gp2.getTrigger(GamepadKeys.Trigger.LEFT_TRIGGER));
-            }else{
-                if (isManual) {
-                    isManual = false;
-                    bot.slide.stopManual();
-                }
-                bot.slide.periodic();
-            }
+            bot.slide.periodic();
 
 
             // bot.turret.rotate(gp2.getLeftX());
