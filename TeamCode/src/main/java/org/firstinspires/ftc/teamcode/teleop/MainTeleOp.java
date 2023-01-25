@@ -103,7 +103,7 @@ public class MainTeleOp extends LinearOpMode {
             driveSpeed *= 1 - 0.5 * gp1.getTrigger(GamepadKeys.Trigger.RIGHT_TRIGGER);
             driveSpeed = Math.max(0, driveSpeed);
             bot.fixMotors();
-            bot.drive(gp1.getLeftX() * driveSpeed, -gp1.getLeftY() * driveSpeed, gp1.getRightX() * driveSpeed/2);
+            bot.drive(gp1.getLeftX() * driveSpeed, -gp1.getLeftY() * driveSpeed, gp1.getRightX() * driveSpeed/1.5);
             }
         }
     }
