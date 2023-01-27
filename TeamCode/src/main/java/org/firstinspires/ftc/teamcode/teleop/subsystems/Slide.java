@@ -36,7 +36,7 @@ public class Slide {
         motors.setZeroPowerBehavior(Motor.ZeroPowerBehavior.BRAKE);
     }
 
-    private void runTo(int t){
+    public void runTo(int t){
         motorRight.setInverted(true);
         motorLeft.setInverted(false);
         controller.setSetPoint(t);
