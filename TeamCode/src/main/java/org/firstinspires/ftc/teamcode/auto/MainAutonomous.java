@@ -183,7 +183,7 @@ public class MainAutonomous extends LinearOpMode {
 
 
         Trajectory forward = bot.rr.trajectoryBuilder(startPose)
-                .forward(48)
+                .forward(50)
                 .build();
 
 
@@ -197,14 +197,11 @@ public class MainAutonomous extends LinearOpMode {
         Trajectory alliance1GoBack = bot.rr.trajectoryBuilder(alliance1ApproachJunction.end())
                 .back(4)
                 .build();
-        Trajectory alliance1GoToCone = bot.rr.trajectoryBuilder(alliance1GoBack.end())
-                .strafeLeft(28)
+        Trajectory alliance1GoToCone = bot.rr.trajectoryBuilder(new Pose2d(alliance1GoBack.end().getX(), alliance1GoBack.end().getY(), Math.toRadians(90)))
+                .forward(36)
                 .build();
-        Trajectory alliance1GoForwardToCone = bot.rr.trajectoryBuilder(new Pose2d(alliance1GoToCone.end().getX(), alliance1GoToCone.end().getY(), Math.toRadians(90)))
-                .forward(4)
-                .build();
-        Trajectory alliance1GoToJunction = bot.rr.trajectoryBuilder(new Pose2d(alliance1GoForwardToCone.end().getX(), alliance1GoForwardToCone.end().getY(), Math.toRadians(0)))
-                .strafeRight(32)
+        Trajectory alliance1GoToJunction = bot.rr.trajectoryBuilder(new Pose2d(alliance1GoToCone.end().getX(), alliance1GoToCone.end().getY(), Math.toRadians(90)))
+                .back(40)
                 .build();
 
        /* Trajectory goBack = bot.rr.trajectoryBuilder(new Pose2d(allianceOneGoToJunction.end().getX(), allianceOneGoToJunction.end().getY(), -Math.toRadians(90)))
@@ -226,10 +223,10 @@ public class MainAutonomous extends LinearOpMode {
                 .strafeRight(28)
                 .build();
         Trajectory alliance2GoForwardToCone = bot.rr.trajectoryBuilder(new Pose2d(alliance2GoToCone.end().getX(), alliance2GoToCone.end().getY(), -Math.toRadians(90)))
-                .forward(4)
+                .forward(12)
                 .build();
         Trajectory alliance2GoToJunction = bot.rr.trajectoryBuilder(new Pose2d(alliance2GoForwardToCone.end().getX(), alliance2GoForwardToCone.end().getY(), Math.toRadians(0)))
-                .strafeLeft(32)
+                .strafeLeft(40)
                 .build();
 
 
@@ -245,43 +242,38 @@ public class MainAutonomous extends LinearOpMode {
             bot.claw.open();
             //Cone placed
             bot.rr.followTrajectory(alliance1GoBack);
-            bot.slide.runTo(580);
-            bot.rr.followTrajectory(alliance1GoToCone);
             bot.rr.turn(Math.toRadians(90));
-            bot.rr.followTrajectory(alliance1GoForwardToCone);
+            bot.rr.followTrajectory(alliance1GoToCone);
+            bot.slide.runTo(580);
             bot.claw.close();
             //new cone picked up
-            sleep(400);
+            sleep(2000);
             bot.slide.runToTop();
-            bot.rr.turn(-Math.toRadians(90));
             bot.rr.followTrajectory(alliance1GoToJunction);
-
+            bot.rr.turn(-Math.toRadians(90));
+            sleep(100);
             bot.rr.followTrajectory(alliance1ApproachJunction);
             bot.slide.goDown();
             sleep(100);
             bot.claw.open();
-            //cone placed
-          for(int i =0; i< 5; i++){
-              int runTo = 460;
-              bot.rr.followTrajectory(alliance1GoBack);
-              bot.slide.runTo(runTo);
-              bot.rr.followTrajectory(alliance1GoToCone);
-              bot.rr.turn(Math.toRadians(90));
-              bot.rr.followTrajectory(alliance1GoForwardToCone);
-              bot.claw.close();
+            bot.rr.followTrajectory(alliance1GoBack);
+            bot.slide.runTo(500);
+            bot.rr.turn(Math.toRadians(90));
+            bot.rr.followTrajectory(alliance1GoToCone);
+            sleep(300);
+            bot.claw.close();
               //new cone picked up
-              sleep(400);
-              bot.slide.runToTop();
-              bot.rr.turn(-Math.toRadians(90));
-              bot.rr.followTrajectory(alliance1GoToJunction);
+            sleep(50);
+            bot.slide.runToTop();
+            bot.rr.followTrajectory(alliance1GoToJunction);
+            bot.rr.turn(-Math.toRadians(90));
+            bot.rr.followTrajectory(alliance1ApproachJunction);
+            bot.slide.goDown();
+            sleep(100);
+            bot.claw.open();
 
-              bot.rr.followTrajectory(alliance1ApproachJunction);
-              bot.slide.goDown();
-              sleep(100);
-              bot.claw.open();
-
-              runTo -= 70;
-          }
+//              runTo -= 70;
+//          }
             bot.rr.followTrajectory(alliance1GoBack);
         }
 
