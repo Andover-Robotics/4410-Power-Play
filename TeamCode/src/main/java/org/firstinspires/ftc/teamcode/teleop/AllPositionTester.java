@@ -6,10 +6,12 @@ import com.arcrobotics.ftclib.gamepad.GamepadEx;
 import com.arcrobotics.ftclib.gamepad.GamepadKeys;
 import com.qualcomm.hardware.bosch.BNO055IMU;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
+import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 
 import org.firstinspires.ftc.teamcode.teleop.subsystems.Bot;
 import org.firstinspires.ftc.teamcode.teleop.subsystems.Claw;
 
+@TeleOp(name="all position tester")
 public class AllPositionTester extends LinearOpMode {
 
     private Bot bot;
@@ -86,7 +88,7 @@ public class AllPositionTester extends LinearOpMode {
             }
 
 
-            bot.slide.periodic();
+//            bot.slide.periodic();
         }
     }
 }

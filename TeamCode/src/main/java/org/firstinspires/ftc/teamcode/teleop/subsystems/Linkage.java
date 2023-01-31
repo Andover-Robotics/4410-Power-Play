@@ -8,7 +8,7 @@ import com.qualcomm.robotcore.hardware.Servo;
 public class Linkage {
     private final Servo linkLeft, linkRight, railLeft, railRight;
 
-    public static double railOut = 1, railIn = 0, linkOut = 1, linkIn = 0;
+    public static double railOut = 0.35, railIn = 0.1, linkOut = 0.1, linkIn = 1;
 
     public Linkage(OpMode opMode){
         linkLeft = opMode.hardwareMap.servo.get("linkLeft");
