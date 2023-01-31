@@ -30,19 +30,19 @@ public class MainAutonomous extends LinearOpMode {
 
     static final double FEET_PER_METER = 3.28084;
 
-    double fx = 1078.03779;
-    double fy = 1084.50988;
-    double cx = 580.850545;
-    double cy = 245.959325;
-
-    // UNITS ARE METERS
-    double tagsize = 0.032; //ONLY FOR TESTING
-
-    // Tag ID 1,2,3 from the 36h11 family
-    int ID_ONE = 1;
-    int ID_TWO = 2;
-    int ID_THREE = 3;
-    AprilTagDetection tagOfInterest = null;
+//    double fx = 1078.03779;
+//    double fy = 1084.50988;
+//    double cx = 580.850545;
+//    double cy = 245.959325;
+//
+//    // UNITS ARE METERS
+//    double tagsize = 0.032; //ONLY FOR TESTING
+//
+//    // Tag ID 1,2,3 from the 36h11 family
+//    int ID_ONE = 1;
+//    int ID_TWO = 2;
+//    int ID_THREE = 3;
+//    AprilTagDetection tagOfInterest = null;
 
     @Override
     public void runOpMode() throws InterruptedException {
@@ -63,23 +63,23 @@ public class MainAutonomous extends LinearOpMode {
 
         WebcamName camName = hardwareMap.get(WebcamName.class, "Webcam 1");
         OpenCvCamera camera = OpenCvCameraFactory.getInstance().createWebcam(camName);
-        AprilTagDetectionPipeline aprilTagDetectionPipeline = new AprilTagDetectionPipeline(tagsize, fx, fy, cx, cy);
+//        AprilTagDetectionPipeline aprilTagDetectionPipeline = new AprilTagDetectionPipeline(tagsize, fx, fy, cx, cy);
 
-        camera.setPipeline(aprilTagDetectionPipeline);
-        camera.openCameraDeviceAsync(new OpenCvCamera.AsyncCameraOpenListener()
-        {
-            @Override
-            public void onOpened()
-            {
-                camera.startStreaming(1280,720, OpenCvCameraRotation.UPRIGHT);
-            }
-
-            @Override
-            public void onError(int errorCode)
-            {
-
-            }
-        });
+//        camera.setPipeline(aprilTagDetectionPipeline);
+//        camera.openCameraDeviceAsync(new OpenCvCamera.AsyncCameraOpenListener()
+//        {
+//            @Override
+//            public void onOpened()
+//            {
+//                camera.startStreaming(1280,720, OpenCvCameraRotation.UPRIGHT);
+//            }
+//
+//            @Override
+//            public void onError(int errorCode)
+//            {
+//
+//            }
+//        });
 
         telemetry.setMsTransmissionInterval(50);
 
@@ -93,61 +93,59 @@ public class MainAutonomous extends LinearOpMode {
             telemetry.addData("Current Max FPS:", camera.getCurrentPipelineMaxFps());
             telemetry.addData("Is right side?", isRight);
 
-            ArrayList<AprilTagDetection> currentDetections = aprilTagDetectionPipeline.getLatestDetections();
+//            ArrayList<AprilTagDetection> currentDetections = aprilTagDetectionPipeline.getLatestDetections();
+//
+//            if(currentDetections.size() != 0)
+//            {
+//                boolean tagFound = false;
+//
+//                for(AprilTagDetection tag : currentDetections)
+//                {
+//                    if(tag.id == ID_ONE || tag.id == ID_TWO || tag.id == ID_THREE)
+//                    {
+//                        tagOfInterest = tag;
+//                        tagFound = true;
+//                        break;
+//                    }
+//                }
+//
+//                if(tagFound)
+//                {
+//                    telemetry.addLine("Tag of interest is in sight!\n\nLocation data:");
+//                    tagToTelemetry(tagOfInterest);
+//                }
+//                else
+//                {
+//                    telemetry.addLine("Don't see tag of interest :(");
+//
+//                    if(tagOfInterest == null)
+//                    {
+//                        telemetry.addLine("(The tag has never been seen)");
+//                    }
+//                    else
+//                    {
+//                        telemetry.addLine("\nBut we HAVE seen the tag before; last seen at:");
+//                        tagToTelemetry(tagOfInterest);
+//                    }
+//                }
+//
+//            }
+//            else
+//            {
+//                telemetry.addLine("Don't see tag of interest :(");
+//
+//                if(tagOfInterest == null)
+//                {
+//                    telemetry.addLine("(The tag has never been seen)");
+//                }
+//                else
+//                {
+//                    telemetry.addLine("\nBut we HAVE seen the tag before; last seen at:");
+//                    tagToTelemetry(tagOfInterest);
+//                }
+//
+//            }
 
-            if(currentDetections.size() != 0)
-            {
-                boolean tagFound = false;
-
-                for(AprilTagDetection tag : currentDetections)
-                {
-                    if(tag.id == ID_ONE || tag.id == ID_TWO || tag.id == ID_THREE)
-                    {
-                        tagOfInterest = tag;
-                        tagFound = true;
-                        break;
-                    }
-                }
-
-                if(tagFound)
-                {
-                    telemetry.addLine("Tag of interest is in sight!\n\nLocation data:");
-                    tagToTelemetry(tagOfInterest);
-                }
-                else
-                {
-                    telemetry.addLine("Don't see tag of interest :(");
-
-                    if(tagOfInterest == null)
-                    {
-                        telemetry.addLine("(The tag has never been seen)");
-                    }
-                    else
-                    {
-                        telemetry.addLine("\nBut we HAVE seen the tag before; last seen at:");
-                        tagToTelemetry(tagOfInterest);
-                    }
-                }
-
-            }
-            else
-            {
-                telemetry.addLine("Don't see tag of interest :(");
-
-                if(tagOfInterest == null)
-                {
-                    telemetry.addLine("(The tag has never been seen)");
-                }
-                else
-                {
-                    telemetry.addLine("\nBut we HAVE seen the tag before; last seen at:");
-                    tagToTelemetry(tagOfInterest);
-                }
-
-            }
-
-            telemetry.update();
-            sleep(20);
 
             gp1.readButtons();
             if(gp1.wasJustPressed(GamepadKeys.Button.Y)) {
@@ -158,8 +156,8 @@ public class MainAutonomous extends LinearOpMode {
 
         }
 
-        camera.stopStreaming();
-        camera.closeCameraDevice();
+//        camera.stopStreaming();
+//        camera.closeCameraDevice();
 
         //END CAMERA STUFF ===============
 
@@ -183,7 +181,7 @@ public class MainAutonomous extends LinearOpMode {
 
 
         Trajectory forward = bot.rr.trajectoryBuilder(startPose)
-                .forward(50)
+                .forward(49)
                 .build();
 
 
@@ -198,10 +196,10 @@ public class MainAutonomous extends LinearOpMode {
                 .back(4)
                 .build();
         Trajectory alliance1GoToCone = bot.rr.trajectoryBuilder(new Pose2d(alliance1GoBack.end().getX(), alliance1GoBack.end().getY(), Math.toRadians(90)))
-                .forward(36)
+                .forward(38)
                 .build();
         Trajectory alliance1GoToJunction = bot.rr.trajectoryBuilder(new Pose2d(alliance1GoToCone.end().getX(), alliance1GoToCone.end().getY(), Math.toRadians(90)))
-                .back(40)
+                .back(33)
                 .build();
 
        /* Trajectory goBack = bot.rr.trajectoryBuilder(new Pose2d(allianceOneGoToJunction.end().getX(), allianceOneGoToJunction.end().getY(), -Math.toRadians(90)))
@@ -229,48 +227,41 @@ public class MainAutonomous extends LinearOpMode {
                 .strafeLeft(40)
                 .build();
 
-
-        bot.rr.followTrajectory(forward);
-
         if(!isRight) {
+
+            bot.rr.followTrajectory(forward);
             bot.slide.runToTop();
             bot.rr.followTrajectory(alliance1StrafeRight);
-
             bot.rr.followTrajectory(alliance1ApproachJunction);
             bot.slide.goDown();
-            sleep(100);
             bot.claw.open();
             //Cone placed
+            bot.slide.runTo(520);
             bot.rr.followTrajectory(alliance1GoBack);
             bot.rr.turn(Math.toRadians(90));
             bot.rr.followTrajectory(alliance1GoToCone);
-            bot.slide.runTo(580);
             bot.claw.close();
+            sleep(600);
             //new cone picked up
-            sleep(2000);
             bot.slide.runToTop();
             bot.rr.followTrajectory(alliance1GoToJunction);
             bot.rr.turn(-Math.toRadians(90));
-            sleep(100);
             bot.rr.followTrajectory(alliance1ApproachJunction);
             bot.slide.goDown();
-            sleep(100);
             bot.claw.open();
             bot.rr.followTrajectory(alliance1GoBack);
-            bot.slide.runTo(500);
+            bot.slide.runTo(400);
             bot.rr.turn(Math.toRadians(90));
             bot.rr.followTrajectory(alliance1GoToCone);
-            sleep(300);
             bot.claw.close();
               //new cone picked up
-            sleep(50);
+            sleep(660);
             bot.slide.runToTop();
             bot.rr.followTrajectory(alliance1GoToJunction);
             bot.rr.turn(-Math.toRadians(90));
-            bot.rr.followTrajectory(alliance1ApproachJunction);
             bot.slide.goDown();
-            sleep(100);
             bot.claw.open();
+            sleep(500);
 
 //              runTo -= 70;
 //          }

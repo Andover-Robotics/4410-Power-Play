@@ -23,12 +23,14 @@ public class MainAutoWithSplines extends LinearOpMode {
     public void runOpMode() throws InterruptedException {
 
         GamepadEx gp1 = new GamepadEx(gamepad1);
+        bot = Bot.getInstance(this);
 
         while(!isStarted()){
             if(gp1.wasJustPressed(GamepadKeys.Button.X))
                 isRight = !isRight;
         }
         telemetry.addData("Is right side?", isRight);
+        telemetry.update();
 
         waitForStart();
         Thread slidePeriodic = new Thread(() -> {
@@ -39,7 +41,7 @@ public class MainAutoWithSplines extends LinearOpMode {
 
         Pose2d startPose = new Pose2d(0, 0, 0);
         Trajectory toJunction = bot.rr.trajectoryBuilder(startPose)
-                .splineTo(new Vector2d(50, 13), 0)
+                .splineTo(new Vector2d(50, 0), 0)
                 .addTemporalMarker(0, () -> {
                     bot.claw.close();
                     slidePeriodic.start();
@@ -47,6 +49,7 @@ public class MainAutoWithSplines extends LinearOpMode {
                 .addTemporalMarker(1, () -> {
                     bot.slide.runToTop();
                 })
+                .splineTo(new Vector2d(50, 13), 0)
                 .build();
 
         Trajectory alliance1ApproachJunction = bot.rr.trajectoryBuilder(toJunction.end())
@@ -65,15 +68,15 @@ public class MainAutoWithSplines extends LinearOpMode {
                 .build();
 
         Trajectory toCone = bot.rr.trajectoryBuilder(alliance1GoBack.end())
-                .splineTo(new Vector2d(36, 0), Math.toRadians(90))
+                .splineTo(new Vector2d(52, 36), Math.toRadians(90))
                 .addTemporalMarker(6, () -> {
                     bot.claw.close();
                 })
                 .build();
 
         Trajectory backToJunction = bot.rr.trajectoryBuilder(toCone.end())
-                .splineTo(new Vector2d(-36, 0), 0)
-                .addDisplacementMarker(-36, () -> {
+                .splineTo(new Vector2d(52, 0), -Math.toRadians(90))
+                .addDisplacementMarker(36, () -> {
                     bot.rr.turn(-Math.toRadians(90));
                 })
                 .build();
@@ -84,8 +87,6 @@ public class MainAutoWithSplines extends LinearOpMode {
             bot.rr.followTrajectory(alliance1GoBack);
             bot.rr.followTrajectory(toCone);
             bot.rr.followTrajectory(backToJunction);
-            bot.rr.followTrajectory(alliance1ApproachJunction);
-            bot.rr.followTrajectory(alliance1GoBack);
 
 
         }
