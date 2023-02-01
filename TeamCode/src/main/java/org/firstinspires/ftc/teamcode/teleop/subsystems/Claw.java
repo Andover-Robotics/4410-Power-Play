@@ -33,6 +33,10 @@ public class Claw {
         right.setDirection(Servo.Direction.FORWARD);
         left.setPosition(0.30);
         right.setPosition(0.56);
+        left.setPosition(0.3);
+        right.setPosition(0.56);
+        left.setPosition(0.3);
+        right.setPosition(0.56);
     }
 
     public void openRight()

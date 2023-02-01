@@ -41,7 +41,7 @@ public class MainAutoWithSplines extends LinearOpMode {
 
         Pose2d startPose = new Pose2d(0, 0, 0);
         Trajectory toJunction = bot.rr.trajectoryBuilder(startPose)
-                .splineTo(new Vector2d(50, 0), 0)
+                .splineTo(new Vector2d(50, 13), 0)
                 .addTemporalMarker(0, () -> {
                     bot.claw.close();
                     slidePeriodic.start();
@@ -49,7 +49,6 @@ public class MainAutoWithSplines extends LinearOpMode {
                 .addTemporalMarker(1, () -> {
                     bot.slide.runToTop();
                 })
-                .splineTo(new Vector2d(50, 13), 0)
                 .build();
 
         Trajectory alliance1ApproachJunction = bot.rr.trajectoryBuilder(toJunction.end())
@@ -83,11 +82,8 @@ public class MainAutoWithSplines extends LinearOpMode {
 
         if(!isRight){
             bot.rr.followTrajectory(toJunction);
-            bot.rr.followTrajectory(alliance1ApproachJunction);
-            bot.rr.followTrajectory(alliance1GoBack);
-            bot.rr.followTrajectory(toCone);
-            bot.rr.followTrajectory(backToJunction);
-
+        }
+        else{
 
         }
 

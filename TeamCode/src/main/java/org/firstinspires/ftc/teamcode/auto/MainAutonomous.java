@@ -196,10 +196,10 @@ public class MainAutonomous extends LinearOpMode {
                 .back(4)
                 .build();
         Trajectory alliance1GoToCone = bot.rr.trajectoryBuilder(new Pose2d(alliance1GoBack.end().getX(), alliance1GoBack.end().getY(), Math.toRadians(90)))
-                .forward(38)
+                .forward(39)
                 .build();
         Trajectory alliance1GoToJunction = bot.rr.trajectoryBuilder(new Pose2d(alliance1GoToCone.end().getX(), alliance1GoToCone.end().getY(), Math.toRadians(90)))
-                .back(33)
+                .back(35)
                 .build();
 
        /* Trajectory goBack = bot.rr.trajectoryBuilder(new Pose2d(allianceOneGoToJunction.end().getX(), allianceOneGoToJunction.end().getY(), -Math.toRadians(90)))
@@ -237,7 +237,7 @@ public class MainAutonomous extends LinearOpMode {
             bot.slide.goDown();
             bot.claw.open();
             //Cone placed
-            bot.slide.runTo(520);
+            bot.slide.runTo(470);
             bot.rr.followTrajectory(alliance1GoBack);
             bot.rr.turn(Math.toRadians(90));
             bot.rr.followTrajectory(alliance1GoToCone);
@@ -251,7 +251,7 @@ public class MainAutonomous extends LinearOpMode {
             bot.slide.goDown();
             bot.claw.open();
             bot.rr.followTrajectory(alliance1GoBack);
-            bot.slide.runTo(400);
+            bot.slide.runTo(360);
             bot.rr.turn(Math.toRadians(90));
             bot.rr.followTrajectory(alliance1GoToCone);
             bot.claw.close();
@@ -260,6 +260,7 @@ public class MainAutonomous extends LinearOpMode {
             bot.slide.runToTop();
             bot.rr.followTrajectory(alliance1GoToJunction);
             bot.rr.turn(-Math.toRadians(90));
+            bot.rr.followTrajectory(alliance1ApproachJunction);
             bot.slide.goDown();
             bot.claw.open();
             sleep(500);
@@ -278,7 +279,7 @@ public class MainAutonomous extends LinearOpMode {
             bot.slide.goDown();
             bot.claw.open();
             //Cone placed
-            bot.slide.runTo(520);
+            bot.slide.runTo(500);
             bot.rr.followTrajectory(alliance2GoBack);
             bot.rr.turn(-Math.toRadians(90));
             bot.rr.followTrajectory(alliance2GoToCone);
@@ -292,7 +293,7 @@ public class MainAutonomous extends LinearOpMode {
             bot.slide.goDown();
             bot.claw.open();
             bot.rr.followTrajectory(alliance2GoBack);
-            bot.slide.runTo(400);
+            bot.slide.runTo(360);
             bot.rr.turn(-Math.toRadians(90));
             bot.rr.followTrajectory(alliance2GoToCone);
             bot.claw.close();
@@ -301,6 +302,7 @@ public class MainAutonomous extends LinearOpMode {
             bot.slide.runToTop();
             bot.rr.followTrajectory(alliance2GoToJunction);
             bot.rr.turn(Math.toRadians(90));
+            bot.rr.followTrajectory(alliance1ApproachJunction);
             bot.slide.goDown();
             bot.claw.open();
             sleep(500);
@@ -308,6 +310,7 @@ public class MainAutonomous extends LinearOpMode {
 //              runTo -= 70;
 //          }
             bot.rr.followTrajectory(alliance1GoBack);
+
 
         }
         bot.slide.runToBottom();
