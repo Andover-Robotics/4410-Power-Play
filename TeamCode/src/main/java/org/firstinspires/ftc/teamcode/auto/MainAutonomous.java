@@ -242,8 +242,7 @@ public class MainAutonomous extends LinearOpMode {
             bot.rr.followTrajectory(alliance1ApproachJunction);
             bot.slide.goDown();
             sleep(100);
-            bot.claw.open();
-            //Cone placed
+            bot.claw.open();            //Cone placed
             bot.rr.followTrajectory(alliance1GoBack);
             bot.slide.runTo(580);
             bot.rr.followTrajectory(alliance1GoToCone);
