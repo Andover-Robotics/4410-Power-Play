@@ -40,8 +40,10 @@ public class MainAutoWithSplines extends LinearOpMode {
         });
 
         Pose2d startPose = new Pose2d(0, 0, 0);
+        bot.rr.setPoseEstimate(startPose);
         Trajectory toJunction = bot.rr.trajectoryBuilder(startPose)
-                .splineTo(new Vector2d(50, 13), 0)
+                .splineTo(new Vector2d(48, -3), 0)
+                .splineTo(new Vector2d(50, 5), 0)
                 .addTemporalMarker(0, () -> {
                     bot.claw.close();
                     slidePeriodic.start();
