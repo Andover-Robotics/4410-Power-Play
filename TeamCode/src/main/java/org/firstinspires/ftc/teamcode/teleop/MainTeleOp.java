@@ -43,7 +43,7 @@ public class MainTeleOp extends LinearOpMode {
 
             if (gp2.wasJustPressed(GamepadKeys.Button.Y)) {
                 bot.claw.open();
-            }else if(gp2.getButton(GamepadKeys.Button.RIGHT_STICK_BUTTON)) {
+            }else if(gp2.getButton(GamepadKeys.Button.X)) {
                 bot.claw.close();
             }else if (bot.claw.getDistance() < 85) {
                 if (gp2.getButton(GamepadKeys.Button.Y)) {

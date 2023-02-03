@@ -195,7 +195,7 @@ public class MainAutonomous extends LinearOpMode {
                 .forward(6)
                 .build();
         Trajectory alliance1GoBack = bot.rr.trajectoryBuilder(alliance1ApproachJunction.end())
-                .back(3.6)
+                .back(3.8)
                 .build();
         Trajectory alliance1GoToCone = bot.rr.trajectoryBuilder(new Pose2d(alliance1GoBack.end().getX(), alliance1GoBack.end().getY(), Math.toRadians(90)))
                 .forward(38)
@@ -229,10 +229,16 @@ public class MainAutonomous extends LinearOpMode {
         Trajectory alliance2GoToJunction = bot.rr.trajectoryBuilder(new Pose2d(alliance2GoToCone.end().getX(), alliance2GoToCone.end().getY(), Math.toRadians(0)))
                 .back(33)
                 .build();
-        Trajectory readyForCVAllianceOne= bot.rr.trajectoryBuilder(new Pose2d(alliance1GoToCone.end().getX(), alliance1GoToCone.end().getY(), Math.toRadians(0)))
+        Trajectory readyForCVAllianceLeft1= bot.rr.trajectoryBuilder(new Pose2d(alliance1GoBack.end().getX(), alliance1GoBack.end().getY(), Math.toRadians(0)))
+                .strafeLeft(12)
+                .build();
+        Trajectory readyForCVAllianceOne= bot.rr.trajectoryBuilder(new Pose2d(readyForCVAllianceLeft1.end().getX(), readyForCVAllianceLeft1.end().getY(), Math.toRadians(0)))
                 .back(24)
                 .build();
-        Trajectory readyForCVAllianceTwo= bot.rr.trajectoryBuilder(new Pose2d(alliance2GoToCone.end().getX(), alliance2GoToCone.end().getY(), Math.toRadians(0)))
+        Trajectory readyforCVAllianceRight2=bot.rr.trajectoryBuilder(new Pose2d(alliance2GoBack.end().getX(), alliance2GoBack.end().getY(), Math.toRadians(0)))
+                .strafeRight(12)
+                .build();
+        Trajectory readyForCVAllianceTwo= bot.rr.trajectoryBuilder(new Pose2d(readyforCVAllianceRight2.end().getX(), readyforCVAllianceRight2.end().getY(), Math.toRadians(0)))
                 .back(24)
                 .build();
 
@@ -259,7 +265,7 @@ public class MainAutonomous extends LinearOpMode {
             bot.slide.goDown();
             bot.claw.open();
             //Cone placed
-            bot.slide.runTo(470);
+            bot.slide.runTo(500);
             bot.rr.followTrajectory(alliance1GoBack);
             bot.rr.turn(Math.toRadians(90));
             bot.rr.followTrajectory(alliance1GoToCone);
@@ -273,7 +279,7 @@ public class MainAutonomous extends LinearOpMode {
             bot.slide.goDown();
             bot.claw.open();
             bot.rr.followTrajectory(alliance1GoBack);
-            bot.slide.runTo(360);
+            bot.slide.runTo(400);
             bot.rr.turn(Math.toRadians(90));
             bot.rr.followTrajectory(alliance1GoToCone);
             bot.claw.close();
@@ -347,14 +353,30 @@ public class MainAutonomous extends LinearOpMode {
         }
 
         if(tagOfInterest.id == ID_ONE){
-            if(!isAllianceOne) bot.rr.followTrajectory(allianceTwoId1);
-            if(isAllianceOne) bot.rr.followTrajectory(allianceOneId1);
+            if(!isAllianceOne){
+                bot.rr.followTrajectory(readyforCVAllianceRight2);
+                bot.rr.followTrajectory(readyForCVAllianceTwo);
+                bot.rr.followTrajectory(allianceTwoId1);
+            }
+            if(isAllianceOne){
+                bot.rr.followTrajectory(readyForCVAllianceLeft1);
+                bot.rr.followTrajectory(readyForCVAllianceOne);
+                bot.rr.followTrajectory(allianceOneId1);
+            }
 
         }
 
         else if (tagOfInterest.id == ID_THREE){
-            if(!isAllianceOne) bot.rr.followTrajectory(allianceTwoId3);
-            if(isAllianceOne) bot.rr.followTrajectory(allianceOneId3);
+            if(!isAllianceOne){
+                bot.rr.followTrajectory(readyforCVAllianceRight2);
+                bot.rr.followTrajectory(readyForCVAllianceTwo);
+                bot.rr.followTrajectory(allianceTwoId3);
+            }
+            if(isAllianceOne){
+                bot.rr.followTrajectory(readyForCVAllianceLeft1);
+                bot.rr.followTrajectory(readyForCVAllianceOne);
+                bot.rr.followTrajectory(allianceOneId3);
+            }
 
         }
     }

@@ -1,5 +1,6 @@
 package org.firstinspires.ftc.teamcode.teleop.subsystems;
 
+import com.acmerobotics.dashboard.config.Config;
 import com.qualcomm.hardware.rev.Rev2mDistanceSensor;
 import com.qualcomm.robotcore.eventloop.opmode.OpMode;
 import com.qualcomm.robotcore.hardware.DistanceSensor;
@@ -9,7 +10,10 @@ import com.qualcomm.robotcore.hardware.Servo;
 import org.firstinspires.ftc.robotcontroller.external.samples.SensorREV2mDistance;
 import org.firstinspires.ftc.robotcore.external.navigation.DistanceUnit;
 
+@Config
 public class Claw {
+
+    public static double cr = 0.3, cl = 0.55;
     private final Servo left, right;
     private final DistanceSensor proxSensor;
 
@@ -24,15 +28,15 @@ public class Claw {
     public void open(){
         left.setDirection(Servo.Direction.FORWARD);
         right.setDirection(Servo.Direction.FORWARD);
-        left.setPosition(0.55);
-        right.setPosition(0.29);
+        left.setPosition(cl);
+        right.setPosition(cr);
     }
 
     public void close(){
         left.setDirection(Servo.Direction.FORWARD);
         right.setDirection(Servo.Direction.FORWARD);
-        left.setPosition(0.30);
-        right.setPosition(0.56);
+        left.setPosition(0.29);
+        right.setPosition(0.55);
     }
 
     public void openRight()
