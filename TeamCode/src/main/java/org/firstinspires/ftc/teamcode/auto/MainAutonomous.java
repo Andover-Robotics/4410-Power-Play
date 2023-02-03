@@ -278,7 +278,7 @@ public class MainAutonomous extends LinearOpMode {
             bot.rr.followTrajectory(alliance1GoToCone);
             bot.claw.close();
               //new cone picked up
-            sleep(660);
+            sleep(600);
             bot.slide.runToTop();
             bot.rr.followTrajectory(alliance1GoToJunction);
             bot.rr.turn(-Math.toRadians(90));
