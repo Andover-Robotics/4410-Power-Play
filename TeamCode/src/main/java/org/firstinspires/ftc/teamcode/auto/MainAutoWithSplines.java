@@ -8,6 +8,7 @@ import com.acmerobotics.roadrunner.geometry.Pose2d;
 import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 
+import org.firstinspires.ftc.teamcode.auto.trajectorysequence.TrajectorySequence;
 import org.firstinspires.ftc.teamcode.teleop.subsystems.Bot;
 
 import java.util.Vector;
@@ -75,23 +76,21 @@ public class MainAutoWithSplines extends LinearOpMode {
 
         Trajectory backToJunction = bot.rr.trajectoryBuilder(toCone.end())
                 .splineTo(new Vector2d(23.31, -23), Math.toRadians(95.44))
-                .addDisplacementMarker(36, () -> {
-                    bot.rr.turn(-Math.toRadians(90));
+                .addTemporalMarker(5, () -> {
+                    bot.slide.runToTop();
                 })
                 .build();
 
-        if(!isRight){
-            bot.rr.followTrajectory(toJunction);
-            bot.rr.followTrajectory(alliance1ApproachJunction);
-            bot.rr.followTrajectory(alliance1GoBack);
-            bot.rr.followTrajectory(toCone);
-            bot.rr.followTrajectory(backToJunction);
+        TrajectorySequence test = bot.rr.trajectorySequenceBuilder(new Pose2d(-36.34, -71.09, Math.toRadians(90.00)))
+                .splineTo(new Vector2d(-9.14, -40.69), Math.toRadians(75.48))
+                .splineTo(new Vector2d(-24.23, -4.11), Math.toRadians(79.08))
+                .splineTo(new Vector2d(-65.60, -12.34), Math.toRadians(190.53))
+                .build();
 
+
+        if(!isRight){
+            bot.rr.followTrajectorySequence(test);
 
         }
-
-
-
-
     }
 }
