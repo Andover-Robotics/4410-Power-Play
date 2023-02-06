@@ -26,23 +26,24 @@ import java.util.Map;
 public class MainAutonomous extends LinearOpMode {
 
     Bot bot;
-    boolean isRight;
+    boolean isAllianceOne;
 
     static final double FEET_PER_METER = 3.28084;
 
-//    double fx = 1078.03779;
-//    double fy = 1084.50988;
-//    double cx = 580.850545;
-//    double cy = 245.959325;
+    double fx = 1078.03779;
+    double fy = 1084.50988;
+    double cx = 580.850545;
+    double cy = 245.959325;
 //
 //    // UNITS ARE METERS
-//    double tagsize = 0.032; //ONLY FOR TESTING
+    double tagsize = 0.032; //ONLY FOR TESTING
 //
 //    // Tag ID 1,2,3 from the 36h11 family
-//    int ID_ONE = 1;
-//    int ID_TWO = 2;
-//    int ID_THREE = 3;
-//    AprilTagDetection tagOfInterest = null;
+    int ID_ONE = 1;
+    int ID_TWO = 2;
+    int ID_THREE = 3;
+    AprilTagDetection tagOfInterest = null;
+
 
     @Override
     public void runOpMode() throws InterruptedException {
@@ -50,12 +51,12 @@ public class MainAutonomous extends LinearOpMode {
         bot = Bot.getInstance(this);
 
         // Retrieve the IMU from the hardware map
-//        BNO055IMU imu = hardwareMap.get(BNO055IMU.class, "imu");
-//        BNO055IMU.Parameters parameters = new BNO055IMU.Parameters();
+        BNO055IMU imu = hardwareMap.get(BNO055IMU.class, "imu");
+        BNO055IMU.Parameters parameters = new BNO055IMU.Parameters();
 //        // Technically this is the default, however specifying it is clearer
-//        parameters.angleUnit = BNO055IMU.AngleUnit.RADIANS;
+        parameters.angleUnit = BNO055IMU.AngleUnit.RADIANS;
 //        // Without this, data retrieving from the IMU throws an exception
-//        imu.initialize(parameters);
+        imu.initialize(parameters);
 
         GamepadEx gp1 = new GamepadEx(gamepad1);
 
@@ -63,23 +64,24 @@ public class MainAutonomous extends LinearOpMode {
 
         WebcamName camName = hardwareMap.get(WebcamName.class, "Webcam 1");
         OpenCvCamera camera = OpenCvCameraFactory.getInstance().createWebcam(camName);
-//        AprilTagDetectionPipeline aprilTagDetectionPipeline = new AprilTagDetectionPipeline(tagsize, fx, fy, cx, cy);
+        AprilTagDetectionPipeline aprilTagDetectionPipeline = new AprilTagDetectionPipeline(tagsize, fx, fy, cx, cy);
 
-//        camera.setPipeline(aprilTagDetectionPipeline);
-//        camera.openCameraDeviceAsync(new OpenCvCamera.AsyncCameraOpenListener()
-//        {
-//            @Override
-//            public void onOpened()
-//            {
-//                camera.startStreaming(1280,720, OpenCvCameraRotation.UPRIGHT);
-//            }
-//
-//            @Override
-//            public void onError(int errorCode)
-//            {
-//
-//            }
-//        });
+        camera.setPipeline(aprilTagDetectionPipeline);
+        camera.openCameraDeviceAsync(new OpenCvCamera.AsyncCameraOpenListener()
+        {
+            @Override
+            public void onOpened()
+            {
+                camera.startStreaming(1280,720, OpenCvCameraRotation.UPRIGHT);
+            }
+
+            @Override
+            public void onError(int errorCode)
+            {
+
+            }
+        });
+
 
         telemetry.setMsTransmissionInterval(50);
 
@@ -87,64 +89,64 @@ public class MainAutonomous extends LinearOpMode {
 
         while(!isStarted()) {
             if(gp1.wasJustPressed(GamepadKeys.Button.X)){
-                isRight=!isRight;
+                isAllianceOne=!isAllianceOne;
             }
             telemetry.addData("Current FPS:", camera.getFps());
             telemetry.addData("Current Max FPS:", camera.getCurrentPipelineMaxFps());
-            telemetry.addData("Is right side?", isRight);
+            telemetry.addData("Is right side?", isAllianceOne);
 
-//            ArrayList<AprilTagDetection> currentDetections = aprilTagDetectionPipeline.getLatestDetections();
-//
-//            if(currentDetections.size() != 0)
-//            {
-//                boolean tagFound = false;
-//
-//                for(AprilTagDetection tag : currentDetections)
-//                {
-//                    if(tag.id == ID_ONE || tag.id == ID_TWO || tag.id == ID_THREE)
-//                    {
-//                        tagOfInterest = tag;
-//                        tagFound = true;
-//                        break;
-//                    }
-//                }
-//
-//                if(tagFound)
-//                {
-//                    telemetry.addLine("Tag of interest is in sight!\n\nLocation data:");
-//                    tagToTelemetry(tagOfInterest);
-//                }
-//                else
-//                {
-//                    telemetry.addLine("Don't see tag of interest :(");
-//
-//                    if(tagOfInterest == null)
-//                    {
-//                        telemetry.addLine("(The tag has never been seen)");
-//                    }
-//                    else
-//                    {
-//                        telemetry.addLine("\nBut we HAVE seen the tag before; last seen at:");
-//                        tagToTelemetry(tagOfInterest);
-//                    }
-//                }
-//
-//            }
-//            else
-//            {
-//                telemetry.addLine("Don't see tag of interest :(");
-//
-//                if(tagOfInterest == null)
-//                {
-//                    telemetry.addLine("(The tag has never been seen)");
-//                }
-//                else
-//                {
-//                    telemetry.addLine("\nBut we HAVE seen the tag before; last seen at:");
-//                    tagToTelemetry(tagOfInterest);
-//                }
-//
-//            }
+            ArrayList<AprilTagDetection> currentDetections = aprilTagDetectionPipeline.getLatestDetections();
+
+            if(currentDetections.size() != 0)
+            {
+                boolean tagFound = false;
+
+                for(AprilTagDetection tag : currentDetections)
+                {
+                    if(tag.id == ID_ONE || tag.id == ID_TWO || tag.id == ID_THREE)
+                    {
+                        tagOfInterest = tag;
+                        tagFound = true;
+                        break;
+                    }
+                }
+
+                if(tagFound)
+                {
+                    telemetry.addLine("Tag of interest is in sight!\n\nLocation data:");
+                    tagToTelemetry(tagOfInterest);
+                }
+                else
+                {
+                    telemetry.addLine("Don't see tag of interest :(");
+
+                    if(tagOfInterest == null)
+                    {
+                        telemetry.addLine("(The tag has never been seen)");
+                    }
+                    else
+                    {
+                        telemetry.addLine("\nBut we HAVE seen the tag before; last seen at:");
+                        tagToTelemetry(tagOfInterest);
+                    }
+                }
+
+            }
+            else
+            {
+                telemetry.addLine("Don't see tag of interest :(");
+
+                if(tagOfInterest == null)
+                {
+                    telemetry.addLine("(The tag has never been seen)");
+                }
+                else
+                {
+                    telemetry.addLine("\nBut we HAVE seen the tag before; last seen at:");
+                    tagToTelemetry(tagOfInterest);
+                }
+
+            }
 
 
             gp1.readButtons();
@@ -156,8 +158,8 @@ public class MainAutonomous extends LinearOpMode {
 
         }
 
-//        camera.stopStreaming();
-//        camera.closeCameraDevice();
+        camera.stopStreaming();
+        camera.closeCameraDevice();
 
         //END CAMERA STUFF ===============
 
@@ -193,13 +195,13 @@ public class MainAutonomous extends LinearOpMode {
                 .forward(6)
                 .build();
         Trajectory alliance1GoBack = bot.rr.trajectoryBuilder(alliance1ApproachJunction.end())
-                .back(4)
+                .back(3.8)
                 .build();
         Trajectory alliance1GoToCone = bot.rr.trajectoryBuilder(new Pose2d(alliance1GoBack.end().getX(), alliance1GoBack.end().getY(), Math.toRadians(90)))
                 .forward(38)
                 .build();
         Trajectory alliance1GoToJunction = bot.rr.trajectoryBuilder(new Pose2d(alliance1GoToCone.end().getX(), alliance1GoToCone.end().getY(), Math.toRadians(90)))
-                .back(33)
+                .back(34)
                 .build();
 
        /* Trajectory goBack = bot.rr.trajectoryBuilder(new Pose2d(allianceOneGoToJunction.end().getX(), allianceOneGoToJunction.end().getY(), -Math.toRadians(90)))
@@ -227,8 +229,34 @@ public class MainAutonomous extends LinearOpMode {
         Trajectory alliance2GoToJunction = bot.rr.trajectoryBuilder(new Pose2d(alliance2GoToCone.end().getX(), alliance2GoToCone.end().getY(), Math.toRadians(0)))
                 .back(33)
                 .build();
+        Trajectory readyForCVAllianceLeft1= bot.rr.trajectoryBuilder(new Pose2d(alliance1GoBack.end().getX(), alliance1GoBack.end().getY(), Math.toRadians(0)))
+                .strafeLeft(12)
+                .build();
+        Trajectory readyForCVAllianceOne= bot.rr.trajectoryBuilder(new Pose2d(readyForCVAllianceLeft1.end().getX(), readyForCVAllianceLeft1.end().getY(), Math.toRadians(0)))
+                .back(24)
+                .build();
+        Trajectory readyforCVAllianceRight2=bot.rr.trajectoryBuilder(new Pose2d(alliance2GoBack.end().getX(), alliance2GoBack.end().getY(), Math.toRadians(0)))
+                .strafeRight(12)
+                .build();
+        Trajectory readyForCVAllianceTwo= bot.rr.trajectoryBuilder(new Pose2d(readyforCVAllianceRight2.end().getX(), readyforCVAllianceRight2.end().getY(), Math.toRadians(0)))
+                .back(24)
+                .build();
 
-        if(!isRight) {
+        Trajectory allianceOneId1=bot.rr.trajectoryBuilder(new Pose2d(readyForCVAllianceOne.end().getX(), readyForCVAllianceOne.end().getY(), Math.toRadians(0)))
+                .strafeLeft(24)
+                .build();
+        Trajectory allianceOneId3=bot.rr.trajectoryBuilder(new Pose2d(readyForCVAllianceOne.end().getX(), readyForCVAllianceOne.end().getY(), Math.toRadians(0)))
+                .strafeRight(24)
+                .build();
+
+        Trajectory allianceTwoId1=bot.rr.trajectoryBuilder(new Pose2d(readyForCVAllianceTwo.end().getX(), readyForCVAllianceTwo.end().getY(), Math.toRadians(0)))
+                .strafeLeft(24)
+                .build();
+        Trajectory allianceTwoId3=bot.rr.trajectoryBuilder(new Pose2d(readyForCVAllianceTwo.end().getX(), readyForCVAllianceTwo.end().getY(), Math.toRadians(0)))
+                .strafeRight(24)
+                .build();
+
+        if(!isAllianceOne) {
 
             bot.rr.followTrajectory(forward);
             bot.slide.runToTop();
@@ -237,7 +265,7 @@ public class MainAutonomous extends LinearOpMode {
             bot.slide.goDown();
             bot.claw.open();
             //Cone placed
-            bot.slide.runTo(520);
+            bot.slide.runTo(500);
             bot.rr.followTrajectory(alliance1GoBack);
             bot.rr.turn(Math.toRadians(90));
             bot.rr.followTrajectory(alliance1GoToCone);
@@ -256,10 +284,11 @@ public class MainAutonomous extends LinearOpMode {
             bot.rr.followTrajectory(alliance1GoToCone);
             bot.claw.close();
               //new cone picked up
-            sleep(660);
+            sleep(600);
             bot.slide.runToTop();
             bot.rr.followTrajectory(alliance1GoToJunction);
             bot.rr.turn(-Math.toRadians(90));
+            bot.rr.followTrajectory(alliance1ApproachJunction);
             bot.slide.goDown();
             bot.claw.open();
             sleep(500);
@@ -278,7 +307,7 @@ public class MainAutonomous extends LinearOpMode {
             bot.slide.goDown();
             bot.claw.open();
             //Cone placed
-            bot.slide.runTo(520);
+            bot.slide.runTo(500);
             bot.rr.followTrajectory(alliance2GoBack);
             bot.rr.turn(-Math.toRadians(90));
             bot.rr.followTrajectory(alliance2GoToCone);
@@ -292,7 +321,7 @@ public class MainAutonomous extends LinearOpMode {
             bot.slide.goDown();
             bot.claw.open();
             bot.rr.followTrajectory(alliance2GoBack);
-            bot.slide.runTo(400);
+            bot.slide.runTo(360);
             bot.rr.turn(-Math.toRadians(90));
             bot.rr.followTrajectory(alliance2GoToCone);
             bot.claw.close();
@@ -301,6 +330,7 @@ public class MainAutonomous extends LinearOpMode {
             bot.slide.runToTop();
             bot.rr.followTrajectory(alliance2GoToJunction);
             bot.rr.turn(Math.toRadians(90));
+            bot.rr.followTrajectory(alliance1ApproachJunction);
             bot.slide.goDown();
             bot.claw.open();
             sleep(500);
@@ -309,10 +339,48 @@ public class MainAutonomous extends LinearOpMode {
 //          }
             bot.rr.followTrajectory(alliance1GoBack);
 
+
         }
+
         bot.slide.runToBottom();
         slidePeriodic.interrupt();
+
+        if(!isAllianceOne){
+            bot.rr.followTrajectory(readyForCVAllianceOne);
+        }
+        else{
+            bot.rr.followTrajectory(readyForCVAllianceTwo);
+        }
+
+        if(tagOfInterest.id == ID_ONE){
+            if(!isAllianceOne){
+                bot.rr.followTrajectory(readyforCVAllianceRight2);
+                bot.rr.followTrajectory(readyForCVAllianceTwo);
+                bot.rr.followTrajectory(allianceTwoId1);
+            }
+            if(isAllianceOne){
+                bot.rr.followTrajectory(readyForCVAllianceLeft1);
+                bot.rr.followTrajectory(readyForCVAllianceOne);
+                bot.rr.followTrajectory(allianceOneId1);
+            }
+
+        }
+
+        else if (tagOfInterest.id == ID_THREE){
+            if(!isAllianceOne){
+                bot.rr.followTrajectory(readyforCVAllianceRight2);
+                bot.rr.followTrajectory(readyForCVAllianceTwo);
+                bot.rr.followTrajectory(allianceTwoId3);
+            }
+            if(isAllianceOne){
+                bot.rr.followTrajectory(readyForCVAllianceLeft1);
+                bot.rr.followTrajectory(readyForCVAllianceOne);
+                bot.rr.followTrajectory(allianceOneId3);
+            }
+
+        }
     }
+
 
 
     void tagToTelemetry(AprilTagDetection detection)
