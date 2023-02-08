@@ -18,6 +18,7 @@ public class MainAutoWithSplines extends LinearOpMode {
 
 
     Bot bot;
+    //hi
     boolean isRight;
 
     @Override
