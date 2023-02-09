@@ -23,6 +23,10 @@ public class Slide {
 
     private int target = 0;
 
+
+    public static int coneStackInterval = 100;
+    public static int currentConeStackSelected = -1;
+
     public Slide(OpMode opMode){
         motors = new MotorEx(opMode.hardwareMap, "slides", Motor.GoBILDA.RPM_312);
 //        motorRight = new MotorEx(opMode.hardwareMap, "slidesRight", Motor.GoBILDA.RPM_435);
@@ -81,5 +85,32 @@ public class Slide {
     public double getCurrent(){
         return motors.motorEx.getCurrent(CurrentUnit.MILLIAMPS);
     }
+
+    public void goUpConeStack(){
+        if(currentConeStackSelected == -1){
+            currentConeStackSelected = 4;
+            runTo(ground + currentConeStackSelected * coneStackInterval);
+        }else if(currentConeStackSelected == 4){
+            currentConeStackSelected = 0;
+            runTo(ground + currentConeStackSelected * coneStackInterval);
+        }else{
+            currentConeStackSelected++;
+            runTo(ground + currentConeStackSelected * coneStackInterval);
+        }
+    }
+
+    public void goDownConeStack(){
+        if(currentConeStackSelected == -1){
+            currentConeStackSelected = 4;
+            runTo(ground + currentConeStackSelected * coneStackInterval);
+        }else if(currentConeStackSelected == 0){
+            currentConeStackSelected = 4;
+            runTo(ground + currentConeStackSelected * coneStackInterval);
+        }else{
+            currentConeStackSelected--;
+            runTo(ground + currentConeStackSelected * coneStackInterval);
+        }
+    }
+
 
 }

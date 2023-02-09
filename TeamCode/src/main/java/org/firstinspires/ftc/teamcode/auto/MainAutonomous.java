@@ -65,8 +65,10 @@ public class MainAutonomous extends LinearOpMode {
         WebcamName camName = hardwareMap.get(WebcamName.class, "Webcam 1");
         OpenCvCamera camera = OpenCvCameraFactory.getInstance().createWebcam(camName);
         AprilTagDetectionPipeline aprilTagDetectionPipeline = new AprilTagDetectionPipeline(tagsize, fx, fy, cx, cy);
+        JunctionDetectionPipeline junctionDetectionPipeline = new JunctionDetectionPipeline(telemetry);
 
         camera.setPipeline(aprilTagDetectionPipeline);
+
         camera.openCameraDeviceAsync(new OpenCvCamera.AsyncCameraOpenListener() {
             @Override
             public void onOpened() {
@@ -126,6 +128,11 @@ public class MainAutonomous extends LinearOpMode {
                 }
 
             }
+
+            camera.setPipeline(junctionDetectionPipeline);
+            telemetry.addData("Junction Status", junctionDetectionPipeline.getJunctionVal());
+            telemetry.addData("Yellow Percentage", junctionDetectionPipeline.getYellowPercentage());
+            telemetry.update();
 
 
             gp1.readButtons();

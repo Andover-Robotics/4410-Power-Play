@@ -22,6 +22,10 @@ public class MainTeleOp extends LinearOpMode {
     private boolean isManual = false;
 
 
+    private boolean leftTriggerPressed = false;
+    private boolean rightTriggerPressed = false;
+
+
 
     @Override
     public void runOpMode() throws InterruptedException {
@@ -69,6 +73,20 @@ public class MainTeleOp extends LinearOpMode {
 
             if (gp2.wasJustPressed(GamepadKeys.Button.LEFT_BUMPER)) {
                 bot.slide.goUp();
+            }
+
+            if (gp2.getTrigger(GamepadKeys.Trigger.RIGHT_TRIGGER) > 0.9 && !rightTriggerPressed){
+                rightTriggerPressed = true;
+                bot.slide.goUpConeStack();
+            }else if(gp2.getTrigger(GamepadKeys.Trigger.LEFT_TRIGGER) > 0.9 && !leftTriggerPressed){
+                leftTriggerPressed = true;
+                bot.slide.goDownConeStack();
+            }
+            if(gp2.getTrigger(GamepadKeys.Trigger.LEFT_TRIGGER) < 0.7){
+                leftTriggerPressed = false;
+            }
+            if(gp2.getTrigger(GamepadKeys.Trigger.RIGHT_TRIGGER) < 0.7){
+                rightTriggerPressed = false;
             }
 
             bot.slide.periodic();

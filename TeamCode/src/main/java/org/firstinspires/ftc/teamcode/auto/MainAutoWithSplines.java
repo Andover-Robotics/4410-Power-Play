@@ -51,14 +51,14 @@ public class MainAutoWithSplines extends LinearOpMode {
                 .addTemporalMarker(1, () -> {
                     bot.slide.runToTop();
                 })
-                .addTemporalMarker(8, () -> {
+                .addTemporalMarker(5, () -> {
                     bot.slide.goDown();
                     bot.claw.open();
                 })
                 .build();
 
         Trajectory toCone = bot.rr.trajectoryBuilder(toJunction.end())
-                .splineTo(new Vector2d(65.6, -12.34), Math.toRadians(90))
+                .splineTo(new Vector2d(54, 15.34), Math.toRadians(27.5))
                 .addTemporalMarker(6, () -> {
                     bot.claw.close();
                 })
@@ -80,7 +80,7 @@ public class MainAutoWithSplines extends LinearOpMode {
 
         if(!isRight){
             bot.rr.followTrajectorySequence(toJunction);
-
+            bot.rr.followTrajectory(toCone);
         }
     }
 }
