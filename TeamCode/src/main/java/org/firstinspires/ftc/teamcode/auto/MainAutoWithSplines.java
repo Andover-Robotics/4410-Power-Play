@@ -60,6 +60,21 @@ public class MainAutoWithSplines extends LinearOpMode {
                 })
                 .build();
 
+        TrajectorySequence toJunctionRight = bot.rr.trajectorySequenceBuilder(startPose)
+                .splineTo(new Vector2d(54, -5.9), Math.toRadians(27.5))
+                .addTemporalMarker(0, () -> {
+                    bot.claw.close();
+                    slidePeriodic.start();
+                })
+                .addTemporalMarker(1, () -> {
+                    bot.slide.runToTop();
+                })
+                .addTemporalMarker(5, () -> {
+                    bot.slide.goDown();
+                    bot.claw.open();
+                })
+                .build();
+
         Trajectory toCone = bot.rr.trajectoryBuilder(toJunction.end())
                 .splineTo(new Vector2d(54, 15.34), Math.toRadians(27.5))
                 .addTemporalMarker(6, () -> {
@@ -67,8 +82,25 @@ public class MainAutoWithSplines extends LinearOpMode {
                 })
                 .build();
 
+        Trajectory toConeRight = bot.rr.trajectoryBuilder(toJunction.end())
+                .splineTo(new Vector2d(54, -15.34), -Math.toRadians(27.5))
+                .addTemporalMarker(6, () -> {
+                    bot.claw.close();
+                })
+                .build();
+
         Trajectory backToJunction = bot.rr.trajectoryBuilder(toCone.end(), true)
                 .splineTo(new Vector2d(54, -5.9), 0)
+                .addTemporalMarker(0, () -> {
+                    bot.slide.runToTop();
+                })
+                .addTemporalMarker(4, () -> {
+                    bot.claw.open();
+                })
+                .build();
+
+        Trajectory backToJunctionRight = bot.rr.trajectoryBuilder(toConeRight.end(), true)
+                .splineTo(new Vector2d(54, 5.9), 0)
                 .addTemporalMarker(0, () -> {
                     bot.slide.runToTop();
                 })
@@ -92,6 +124,23 @@ public class MainAutoWithSplines extends LinearOpMode {
                 );
                 targetPos -= 100;
                 bot.rr.followTrajectory(backToJunction);
+            }
+        }
+
+        if(isRight){
+            bot.rr.followTrajectorySequence(toJunctionRight);
+            for(int i = 1; i <= 5; i++) {
+                int finalPos = targetPos;
+                bot.rr.followTrajectory(
+                        bot.rr.trajectoryBuilder(toJunctionRight.end())
+                                .splineTo(new Vector2d(54, -15.34), -Math.toRadians(27.5))
+                                .addTemporalMarker(0, () -> {
+                                    bot.slide.runTo(finalPos);
+                                })
+                                .build()
+                );
+                targetPos -= 100;
+                bot.rr.followTrajectory(backToJunctionRight);
             }
         }
     }
