@@ -60,20 +60,15 @@ public class MainAutoWithSplines extends LinearOpMode {
                 })
                 .build();
 
-        int finalTargetPos = targetPos;
         Trajectory toCone = bot.rr.trajectoryBuilder(toJunction.end())
                 .splineTo(new Vector2d(54, 15.34), Math.toRadians(27.5))
-                .addTemporalMarker(0, () -> {
-                    bot.slide.runTo(finalTargetPos);
-
-                })
                 .addTemporalMarker(6, () -> {
                     bot.claw.close();
                 })
                 .build();
 
         Trajectory backToJunction = bot.rr.trajectoryBuilder(toCone.end(), true)
-                .splineTo(new Vector2d(-54, -15.34), 0)
+                .splineTo(new Vector2d(54, -5.9), 0)
                 .addTemporalMarker(0, () -> {
                     bot.slide.runToTop();
                 })
@@ -86,7 +81,15 @@ public class MainAutoWithSplines extends LinearOpMode {
         if(!isRight){
             bot.rr.followTrajectorySequence(toJunction);
             for(int i = 1; i <= 5; i++) {
-                bot.rr.followTrajectory(toCone);
+                int finalPos = targetPos;
+                bot.rr.followTrajectory(
+                        bot.rr.trajectoryBuilder(toJunction.end())
+                                .splineTo(new Vector2d(54, 15.34), Math.toRadians(27.5))
+                                .addTemporalMarker(0, () -> {
+                                    bot.slide.runTo(finalPos);
+                                })
+                                .build()
+                );
                 targetPos -= 100;
                 bot.rr.followTrajectory(backToJunction);
             }
