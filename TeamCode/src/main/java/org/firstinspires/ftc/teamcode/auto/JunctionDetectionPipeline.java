@@ -78,7 +78,6 @@ public class JunctionDetectionPipeline extends OpenCvPipeline{
 
         return input;
 
-
     }
     public JunctionVal getJunctionVal(){
         return junctionVal;

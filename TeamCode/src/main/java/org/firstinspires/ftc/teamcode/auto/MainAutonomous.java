@@ -132,6 +132,8 @@ public class MainAutonomous extends LinearOpMode {
             camera.setPipeline(junctionDetectionPipeline);
             telemetry.addData("Junction Status", junctionDetectionPipeline.getJunctionVal());
             telemetry.addData("Yellow Percentage", junctionDetectionPipeline.getYellowPercentage());
+            telemetry.addData("ROI X Value:", junctionDetectionPipeline.getROIx());
+            telemetry.addData("ROI Y Value:", junctionDetectionPipeline.getROIy());
             telemetry.update();
 
 
