@@ -32,6 +32,7 @@ public class JunctionDetectionPipeline extends OpenCvPipeline{
         AT_JUNCTION,
         NOT_DETECTED
     }
+
     private JunctionVal junctionVal = JunctionVal.NOT_DETECTED;
     static Rect ROI = new Rect();
 
@@ -42,8 +43,8 @@ public class JunctionDetectionPipeline extends OpenCvPipeline{
     Scalar yellowHighHSV = new Scalar(54,209,255);
     //do not know yellow vals
 
-    Mat yellowMat = new Mat();
     Mat smallMat = new Mat();
+
 
     @Override
     public Mat processFrame(Mat input) {
@@ -54,10 +55,10 @@ public class JunctionDetectionPipeline extends OpenCvPipeline{
         ROI.width = width;
         ROI.height = height;
         smallMat = input.submat(ROI);
-
+        Mat yellowMat = new Mat(176, 144, input.type());
         Core.inRange(smallMat, yellowLowHSV, yellowHighHSV, yellowMat);
 
-        yellowPercentage = (Core.sumElems(yellowMat)).val[0]/10000;
+        yellowPercentage = (Core.sumElems(yellowMat)).val[0]/25344;
         yellowMat.release();
         smallMat.release();
 
@@ -86,4 +87,8 @@ public class JunctionDetectionPipeline extends OpenCvPipeline{
     public double getYellowPercentage(){
         return yellowPercentage;
     }
+
+    public double getROIx() { return ROI.x; }
+
+    public double getROIy() { return ROI.y; }
 }
