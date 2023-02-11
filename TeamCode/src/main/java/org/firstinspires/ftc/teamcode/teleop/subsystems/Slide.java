@@ -24,7 +24,7 @@ public class Slide {
     private int target = 0;
 
 
-    public static int coneStackInterval = 100;
+    public static int coneStackInterval = 90;
     public static int currentConeStackSelected = -1;
 
     public Slide(OpMode opMode){
@@ -89,12 +89,15 @@ public class Slide {
     public void goUpConeStack(){
         if(currentConeStackSelected == -1){
             currentConeStackSelected = 4;
-            runTo(ground + currentConeStackSelected * coneStackInterval);
+//            runTo(ground + currentConeStackSelected * coneStackInterval);
+            runTo(400);
+
         }else if(currentConeStackSelected == 4){
             currentConeStackSelected = 0;
             runTo(ground + currentConeStackSelected * coneStackInterval);
+
         }else{
-            currentConeStackSelected++;
+            currentConeStackSelected--;
             runTo(ground + currentConeStackSelected * coneStackInterval);
         }
     }

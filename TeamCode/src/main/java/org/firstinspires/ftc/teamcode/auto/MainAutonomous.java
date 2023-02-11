@@ -129,8 +129,7 @@ public class MainAutonomous extends LinearOpMode {
 
             }
 
-            camera.setPipeline(junctionDetectionPipeline);
-            telemetry.addData("Junction Status", junctionDetectionPipeline.getJunctionVal());
+              telemetry.addData("Junction Status", junctionDetectionPipeline.getJunctionVal());
             telemetry.addData("Yellow Percentage", junctionDetectionPipeline.getYellowPercentage());
             telemetry.update();
 
@@ -144,12 +143,15 @@ public class MainAutonomous extends LinearOpMode {
 
         }
 
-        camera.stopStreaming();
-        camera.closeCameraDevice();
+//        camera.stopStreaming();
+//        camera.closeCameraDevice();
 
         //END CAMERA STUFF ===============
 
         waitForStart();
+
+        camera.setPipeline(junctionDetectionPipeline);
+
 
         bot.claw.close();
 //
@@ -249,6 +251,8 @@ public class MainAutonomous extends LinearOpMode {
         Trajectory allianceTwoId3 = bot.rr.trajectoryBuilder(new Pose2d(alliance2GoBack.end().getX(), alliance2GoBack.end().getY(), Math.toRadians(0)))
                 .strafeRight(21)
                 .build();
+        camera.stopStreaming();
+        camera.closeCameraDevice();
 
 //    if (!isAllianceOne) {
         bot.rr.followTrajectory(forward);

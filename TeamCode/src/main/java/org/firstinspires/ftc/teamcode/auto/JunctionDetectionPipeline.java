@@ -42,32 +42,32 @@ public class JunctionDetectionPipeline extends OpenCvPipeline{
     Scalar yellowHighHSV = new Scalar(54,209,255);
     //do not know yellow vals
 
-    Mat yellowMat = new Mat();
+
     Mat smallMat = new Mat();
 
     @Override
     public Mat processFrame(Mat input) {
         //176 x 144= matrix size
         Imgproc.cvtColor(input, input, Imgproc.COLOR_RGB2HSV);
-        ROI.x = input.width()/2 + horizOffset - 25;
-        ROI.y = input.height()/2 + vertOffset - 25;
-        ROI.width = width;
-        ROI.height = height;
+        ROI.x = input.width()/2 + horizOffset;
+        ROI.y = input.height()/2 + vertOffset;
+        ROI.width = width + 25;
+        ROI.height = height + 25;
         smallMat = input.submat(ROI);
-
+        Mat yellowMat = new Mat(176, 144, input.type());
         Core.inRange(smallMat, yellowLowHSV, yellowHighHSV, yellowMat);
 
         yellowPercentage = (Core.sumElems(yellowMat)).val[0]/10000;
         yellowMat.release();
         smallMat.release();
 
-        if(yellowPercentage>=60){
+        if(yellowPercentage>=30){
             junctionVal = junctionVal.CLOSE_TO;
             telemetry.addData("Junction is approaching", yellowPercentage);
-        }else if(yellowPercentage>=80){
+        }else if(yellowPercentage>=40){
             junctionVal = junctionVal.CLOSER_TO;
             telemetry.addData("Junction is closer", yellowPercentage);
-        }else if(yellowPercentage>=90){
+        }else if(yellowPercentage>=60){
             junctionVal = junctionVal.AT_JUNCTION;
             telemetry.addData("At junction", yellowPercentage);
         }else{
@@ -80,6 +80,18 @@ public class JunctionDetectionPipeline extends OpenCvPipeline{
 
     }
     public JunctionVal getJunctionVal(){
+        if(yellowPercentage>=30){
+            junctionVal = junctionVal.CLOSE_TO;
+            telemetry.addData("Junction is approaching", yellowPercentage);
+        }else if(yellowPercentage>=40){
+            junctionVal = junctionVal.CLOSER_TO;
+            telemetry.addData("Junction is closer", yellowPercentage);
+        }else if(yellowPercentage>=60){
+            junctionVal = junctionVal.AT_JUNCTION;
+            telemetry.addData("At junction", yellowPercentage);
+        }else{
+            telemetry.addData("Junction has not been detected", yellowPercentage);
+        }
         return junctionVal;
     }
 
