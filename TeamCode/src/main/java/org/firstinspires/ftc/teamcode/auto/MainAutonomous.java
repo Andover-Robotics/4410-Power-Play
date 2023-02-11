@@ -131,6 +131,8 @@ public class MainAutonomous extends LinearOpMode {
 
               telemetry.addData("Junction Status", junctionDetectionPipeline.getJunctionVal());
             telemetry.addData("Yellow Percentage", junctionDetectionPipeline.getYellowPercentage());
+            telemetry.addData("ROI X Value:", junctionDetectionPipeline.getROIx());
+            telemetry.addData("ROI Y Value:", junctionDetectionPipeline.getROIy());
             telemetry.update();
 
 
