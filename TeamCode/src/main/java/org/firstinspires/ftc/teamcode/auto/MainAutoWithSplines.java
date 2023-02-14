@@ -46,7 +46,7 @@ public class MainAutoWithSplines extends LinearOpMode {
 
         Pose2d startPose = new Pose2d(0, 0, 0);
         TrajectorySequence toJunction = bot.rr.trajectorySequenceBuilder(startPose)
-                .splineTo(new Vector2d(54, -5.9), -Math.toRadians(27.5))
+                .splineTo(new Vector2d(52, -5.9), -Math.toRadians(27.5))
                 .addTemporalMarker(0, () -> {
                     bot.claw.close();
                     slidePeriodic.start();
@@ -76,7 +76,7 @@ public class MainAutoWithSplines extends LinearOpMode {
                 .build();
 
         Trajectory toCone = bot.rr.trajectoryBuilder(toJunction.end())
-                .splineTo(new Vector2d(54, 15.34), Math.toRadians(27.5))
+                .splineTo(new Vector2d(52, 20.34), Math.toRadians(27.5))
                 .addTemporalMarker(6, () -> {
                     bot.claw.close();
                 })
@@ -90,7 +90,7 @@ public class MainAutoWithSplines extends LinearOpMode {
                 .build();
 
         Trajectory backToJunction = bot.rr.trajectoryBuilder(toCone.end(), true)
-                .splineTo(new Vector2d(54, -5.9), 0)
+                .splineTo(new Vector2d(52, -5.9), -Math.toRadians(27.5))
                 .addTemporalMarker(0, () -> {
                     bot.slide.runToTop();
                 })
@@ -116,9 +116,14 @@ public class MainAutoWithSplines extends LinearOpMode {
                 int finalPos = targetPos;
                 bot.rr.followTrajectory(
                         bot.rr.trajectoryBuilder(toJunction.end())
-                                .splineTo(new Vector2d(54, 15.34), Math.toRadians(27.5))
+                                .splineTo(new Vector2d(52, 20.34), Math.toRadians(40))
                                 .addTemporalMarker(0, () -> {
                                     bot.slide.runTo(finalPos);
+                                    sleep(1000);
+                                })
+                                .addTemporalMarker(2, () -> {
+                                    bot.claw.close();
+                                    sleep(100);
                                 })
                                 .build()
                 );
@@ -133,7 +138,7 @@ public class MainAutoWithSplines extends LinearOpMode {
                 int finalPos = targetPos;
                 bot.rr.followTrajectory(
                         bot.rr.trajectoryBuilder(toJunctionRight.end())
-                                .splineTo(new Vector2d(54, -15.34), -Math.toRadians(27.5))
+                                .splineTo(new Vector2d(52, -18.34), -Math.toRadians(27.5))
                                 .addTemporalMarker(0, () -> {
                                     bot.slide.runTo(finalPos);
                                 })

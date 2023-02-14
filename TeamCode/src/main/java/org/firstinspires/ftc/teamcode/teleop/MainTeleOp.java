@@ -10,8 +10,17 @@ import com.qualcomm.hardware.bosch.BNO055IMU;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 
+import org.firstinspires.ftc.robotcore.external.hardware.camera.WebcamName;
+import org.firstinspires.ftc.teamcode.auto.JunctionDetectionPipeline;
 import org.firstinspires.ftc.teamcode.auto.SampleMecanumDrive;
 import org.firstinspires.ftc.teamcode.teleop.subsystems.Bot;
+import org.openftc.easyopencv.OpenCvCamera;
+import org.openftc.easyopencv.OpenCvCameraFactory;
+import org.openftc.easyopencv.OpenCvCameraRotation;
+import org.openftc.easyopencv.OpenCvCamera;
+import org.openftc.easyopencv.OpenCvCameraFactory;
+import org.openftc.easyopencv.OpenCvCameraRotation;
+import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
 
 
 @TeleOp(name = "MainTeleOp", group = "Competition")
@@ -27,8 +36,27 @@ public class MainTeleOp extends LinearOpMode {
 
 
 
+
+
     @Override
     public void runOpMode() throws InterruptedException {
+        WebcamName camName = hardwareMap.get(WebcamName.class, "Webcam 1");
+        OpenCvCamera camera = OpenCvCameraFactory.getInstance().createWebcam(camName);
+        JunctionDetectionPipeline junctionDetectionPipeline = new JunctionDetectionPipeline(telemetry);
+        camera.setPipeline(junctionDetectionPipeline);
+
+        camera.openCameraDeviceAsync(new OpenCvCamera.AsyncCameraOpenListener() {
+            @Override
+            public void onOpened() {
+                camera.startStreaming(1280, 720, OpenCvCameraRotation.UPRIGHT);
+            }
+
+            @Override
+            public void onError(int errorCode) {
+                telemetry.addData("Error code:", errorCode);
+            }
+        });
+
         bot = Bot.getInstance(this);
         GamepadEx gp2 = new GamepadEx(gamepad2);
         GamepadEx gp1 = new GamepadEx(gamepad1);
@@ -65,6 +93,15 @@ public class MainTeleOp extends LinearOpMode {
                 bot.slide.runToLow();
             }else if (gp2.wasJustPressed(GamepadKeys.Button.DPAD_DOWN)) {
                 bot.slide.runToBottom();
+            }
+            if(gp2.wasJustPressed(GamepadKeys.Button.B)){
+                if(junctionDetectionPipeline.getJunctionVal()!= JunctionDetectionPipeline.JunctionVal.NOT_DETECTED || junctionDetectionPipeline.getJunctionVal()!= JunctionDetectionPipeline.JunctionVal.AT_JUNCTION) {
+                    while (junctionDetectionPipeline.getJunctionVal() != JunctionDetectionPipeline.JunctionVal.AT_JUNCTION) {
+                        bot.rr.turn(0.5);
+                        sleep(1000);
+                        telemetry.addData("JunctionDetection", JunctionDetectionPipeline.yellowPercentage);
+                    }
+                }
             }
 
             if (gp2.wasJustPressed(GamepadKeys.Button.RIGHT_BUMPER)) {

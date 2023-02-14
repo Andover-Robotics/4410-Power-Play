@@ -1,6 +1,5 @@
 package org.firstinspires.ftc.teamcode.auto;
-import org.opencv.calib3d.Calib3d;
-import org.opencv.core.CvType;
+
 import org.opencv.core.Mat;
 import org.opencv.core.Core;
 import org.opencv.core.Rect;
@@ -10,22 +9,12 @@ import org.firstinspires.ftc.robotcore.external.Telemetry;
 import org.opencv.core.Core; // works with eocv-sim
 import org.opencv.core.Mat; // also works
 import org.opencv.core.Scalar; // also works
-import org.opencv.core.MatOfDouble;
-import org.opencv.core.MatOfPoint2f;
-import org.opencv.core.MatOfPoint3f;
-import org.opencv.core.Point;
-import org.opencv.core.Point3;
-import org.opencv.core.Scalar;
-import org.opencv.imgproc.Imgproc;
-import org.openftc.apriltag.AprilTagDetection;
-import org.openftc.apriltag.AprilTagDetectorJNI;
-import org.openftc.easyopencv.OpenCvPipeline;
-import java.util.ArrayList;
+
 
 public class JunctionDetectionPipeline extends OpenCvPipeline{
     Telemetry telemetry;
     public static double yellowPercentage;
-    public static int horizOffset = 0, vertOffset = 0, width = 50, height = 50;
+    public static int horizOffset = 10, vertOffset = 50, width = 50, height = 50;
     public enum JunctionVal{
         CLOSE_TO,
         CLOSER_TO,
@@ -38,8 +27,8 @@ public class JunctionDetectionPipeline extends OpenCvPipeline{
     public JunctionDetectionPipeline(Telemetry telemetry){
         this.telemetry = telemetry;
     }
-    Scalar yellowLowHSV= new Scalar(0,55,108);
-    Scalar yellowHighHSV = new Scalar(54,209,255);
+    Scalar yellowLowHSV= new Scalar(0,45, 90);
+    Scalar yellowHighHSV = new Scalar(60,210,260);
     //do not know yellow vals
 
 
@@ -56,19 +45,20 @@ public class JunctionDetectionPipeline extends OpenCvPipeline{
         smallMat = input.submat(ROI);
         Mat yellowMat = new Mat(176, 144, input.type());
         Core.inRange(smallMat, yellowLowHSV, yellowHighHSV, yellowMat);
+        //yellow mat has the output array with the isolated yellow color defined between the yellowHSV range
 
         yellowPercentage = (Core.sumElems(yellowMat)).val[0]/10000;
         yellowMat.release();
         smallMat.release();
 
-        if(yellowPercentage>=30){
-            junctionVal = junctionVal.CLOSE_TO;
+        if(yellowPercentage>=30 && yellowPercentage<40){
+            junctionVal = JunctionVal.CLOSE_TO;
             telemetry.addData("Junction is approaching", yellowPercentage);
-        }else if(yellowPercentage>=40){
-            junctionVal = junctionVal.CLOSER_TO;
+        }else if(yellowPercentage>=40 && yellowPercentage<60){
+            junctionVal = JunctionVal.CLOSER_TO;
             telemetry.addData("Junction is closer", yellowPercentage);
         }else if(yellowPercentage>=60){
-            junctionVal = junctionVal.AT_JUNCTION;
+            junctionVal = JunctionVal.AT_JUNCTION;
             telemetry.addData("At junction", yellowPercentage);
         }else{
             telemetry.addData("Junction has not been detected", yellowPercentage);
@@ -80,14 +70,14 @@ public class JunctionDetectionPipeline extends OpenCvPipeline{
 
     }
     public JunctionVal getJunctionVal(){
-        if(yellowPercentage>=30){
-            junctionVal = junctionVal.CLOSE_TO;
+        if(yellowPercentage>=30 && yellowPercentage<40){
+            junctionVal = JunctionVal.CLOSE_TO;
             telemetry.addData("Junction is approaching", yellowPercentage);
-        }else if(yellowPercentage>=40){
-            junctionVal = junctionVal.CLOSER_TO;
+        }else if(yellowPercentage>=40 && yellowPercentage<60){
+            junctionVal = JunctionVal.CLOSER_TO;
             telemetry.addData("Junction is closer", yellowPercentage);
         }else if(yellowPercentage>=60){
-            junctionVal = junctionVal.AT_JUNCTION;
+            junctionVal = JunctionVal.AT_JUNCTION;
             telemetry.addData("At junction", yellowPercentage);
         }else{
             telemetry.addData("Junction has not been detected", yellowPercentage);
