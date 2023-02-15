@@ -14,7 +14,7 @@ import org.opencv.core.Scalar; // also works
 public class JunctionDetectionPipeline extends OpenCvPipeline{
     Telemetry telemetry;
     public static double yellowPercentage;
-    public static int horizOffset = 10, vertOffset = 50, width = 50, height = 50;
+    public static int horizOffset = -5, vertOffset = 0, width = 50, height = 50;
     public enum JunctionVal{
         CLOSE_TO,
         CLOSER_TO,
@@ -42,8 +42,10 @@ public class JunctionDetectionPipeline extends OpenCvPipeline{
         ROI.y = input.height()/2 + vertOffset;
         ROI.width = width + 25;
         ROI.height = height + 25;
+
         smallMat = input.submat(ROI);
         Mat yellowMat = new Mat(176, 144, input.type());
+
         Core.inRange(smallMat, yellowLowHSV, yellowHighHSV, yellowMat);
         //yellow mat has the output array with the isolated yellow color defined between the yellowHSV range
 
