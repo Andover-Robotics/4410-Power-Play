@@ -14,7 +14,7 @@ import org.opencv.core.Scalar; // also works
 public class JunctionDetectionPipeline extends OpenCvPipeline{
     Telemetry telemetry;
     public static double yellowPercentage;
-    public static int horizOffset = -5, vertOffset = 0, width = 50, height = 50;
+    public static int horizOffset = -20, vertOffset = 40, width = 50, height = 50;
     public enum JunctionVal{
         CLOSE_TO,
         CLOSER_TO,
@@ -27,8 +27,8 @@ public class JunctionDetectionPipeline extends OpenCvPipeline{
     public JunctionDetectionPipeline(Telemetry telemetry){
         this.telemetry = telemetry;
     }
-    Scalar yellowLowHSV= new Scalar(0,45, 90);
-    Scalar yellowHighHSV = new Scalar(60,210,260);
+    Scalar yellowLowHSV= new Scalar(19,112, 73);
+    Scalar yellowHighHSV = new Scalar(56,255,255);
     //do not know yellow vals
 
 
@@ -49,17 +49,17 @@ public class JunctionDetectionPipeline extends OpenCvPipeline{
         Core.inRange(smallMat, yellowLowHSV, yellowHighHSV, yellowMat);
         //yellow mat has the output array with the isolated yellow color defined between the yellowHSV range
 
-        yellowPercentage = (Core.sumElems(yellowMat)).val[0]/10000;
+        yellowPercentage = (Core.sumElems(yellowMat)).val[0]/10000-20;
         yellowMat.release();
         smallMat.release();
 
         if(yellowPercentage>=30 && yellowPercentage<40){
             junctionVal = JunctionVal.CLOSE_TO;
             telemetry.addData("Junction is approaching", yellowPercentage);
-        }else if(yellowPercentage>=40 && yellowPercentage<60){
+        }else if(yellowPercentage>=40 && yellowPercentage<70){
             junctionVal = JunctionVal.CLOSER_TO;
             telemetry.addData("Junction is closer", yellowPercentage);
-        }else if(yellowPercentage>=60){
+        }else if(yellowPercentage>=70){
             junctionVal = JunctionVal.AT_JUNCTION;
             telemetry.addData("At junction", yellowPercentage);
         }else{
@@ -75,10 +75,10 @@ public class JunctionDetectionPipeline extends OpenCvPipeline{
         if(yellowPercentage>=30 && yellowPercentage<40){
             junctionVal = JunctionVal.CLOSE_TO;
             telemetry.addData("Junction is approaching", yellowPercentage);
-        }else if(yellowPercentage>=40 && yellowPercentage<60){
+        }else if(yellowPercentage>=40 && yellowPercentage<70){
             junctionVal = JunctionVal.CLOSER_TO;
             telemetry.addData("Junction is closer", yellowPercentage);
-        }else if(yellowPercentage>=60){
+        }else if(yellowPercentage>=70){
             junctionVal = JunctionVal.AT_JUNCTION;
             telemetry.addData("At junction", yellowPercentage);
         }else{

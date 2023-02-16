@@ -95,10 +95,10 @@ public class MainTeleOp extends LinearOpMode {
                 bot.slide.runToBottom();
             }
             if(gp2.wasJustPressed(GamepadKeys.Button.B)){
-                if(junctionDetectionPipeline.getJunctionVal()!= JunctionDetectionPipeline.JunctionVal.NOT_DETECTED || junctionDetectionPipeline.getJunctionVal()!= JunctionDetectionPipeline.JunctionVal.AT_JUNCTION) {
+                if(junctionDetectionPipeline.getJunctionVal()!= JunctionDetectionPipeline.JunctionVal.AT_JUNCTION) {
                     while (junctionDetectionPipeline.getJunctionVal() != JunctionDetectionPipeline.JunctionVal.AT_JUNCTION) {
-                        bot.rr.turn(0.5);
-                        sleep(1000);
+                        bot.rr.turn(0.001);
+                        sleep(10);
                         telemetry.addData("JunctionDetection", JunctionDetectionPipeline.yellowPercentage);
                     }
                 }
