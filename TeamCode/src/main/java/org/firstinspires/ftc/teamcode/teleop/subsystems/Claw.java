@@ -12,17 +12,17 @@ import org.firstinspires.ftc.robotcore.external.navigation.DistanceUnit;
 
 @Config
 public class Claw {
-    private final Servo claw, flip;
-    private final DistanceSensor proxSensor;
-    public static double open = 1, close = 0, flipIntake = 1, flipOuttake = 0;
-    public static int proximityBound = 85;
+    private final Servo claw;
+    //private final DistanceSensor proxSensor;
+    public static double open = 1, close = 0;
+  //  public static int proximityBound = 85;
 
     public Claw(OpMode opMode){
         claw = opMode.hardwareMap.servo.get("claw");
-        flip = opMode.hardwareMap.servo.get("flip");
+       // flip = opMode.hardwareMap.servo.get("flip");
         claw.setDirection(Servo.Direction.FORWARD);
-        flip.setDirection(Servo.Direction.FORWARD);
-        proxSensor = opMode.hardwareMap.get(DistanceSensor.class, "intakeSensor");
+      //  flip.setDirection(Servo.Direction.FORWARD);
+        //proxSensor = opMode.hardwareMap.get(DistanceSensor.class, "intakeSensor");
     }
 
     public void open(){
@@ -33,19 +33,9 @@ public class Claw {
         claw.setPosition(close);
     }
 
-    public void flipIntake(){
-        flip.setPosition(flipIntake);
-    }
-
-    public void flipOuttake(){
-        flip.setPosition(flipOuttake);
-    }
-    public void intake(){
-        open();
-        flipIntake();
-    }
-
-    public double getDistance(){
+   /* public double getDistance(){
         return proxSensor.getDistance(DistanceUnit.MM);
     }
+
+    */
 }

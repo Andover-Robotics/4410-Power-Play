@@ -35,10 +35,10 @@ public class MainAutonomousUpdated extends LinearOpMode {
                 .addTemporalMarker(0, () -> {
                     bot.claw.close();
                     sleep(100);
-                    bot.slide.runToTop();
+                    bot.slides.runToTop();
                 })
                 .addTemporalMarker(5, () -> {
-                    bot.slide.goDown();
+                    bot.slides.goDown();
                     sleep(100);
                     bot.claw.open();
                 })

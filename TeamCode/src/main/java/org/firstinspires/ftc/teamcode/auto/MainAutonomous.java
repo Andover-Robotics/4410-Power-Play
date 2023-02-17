@@ -4,23 +4,17 @@ import com.acmerobotics.roadrunner.geometry.Pose2d;
 import com.acmerobotics.roadrunner.trajectory.Trajectory;
 import com.arcrobotics.ftclib.gamepad.GamepadEx;
 import com.arcrobotics.ftclib.gamepad.GamepadKeys;
-import com.qualcomm.hardware.bosch.BNO055IMU;
 import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
-import com.qualcomm.robotcore.hardware.DcMotor;
 
 import org.firstinspires.ftc.robotcore.external.hardware.camera.WebcamName;
-import org.firstinspires.ftc.teamcode.auto.trajectorysequence.TrajectorySequence;
-import org.firstinspires.ftc.teamcode.auto.trajectorysequence.TrajectorySequenceBuilder;
 import org.firstinspires.ftc.teamcode.teleop.subsystems.Bot;
 import org.openftc.apriltag.AprilTagDetection;
 import org.openftc.easyopencv.OpenCvCamera;
 import org.openftc.easyopencv.OpenCvCameraFactory;
 import org.openftc.easyopencv.OpenCvCameraRotation;
-import org.openftc.easyopencv.OpenCvInternalCamera;
 
 import java.util.ArrayList;
-import java.util.Map;
 
 @Autonomous(name="MainAutonomous")
 public class MainAutonomous extends LinearOpMode {
@@ -169,7 +163,7 @@ public class MainAutonomous extends LinearOpMode {
 
         Thread slidePeriodic = new Thread(() -> {
             while(opModeIsActive()){
-                bot.slide.periodic();
+                bot.slides.periodic();
             }
         });
         slidePeriodic.start();
@@ -236,46 +230,46 @@ public class MainAutonomous extends LinearOpMode {
         bot.rr.followTrajectory(forward);
 
         if(!isRight) {
-            bot.slide.runToTop();
+            bot.slides.runToTop();
             bot.rr.followTrajectory(alliance1StrafeRight);
 
             bot.rr.followTrajectory(alliance1ApproachJunction);
-            bot.slide.goDown();
+            bot.slides.goDown();
             sleep(100);
             bot.claw.open();            //Cone placed
             bot.rr.followTrajectory(alliance1GoBack);
-            bot.slide.runTo(580);
+            bot.slides.runTo(580);
             bot.rr.followTrajectory(alliance1GoToCone);
             bot.rr.turn(Math.toRadians(90));
             bot.rr.followTrajectory(alliance1GoForwardToCone);
             bot.claw.close();
             //new cone picked up
             sleep(400);
-            bot.slide.runToTop();
+            bot.slides.runToTop();
             bot.rr.turn(-Math.toRadians(90));
             bot.rr.followTrajectory(alliance1GoToJunction);
 
             bot.rr.followTrajectory(alliance1ApproachJunction);
-            bot.slide.goDown();
+            bot.slides.goDown();
             sleep(100);
             bot.claw.open();
             //cone placed
             for(int i =0; i< 5; i++){
                 int runTo = 460;
                 bot.rr.followTrajectory(alliance1GoBack);
-                bot.slide.runTo(runTo);
+                bot.slides.runTo(runTo);
                 bot.rr.followTrajectory(alliance1GoToCone);
                 bot.rr.turn(Math.toRadians(90));
                 bot.rr.followTrajectory(alliance1GoForwardToCone);
                 bot.claw.close();
                 //new cone picked up
                 sleep(400);
-                bot.slide.runToTop();
+                bot.slides.runToTop();
                 bot.rr.turn(-Math.toRadians(90));
                 bot.rr.followTrajectory(alliance1GoToJunction);
 
                 bot.rr.followTrajectory(alliance1ApproachJunction);
-                bot.slide.goDown();
+                bot.slides.goDown();
                 sleep(100);
                 bot.claw.open();
 
@@ -286,51 +280,51 @@ public class MainAutonomous extends LinearOpMode {
 
         else {
 
-            bot.slide.runToTop();
+            bot.slides.runToTop();
             bot.rr.followTrajectory(alliance2StrafeLeft);
 
             bot.rr.followTrajectory(alliance2ApproachJunction);
-            bot.slide.goDown();
+            bot.slides.goDown();
             sleep(100);
             bot.claw.open();
             //Cone placed
             bot.rr.followTrajectory(alliance2GoBack);
-            bot.slide.runTo(580);
+            bot.slides.runTo(580);
             bot.rr.followTrajectory(alliance2GoToCone);
             bot.rr.turn(Math.toRadians(90));
             bot.rr.followTrajectory(alliance2GoForwardToCone);
             bot.claw.close();
             //new cone picked up
             sleep(400);
-            bot.slide.runToTop();
+            bot.slides.runToTop();
             bot.rr.turn(-Math.toRadians(90));
             bot.rr.followTrajectory(alliance2GoToJunction);
 
             bot.rr.followTrajectory(alliance2ApproachJunction);
-            bot.slide.goDown();
+            bot.slides.goDown();
             sleep(100);
             bot.claw.open();
             //cone placed
             bot.rr.followTrajectory(alliance2GoBack);
-            bot.slide.runTo(460);
+            bot.slides.runTo(460);
             bot.rr.followTrajectory(alliance2GoToCone);
             bot.rr.turn(Math.toRadians(90));
             bot.rr.followTrajectory(alliance2GoForwardToCone);
             bot.claw.close();
             //new cone picked up
             sleep(400);
-            bot.slide.runToTop();
+            bot.slides.runToTop();
             bot.rr.turn(-Math.toRadians(90));
             bot.rr.followTrajectory(alliance2GoToJunction);
 
             bot.rr.followTrajectory(alliance2ApproachJunction);
-            bot.slide.goDown();
+            bot.slides.goDown();
             sleep(100);
             bot.claw.open();
             bot.rr.followTrajectory(alliance2GoBack);
 
         }
-        bot.slide.runToBottom();
+        bot.slides.runToBottom();
         slidePeriodic.interrupt();
     }
 

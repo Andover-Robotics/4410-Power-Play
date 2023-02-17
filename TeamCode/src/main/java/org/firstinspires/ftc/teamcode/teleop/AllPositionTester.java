@@ -8,8 +8,8 @@ import com.qualcomm.hardware.bosch.BNO055IMU;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 
+import org.firstinspires.ftc.robotcore.external.navigation.AngleUnit;
 import org.firstinspires.ftc.teamcode.teleop.subsystems.Bot;
-import org.firstinspires.ftc.teamcode.teleop.subsystems.Claw;
 
 @TeleOp(name="all position tester")
 public class AllPositionTester extends LinearOpMode {
@@ -23,13 +23,7 @@ public class AllPositionTester extends LinearOpMode {
         GamepadEx gp2 = new GamepadEx(gamepad2);
         GamepadEx gp1 = new GamepadEx(gamepad1);
 
-        // Retrieve the IMU from the hardware map
-        BNO055IMU imu = hardwareMap.get(BNO055IMU.class, "imu");
-        BNO055IMU.Parameters parameters = new BNO055IMU.Parameters();
-        // Technically this is the default, however specifying it is clearer
-        parameters.angleUnit = BNO055IMU.AngleUnit.RADIANS;
-        // Without this, data retrieving from the IMU throws an exception
-        imu.initialize(parameters);
+         bot.initializeImus();
 
         waitForStart();
 
@@ -43,16 +37,10 @@ public class AllPositionTester extends LinearOpMode {
                 bot.claw.close();
             }
 
-            if (gp2.getButton(GamepadKeys.Button.B)) {
-                bot.claw.flipIntake();
-            } else {
-                bot.claw.flipOuttake();
-            }
-
-            if (gp2.getButton(GamepadKeys.Button.Y)) {
-                bot.linkage.fullOut();
-            } else {
-                bot.linkage.outtake();
+            if(gp2.wasJustPressed(GamepadKeys.Button.Y)){
+                bot.horizSlides.runToFullOut();
+            }else if(gp2.wasJustPressed(GamepadKeys.Button.B)){
+                bot.horizSlides.runToFullIn();
             }
 
             if (gp2.getButton(GamepadKeys.Button.X)){
@@ -61,34 +49,49 @@ public class AllPositionTester extends LinearOpMode {
                 bot.arm.outtake();
             }else if(gp2.getButton(GamepadKeys.Button.LEFT_STICK_BUTTON)){
                 bot.arm.secure();
-            }else if(gp2.getButton(GamepadKeys.Button.START)){
-                bot.arm.frontSecure();
-            }else if(gp2.getButton(GamepadKeys.Button.BACK)){
-                bot.arm.frontOuttake();
             }else{
                 bot.arm.intake();
             }
 
             if (gp2.wasJustPressed(GamepadKeys.Button.DPAD_UP)) {
-                bot.slide.runToTop();
+                bot.slides.runToTop();
             }else if (gp2.wasJustPressed(GamepadKeys.Button.DPAD_LEFT)) {
-                bot.slide.runToMiddle();
+                bot.slides.runToMiddle();
             } else if (gp2.wasJustPressed(GamepadKeys.Button.DPAD_RIGHT)) {
-                bot.slide.runToLow();
+                bot.slides.runToLow();
             } else if (gp2.wasJustPressed(GamepadKeys.Button.DPAD_DOWN)) {
-                bot.slide.runToBottom();
+                bot.slides.runToBottom();
             }
 
             if (gp2.wasJustPressed(GamepadKeys.Button.RIGHT_BUMPER)) {
-                bot.slide.goDown();
+                bot.slides.goDown();
             }
 
             if (gp2.wasJustPressed(GamepadKeys.Button.LEFT_BUMPER)) {
-                bot.slide.goUp();
+                bot.slides.goUp();
             }
 
 
-//            bot.slide.periodic();
+
+            bot.horizSlides.runManual(-gp2.getRightY());
+            bot.slides.runManual(-gp2.getLeftY());
+            bot.turret.runManual(gp2.getLeftX());
+            if(gp2.wasJustPressed(GamepadKeys.Button.START)){
+                bot.resetEncoder();
+            }
+
+            bot.horizSlides.periodic();
+            bot.slides.periodic();
+            bot.turret.periodic();
+
+            telemetry.addData("turret", bot.turret.getPosition());
+            telemetry.addData("vert slides", bot.slides.getPosition());
+            telemetry.addData("horiz slides", bot.horizSlides.getPosition());
+            telemetry.update();
+
         }
+    }
+    private double getIMU(){
+        return (bot.imu0.getAngularOrientation().toAngleUnit(AngleUnit.RADIANS).firstAngle + bot.imu1.getAngularOrientation().toAngleUnit(AngleUnit.RADIANS).firstAngle) / 2;
     }
 }
