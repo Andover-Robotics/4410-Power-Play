@@ -14,7 +14,7 @@ import org.firstinspires.ftc.robotcore.external.navigation.DistanceUnit;
 public class Claw {
     private final Servo claw;
     //private final DistanceSensor proxSensor;
-    public static double open = 1, close = 0;
+    public static double open = 0.3, close = 0.12;
   //  public static int proximityBound = 85;
 
     public Claw(OpMode opMode){

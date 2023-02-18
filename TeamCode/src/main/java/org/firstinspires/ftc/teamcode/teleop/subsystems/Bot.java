@@ -73,9 +73,6 @@ public class Bot {
         this.rr = new SampleMecanumDrive(opMode.hardwareMap);
 
         try {
-            imu0 = opMode.hardwareMap.get(BNO055IMU.class, "imu0");
-            imu1 = opMode.hardwareMap.get(BNO055IMU.class, "imu1");
-
             this.initializeImus();
             fieldCentricRunMode=true;
         }
@@ -122,6 +119,9 @@ public class Bot {
     }
 
     public void initializeImus() {
+        imu0 = opMode.hardwareMap.get(BNO055IMU.class, "imu");
+        imu1 = opMode.hardwareMap.get(BNO055IMU.class, "imu1");
+
         final BNO055IMU.Parameters parameters = new BNO055IMU.Parameters();
 
         parameters.mode = BNO055IMU.SensorMode.IMU;

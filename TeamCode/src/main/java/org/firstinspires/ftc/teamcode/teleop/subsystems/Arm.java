@@ -8,7 +8,7 @@ import com.qualcomm.robotcore.hardware.Servo;
 public class Arm {
     private final Servo armLeft, armRight, bar;
 
-    public static double armIntake = 1, armOuttake = 0, armStorage = 0.5, barIntake = 1, barOuttakeUp = 0.5, barOuttakeDown = 0;
+    public static double armIntake = 0.25, armOuttake = 0.5, armStorage = 0.75, barIntake = 0.61, barOuttakeUp = 0.25, barOuttakeDown = 0.5;
 
     public Arm(OpMode opMode){
         armLeft = opMode.hardwareMap.servo.get("armLeft");
@@ -29,8 +29,8 @@ public class Arm {
     }
 
     public void intake(){
-        setArm(armIntake);
         setBar(barIntake);
+        setArm(armIntake);
     }
 
     public void storage(){
@@ -39,12 +39,12 @@ public class Arm {
     }
 
     public void outtake(){
-        setArm(armOuttake);
         setBar(barOuttakeUp);
+        setArm(armOuttake);
     }
 
     public void secure() {
-        setArm(armOuttake);
         setBar(barOuttakeDown);
+        setArm(armOuttake);
     }
 }

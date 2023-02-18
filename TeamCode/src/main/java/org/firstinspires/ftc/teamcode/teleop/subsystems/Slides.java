@@ -14,7 +14,6 @@ public class Slides {
 
     private final MotorEx motorLeft;
     private final MotorEx motorRight;
-    private final MotorGroup motors;
     private final PIDFController controller;
     public static double p = 0, i = 0, d = 0, f = 0, staticF = 0;
     public static double tolerance = 0, powerUp = 0, powerDown = 0, manualDivide = 3, manualPower = 0;
@@ -27,12 +26,13 @@ public class Slides {
         motorRight = new MotorEx(opMode.hardwareMap, "slidesRight", Motor.GoBILDA.RPM_435);
         motorRight.setInverted(true);
         motorLeft.setInverted(false);
-        motors = new MotorGroup(motorLeft, motorRight);
         controller = new PIDFController(p, i, d, f);
         controller.setTolerance(tolerance);
         controller.setSetPoint(target);
-        motors.setRunMode(Motor.RunMode.RawPower);
-        motors.setZeroPowerBehavior(Motor.ZeroPowerBehavior.BRAKE);
+        motorLeft.setRunMode(Motor.RunMode.RawPower);
+        motorLeft.setZeroPowerBehavior(Motor.ZeroPowerBehavior.BRAKE);
+        motorRight.setRunMode(Motor.RunMode.RawPower);
+        motorRight.setZeroPowerBehavior(Motor.ZeroPowerBehavior.BRAKE);
     }
 
     public void runTo(int t){
@@ -76,21 +76,28 @@ public class Slides {
 
     public void periodic(){
         controller.setPIDF(p, i, d, f);
+        motorRight.setInverted(true);
+        motorLeft.setInverted(false);
         if(manualPower == 0) {
             if (controller.atSetPoint()) {
-                motors.set(staticF);
-            } else if (motors.getCurrentPosition() < target) {
-                motors.set(powerUp * controller.calculate(motors.getCurrentPosition()));
+                motorLeft.set(staticF);
+                motorRight.set(staticF);
+            } else if (motorLeft.getCurrentPosition() < target) {
+                double power = powerUp * controller.calculate(motorLeft.getCurrentPosition());
+                motorLeft.set(power);
+                motorRight.set(power);
             } else {
-                motors.set(powerDown);
+                motorLeft.set(powerDown);
+                motorRight.set(powerDown);
             }
         }else {
-            controller.setSetPoint(motors.getCurrentPosition());
-            motors.set(manualPower / manualDivide);
+            controller.setSetPoint(motorLeft.getCurrentPosition());
+            motorLeft.set(manualPower / manualDivide);
+            motorRight.set(manualPower / manualDivide);
         }
     }
     public double isHigh(){
-        return (double) motors.getCurrentPosition()/MAXHEIGHT;
+        return (double) motorLeft.getCurrentPosition()/MAXHEIGHT;
     }
 
     public double getCurrent(){
@@ -98,11 +105,11 @@ public class Slides {
     }
 
     public void resetEncoder(){
-        motors.resetEncoder();
+        motorLeft.resetEncoder();
     }
 
     public int getPosition(){
-        return motors.getCurrentPosition();
+        return motorLeft.getCurrentPosition();
     }
 
 }

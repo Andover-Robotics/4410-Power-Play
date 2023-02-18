@@ -46,22 +46,20 @@ public class MainTeleOp extends LinearOpMode {
 
             if(!debugMode) {//finite state
                 if (bot.state == Bot.BotState.INTAKE || bot.state == Bot.BotState.INTAKE_OUT) {
-                    if (bot.claw.getDistance() < Claw.proximityBound) {
-                        if (gp2.getButton(GamepadKeys.Button.A)) {
-                            bot.claw.close();
-                            Thread goToOuttake = new Thread(() -> {
-                                sleep(500);
-                                bot.outtake();
-                            });
-                            goToOuttake.start();
-                        } else if (gp2.getButton(GamepadKeys.Button.X)) {
-                            bot.claw.close();
-                            Thread goToStorage = new Thread(() -> {
-                                sleep(500);
-                                bot.storage();
-                            });
-                            goToStorage.start();
-                        }
+                    if (gp2.wasJustPressed(GamepadKeys.Button.A)) {
+                        bot.claw.close();
+                        Thread goToOuttake = new Thread(() -> {
+                            sleep(500);
+                            bot.outtake();
+                        });
+                        goToOuttake.start();
+                    } else if (gp2.wasJustPressed(GamepadKeys.Button.X)) {
+                        bot.claw.close();
+                        Thread goToStorage = new Thread(() -> {
+                            sleep(500);
+                            bot.storage();
+                        });
+                        goToStorage.start();
                     }
                 } else if (bot.state == Bot.BotState.STORAGE) {
                     if (gp2.wasJustPressed(GamepadKeys.Button.A)) {
@@ -118,7 +116,7 @@ public class MainTeleOp extends LinearOpMode {
             bot.turret.periodic();
 
             //TODO test sensor
-            telemetry.addData("sensor", bot.claw.getDistance());
+//            telemetry.addData("sensor", bot.claw.getDistance());
             telemetry.addData("drive current", bot.getCurrent());
             telemetry.addData("slide current", bot.slides.getCurrent());
             telemetry.update();

@@ -37,20 +37,20 @@ public class AllPositionTester extends LinearOpMode {
                 bot.claw.close();
             }
 
-            if(gp2.wasJustPressed(GamepadKeys.Button.Y)){
+            if(gp2.wasJustPressed(GamepadKeys.Button.RIGHT_STICK_BUTTON)){
                 bot.horizSlides.runToFullOut();
-            }else if(gp2.wasJustPressed(GamepadKeys.Button.B)){
+            }else if(gp2.wasJustPressed(GamepadKeys.Button.LEFT_STICK_BUTTON)){
                 bot.horizSlides.runToFullIn();
             }
 
             if (gp2.getButton(GamepadKeys.Button.X)){
-                bot.arm.storage();
-            }else if(gp2.getButton(GamepadKeys.Button.RIGHT_STICK_BUTTON)){
+                bot.arm.intake();
+            }else if(gp2.getButton(GamepadKeys.Button.Y)){
                 bot.arm.outtake();
-            }else if(gp2.getButton(GamepadKeys.Button.LEFT_STICK_BUTTON)){
+            }else if(gp2.getButton(GamepadKeys.Button.B)){
                 bot.arm.secure();
             }else{
-                bot.arm.intake();
+                bot.arm.storage();
             }
 
             if (gp2.wasJustPressed(GamepadKeys.Button.DPAD_UP)) {
@@ -87,6 +87,7 @@ public class AllPositionTester extends LinearOpMode {
             telemetry.addData("turret", bot.turret.getPosition());
             telemetry.addData("vert slides", bot.slides.getPosition());
             telemetry.addData("horiz slides", bot.horizSlides.getPosition());
+            telemetry.addData("slides current", bot.slides.getCurrent());
             telemetry.update();
 
         }
