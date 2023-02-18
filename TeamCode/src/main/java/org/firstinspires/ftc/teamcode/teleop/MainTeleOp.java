@@ -60,6 +60,7 @@ public class MainTeleOp extends LinearOpMode {
         bot = Bot.getInstance(this);
         GamepadEx gp2 = new GamepadEx(gamepad2);
         GamepadEx gp1 = new GamepadEx(gamepad1);
+
 //        // Retrieve the IMU from the hardware map
 //        BNO055IMU imu = hardwareMap.get(BNO055IMU.class, "imu");
 //        BNO055IMU.Parameters parameters = new BNO055IMU.Parameters();
@@ -95,7 +96,7 @@ public class MainTeleOp extends LinearOpMode {
                 bot.slide.runToBottom();
             }
             if(gp2.wasJustPressed(GamepadKeys.Button.B)){
-                while(junctionDetectionPipeline.getJunctionVal()!= JunctionDetectionPipeline.JunctionVal.AT_JUNCTION) {
+                {
                     while (junctionDetectionPipeline.getJunctionVal() != JunctionDetectionPipeline.JunctionVal.AT_JUNCTION) {
                         bot.rr.turn(0.001);
                         sleep(10);
@@ -150,6 +151,8 @@ public class MainTeleOp extends LinearOpMode {
             driveSpeed = Math.max(0, driveSpeed);
             bot.fixMotors();
             bot.drive(gp1.getLeftX() * driveSpeed, -gp1.getLeftY() * driveSpeed, gp1.getRightX() * driveSpeed/1.5);
+
+
             }
         }
     }
