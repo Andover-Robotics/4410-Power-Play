@@ -44,12 +44,12 @@ public class JunctionDetectionPipeline extends OpenCvPipeline{
         ROI.height = height + 25;
 
         smallMat = input.submat(ROI);
-        Mat yellowMat = new Mat(176, 144, input.type());
+        Mat yellowMat = new Mat(ROI.x, ROI.y, input.type());
 
         Core.inRange(smallMat, yellowLowHSV, yellowHighHSV, yellowMat);
         //yellow mat has the output array with the isolated yellow color defined between the yellowHSV range
 
-        yellowPercentage = (Core.sumElems(yellowMat)).val[0]/10000-20;
+        yellowPercentage = (Core.sumElems(yellowMat)).val[0]/25344;
         yellowMat.release();
         smallMat.release();
 
