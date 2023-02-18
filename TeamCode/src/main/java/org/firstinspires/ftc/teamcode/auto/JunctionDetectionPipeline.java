@@ -87,6 +87,22 @@ public class JunctionDetectionPipeline extends OpenCvPipeline{
         return junctionVal;
     }
 
+    public JunctionVal getJunctionValue(double percent){
+        if(percent>=30 && percent<40){
+            junctionVal = JunctionVal.CLOSE_TO;
+            telemetry.addData("Junction is approaching", percent);
+        }else if(percent>=40 && percent<70){
+            junctionVal = JunctionVal.CLOSER_TO;
+            telemetry.addData("Junction is closer", percent);
+        }else if(percent>=70){
+            junctionVal = JunctionVal.AT_JUNCTION;
+            telemetry.addData("At junction", percent);
+        }else{
+            telemetry.addData("Junction has not been detected", percent);
+        }
+        return junctionVal;
+    }
+
 
 
     public double getYellowPercentage(){
