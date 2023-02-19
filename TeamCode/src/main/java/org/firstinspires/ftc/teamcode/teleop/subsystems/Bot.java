@@ -108,14 +108,12 @@ public class Bot {
         state = BotState.OUTTAKE;
         claw.close();
         arm.outtake();
-        horizSlides.runToOuttake();
     }
 
     public void secure(){
         state = BotState.SECURE;
         claw.close();
         arm.secure();
-        horizSlides.runToOuttake();
     }
 
     public void initializeImus() {
