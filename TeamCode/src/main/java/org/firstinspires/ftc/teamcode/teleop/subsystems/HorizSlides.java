@@ -1,20 +1,27 @@
 package org.firstinspires.ftc.teamcode.teleop.subsystems;
 
 import com.acmerobotics.dashboard.config.Config;
+import com.acmerobotics.roadrunner.profile.MotionProfile;
 import com.arcrobotics.ftclib.controller.PIDFController;
 import com.arcrobotics.ftclib.hardware.motors.Motor;
 import com.arcrobotics.ftclib.hardware.motors.MotorEx;
 import com.qualcomm.robotcore.eventloop.opmode.OpMode;
+
+import org.firstinspires.ftc.teamcode.util.MotionProfiler;
 
 @Config
 public class HorizSlides {
 
     private final MotorEx motor;
     private final PIDFController controller;
-    public static double p = 0.04, i = 0, d = 0, f = 0, staticF = 0;
-    public static double tolerance = 10, powerUp = 0.1, manualDivide = 1.5, manualPower = 0;
-    public static int MAXHEIGHT = 5000, fullOut = 580, fullIn = 0, outtake = 1700, intake = 2000;
+    private final OpMode opMode;
+    public static double p = 0.04, i = 0, d = 0, f = 0;
+    public static double tolerance = 10, powerUp = 0.1, manualDivide = 1.5, manualPower = 0, powerMin = 0.1;
+    public static int fullOut = 580, fullIn = 0, outtake = 1700, intake = 2000;
     private int target = 0;
+    private double profile_init_time = 0;
+
+    private static MotionProfiler profiler = new MotionProfiler(1, 1);
 
     public HorizSlides(OpMode opMode){
         motor = new MotorEx(opMode.hardwareMap, "slidesHoriz", Motor.GoBILDA.RPM_1150);
@@ -24,11 +31,12 @@ public class HorizSlides {
         controller.setSetPoint(target);
         motor.setRunMode(Motor.RunMode.RawPower);
         motor.setZeroPowerBehavior(Motor.ZeroPowerBehavior.BRAKE);
+        this.opMode = opMode;
     }
 
     public void runTo(int t){
-        motor.setInverted(false);
-        controller.setSetPoint(t);
+        profiler.init_new_profile(motor.getCurrentPosition(), t);
+        profile_init_time = opMode.time;
         target = t;
     }
 
@@ -46,7 +54,7 @@ public class HorizSlides {
     }
 
     public void runManual(double manual){
-        if(manual > 0.3 || manual < -0.3){
+        if(manual > powerMin || manual < -powerMin){
             manualPower = manual;
         }else{
             manualPower = 0;
@@ -54,13 +62,12 @@ public class HorizSlides {
     }
 
     public void periodic(){
+        motor.setInverted(false);
         controller.setPIDF(p, i, d, f);
-        if(manualPower == 0) {
-            if (controller.atSetPoint()) {
-                motor.set(staticF);
-            } else{
-                motor.set(powerUp * controller.calculate(motor.getCurrentPosition()));
-            }
+        double dt = opMode.time - profile_init_time;
+        if(manualPower == 0 || dt < profiler.getEntire_dt()) {
+            controller.setSetPoint(profiler.motion_profile_pos(dt));
+            motor.set(powerUp * controller.calculate(motor.getCurrentPosition()));
         }else{
             controller.setSetPoint(motor.getCurrentPosition());
             motor.set(manualPower/manualDivide);
