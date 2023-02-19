@@ -14,7 +14,7 @@ public class Turret {
 
     public static double slideOut = 0, slideIn = 1;
     public static double p = 0, i = 0, d = 0, f = 0, staticF = 0;
-    public static double tolerance = 0, powerUp = 0, powerDown = 0, manualDivide = 3, manualPower = 0;
+    public static double tolerance = 0, powerUp = 0, powerDown = 0, manualDivide = 1.5, manualPower = 0;
     public static double tickToAngle = 1000;
     public static int MAXHEIGHT = 5000, fullOut = 3700, fullIn = 2900, outtake = 1700, saveState = 0;
     private int target = 0;

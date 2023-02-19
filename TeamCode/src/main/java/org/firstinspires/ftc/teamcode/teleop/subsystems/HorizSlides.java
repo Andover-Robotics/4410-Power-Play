@@ -11,11 +11,9 @@ public class HorizSlides {
 
     private final MotorEx motor;
     private final PIDFController controller;
-
-    public static double slideOut = 0, slideIn = 1;
-    public static double p = 0, i = 0, d = 0, f = 0, staticF = 0;
-    public static double tolerance = 0, powerUp = 0, powerDown = 0, manualDivide = 3, manualPower = 0;
-    public static int MAXHEIGHT = 5000, fullOut = 3700, fullIn = 2900, outtake = 1700, intake = 2000;
+    public static double p = 0.04, i = 0, d = 0, f = 0, staticF = 0;
+    public static double tolerance = 10, powerUp = 0.1, manualDivide = 1.5, manualPower = 0;
+    public static int MAXHEIGHT = 5000, fullOut = 580, fullIn = 0, outtake = 1700, intake = 2000;
     private int target = 0;
 
     public HorizSlides(OpMode opMode){
@@ -60,10 +58,8 @@ public class HorizSlides {
         if(manualPower == 0) {
             if (controller.atSetPoint()) {
                 motor.set(staticF);
-            } else if (motor.getCurrentPosition() < target) {
+            } else{
                 motor.set(powerUp * controller.calculate(motor.getCurrentPosition()));
-            } else {
-                motor.set(powerDown);
             }
         }else{
             controller.setSetPoint(motor.getCurrentPosition());

@@ -37,9 +37,9 @@ public class AllPositionTester extends LinearOpMode {
                 bot.claw.close();
             }
 
-            if(gp2.wasJustPressed(GamepadKeys.Button.RIGHT_STICK_BUTTON)){
+            if(gp2.wasJustPressed(GamepadKeys.Button.START)){
                 bot.horizSlides.runToFullOut();
-            }else if(gp2.wasJustPressed(GamepadKeys.Button.LEFT_STICK_BUTTON)){
+            }else if(gp2.wasJustPressed(GamepadKeys.Button.BACK)){
                 bot.horizSlides.runToFullIn();
             }
 
@@ -76,7 +76,7 @@ public class AllPositionTester extends LinearOpMode {
             bot.horizSlides.runManual(-gp2.getRightY());
             bot.slides.runManual(-gp2.getLeftY());
             bot.turret.runManual(gp2.getLeftX());
-            if(gp2.wasJustPressed(GamepadKeys.Button.START)){
+            if(gp2.wasJustPressed(GamepadKeys.Button.RIGHT_STICK_BUTTON)){
                 bot.resetEncoder();
             }
 
