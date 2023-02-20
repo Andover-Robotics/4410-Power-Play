@@ -10,6 +10,7 @@ import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 
 import org.firstinspires.ftc.robotcore.external.navigation.AngleUnit;
 import org.firstinspires.ftc.teamcode.teleop.subsystems.Bot;
+import org.firstinspires.ftc.teamcode.teleop.subsystems.Slides;
 
 @TeleOp(name="all position tester")
 public class AllPositionTester extends LinearOpMode {
@@ -39,6 +40,7 @@ public class AllPositionTester extends LinearOpMode {
 
             if(gp2.wasJustPressed(GamepadKeys.Button.START)){
                 bot.horizSlides.runToFullOut();
+                telemetry.addLine("running thing");
             }else if(gp2.wasJustPressed(GamepadKeys.Button.BACK)){
                 bot.horizSlides.runToFullIn();
             }
@@ -72,6 +74,9 @@ public class AllPositionTester extends LinearOpMode {
             }
 
 
+            if(gp2.wasJustPressed(GamepadKeys.Button.LEFT_STICK_BUTTON)){
+                bot.turret.runToFront();
+            }
 
             bot.horizSlides.runManual(-gp2.getRightY());
             bot.slides.runManual(-gp2.getLeftY());
@@ -88,11 +93,10 @@ public class AllPositionTester extends LinearOpMode {
             telemetry.addData("vert slides", bot.slides.getPosition());
             telemetry.addData("horiz slides", bot.horizSlides.getPosition());
             telemetry.addData("slides current", bot.slides.getCurrent());
+            telemetry.addData("slides total time", Slides.profiler.getEntire_dt());
+            telemetry.addData("horiz slides target", bot.horizSlides.getTarget());
             telemetry.update();
 
         }
-    }
-    private double getIMU(){
-        return (bot.imu0.getAngularOrientation().toAngleUnit(AngleUnit.RADIANS).firstAngle + bot.imu1.getAngularOrientation().toAngleUnit(AngleUnit.RADIANS).firstAngle) / 2;
     }
 }

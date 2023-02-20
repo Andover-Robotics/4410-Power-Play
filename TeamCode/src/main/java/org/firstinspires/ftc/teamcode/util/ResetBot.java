@@ -9,6 +9,7 @@ import org.firstinspires.ftc.teamcode.teleop.subsystems.Bot;
 public class ResetBot extends LinearOpMode {
     @Override
     public void runOpMode() throws InterruptedException {
+        waitForStart();
         Bot.instance = null;
     }
 }

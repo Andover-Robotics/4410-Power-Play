@@ -52,6 +52,7 @@ public class MainAutonomous extends LinearOpMode {
 //        imu.initialize(parameters);
 
         GamepadEx gp1 = new GamepadEx(gamepad1);
+        GamepadEx gp2 = new GamepadEx(gamepad2);
 
         //CAMERA STUFF =====================
 
@@ -159,173 +160,209 @@ public class MainAutonomous extends LinearOpMode {
 
         waitForStart();
 
-        bot.claw.close();
-
-        Thread slidePeriodic = new Thread(() -> {
-            while(opModeIsActive()){
-                bot.slides.periodic();
+//        bot.claw.close();
+//
+//        Thread slidePeriodic = new Thread(() -> {
+//            while(opModeIsActive()){
+//                bot.slides.periodic();
+//            }
+//        });
+//        slidePeriodic.start();
+//        bot.claw.close();
+//
+//
+//
+//        Pose2d startPose = new Pose2d(0,0,0);
+//        Pose2d park1Pose = new Pose2d(12, 0,0);
+//        Pose2d park2Pose = new Pose2d(12, 12, 0);
+//
+//
+//        Trajectory forward = bot.rr.trajectoryBuilder(startPose)
+//                .forward(48)
+//                .build();
+//
+//
+//        //Alliance 1 trajectories
+//        Trajectory alliance1StrafeRight = bot.rr.trajectoryBuilder(forward.end())
+//                .strafeRight(13)
+//                .build();
+//        Trajectory alliance1ApproachJunction = bot.rr.trajectoryBuilder(alliance1StrafeRight.end())
+//                .forward(6)
+//                .build();
+//        Trajectory alliance1GoBack = bot.rr.trajectoryBuilder(alliance1ApproachJunction.end())
+//                .back(4)
+//                .build();
+//        Trajectory alliance1GoToCone = bot.rr.trajectoryBuilder(alliance1GoBack.end())
+//                .strafeLeft(28)
+//                .build();
+//        Trajectory alliance1GoForwardToCone = bot.rr.trajectoryBuilder(new Pose2d(alliance1GoToCone.end().getX(), alliance1GoToCone.end().getY(), Math.toRadians(90)))
+//                .forward(4)
+//                .build();
+//        Trajectory alliance1GoToJunction = bot.rr.trajectoryBuilder(new Pose2d(alliance1GoForwardToCone.end().getX(), alliance1GoForwardToCone.end().getY(), Math.toRadians(0)))
+//                .strafeRight(32)
+//                .build();
+//
+//       /* Trajectory goBack = bot.rr.trajectoryBuilder(new Pose2d(allianceOneGoToJunction.end().getX(), allianceOneGoToJunction.end().getY(), -Math.toRadians(90)))
+//                .back(6)
+//                .build();
+//        */
+//
+//        //Alliance 2 trajectories
+//        Trajectory alliance2StrafeLeft= bot.rr.trajectoryBuilder(forward.end())
+//                .strafeLeft(13)
+//                .build();
+//        Trajectory alliance2ApproachJunction= bot.rr.trajectoryBuilder(alliance2StrafeLeft.end())
+//                .forward(6)
+//                .build();
+//        Trajectory alliance2GoBack = bot.rr.trajectoryBuilder(alliance2ApproachJunction.end())
+//                .back(4)
+//                .build();
+//        Trajectory alliance2GoToCone = bot.rr.trajectoryBuilder(alliance2GoBack.end())
+//                .strafeRight(28)
+//                .build();
+//        Trajectory alliance2GoForwardToCone = bot.rr.trajectoryBuilder(new Pose2d(alliance2GoToCone.end().getX(), alliance2GoToCone.end().getY(), -Math.toRadians(90)))
+//                .forward(4)
+//                .build();
+//        Trajectory alliance2GoToJunction = bot.rr.trajectoryBuilder(new Pose2d(alliance2GoForwardToCone.end().getX(), alliance2GoForwardToCone.end().getY(), Math.toRadians(0)))
+//                .strafeLeft(32)
+//                .build();
+//
+//
+//        bot.rr.followTrajectory(forward);
+//
+//        if(!isRight) {
+//            bot.slides.runToTop();
+//            bot.rr.followTrajectory(alliance1StrafeRight);
+//
+//            bot.rr.followTrajectory(alliance1ApproachJunction);
+//            bot.slides.goDown();
+//            sleep(100);
+//            bot.claw.open();            //Cone placed
+//            bot.rr.followTrajectory(alliance1GoBack);
+//            bot.slides.runTo(580);
+//            bot.rr.followTrajectory(alliance1GoToCone);
+//            bot.rr.turn(Math.toRadians(90));
+//            bot.rr.followTrajectory(alliance1GoForwardToCone);
+//            bot.claw.close();
+//            //new cone picked up
+//            sleep(400);
+//            bot.slides.runToTop();
+//            bot.rr.turn(-Math.toRadians(90));
+//            bot.rr.followTrajectory(alliance1GoToJunction);
+//
+//            bot.rr.followTrajectory(alliance1ApproachJunction);
+//            bot.slides.goDown();
+//            sleep(100);
+//            bot.claw.open();
+//            //cone placed
+//            for(int i =0; i< 5; i++){
+//                int runTo = 460;
+//                bot.rr.followTrajectory(alliance1GoBack);
+//                bot.slides.runTo(runTo);
+//                bot.rr.followTrajectory(alliance1GoToCone);
+//                bot.rr.turn(Math.toRadians(90));
+//                bot.rr.followTrajectory(alliance1GoForwardToCone);
+//                bot.claw.close();
+//                //new cone picked up
+//                sleep(400);
+//                bot.slides.runToTop();
+//                bot.rr.turn(-Math.toRadians(90));
+//                bot.rr.followTrajectory(alliance1GoToJunction);
+//
+//                bot.rr.followTrajectory(alliance1ApproachJunction);
+//                bot.slides.goDown();
+//                sleep(100);
+//                bot.claw.open();
+//
+//                runTo -= 70;
+//            }
+//            bot.rr.followTrajectory(alliance1GoBack);
+//        }
+//
+//        else {
+//
+//            bot.slides.runToTop();
+//            bot.rr.followTrajectory(alliance2StrafeLeft);
+//
+//            bot.rr.followTrajectory(alliance2ApproachJunction);
+//            bot.slides.goDown();
+//            sleep(100);
+//            bot.claw.open();
+//            //Cone placed
+//            bot.rr.followTrajectory(alliance2GoBack);
+//            bot.slides.runTo(580);
+//            bot.rr.followTrajectory(alliance2GoToCone);
+//            bot.rr.turn(Math.toRadians(90));
+//            bot.rr.followTrajectory(alliance2GoForwardToCone);
+//            bot.claw.close();
+//            //new cone picked up
+//            sleep(400);
+//            bot.slides.runToTop();
+//            bot.rr.turn(-Math.toRadians(90));
+//            bot.rr.followTrajectory(alliance2GoToJunction);
+//
+//            bot.rr.followTrajectory(alliance2ApproachJunction);
+//            bot.slides.goDown();
+//            sleep(100);
+//            bot.claw.open();
+//            //cone placed
+//            bot.rr.followTrajectory(alliance2GoBack);
+//            bot.slides.runTo(460);
+//            bot.rr.followTrajectory(alliance2GoToCone);
+//            bot.rr.turn(Math.toRadians(90));
+//            bot.rr.followTrajectory(alliance2GoForwardToCone);
+//            bot.claw.close();
+//            //new cone picked up
+//            sleep(400);
+//            bot.slides.runToTop();
+//            bot.rr.turn(-Math.toRadians(90));
+//            bot.rr.followTrajectory(alliance2GoToJunction);
+//
+//            bot.rr.followTrajectory(alliance2ApproachJunction);
+//            bot.slides.goDown();
+//            sleep(100);
+//            bot.claw.open();
+//            bot.rr.followTrajectory(alliance2GoBack);
+//
+//        }
+//        bot.slides.runToBottom();
+//        slidePeriodic.interrupt();
+        Thread runBack, outtake;
+        while(!isStopRequested() && opModeIsActive()){
+            gp2.readButtons();
+            if(gp2.wasJustPressed(GamepadKeys.Button.Y)){
+                bot.turret.runToAutoIntake();
             }
-        });
-        slidePeriodic.start();
-        bot.claw.close();
-
-
-
-        Pose2d startPose = new Pose2d(0,0,0);
-        Pose2d park1Pose = new Pose2d(12, 0,0);
-        Pose2d park2Pose = new Pose2d(12, 12, 0);
-
-
-        Trajectory forward = bot.rr.trajectoryBuilder(startPose)
-                .forward(48)
-                .build();
-
-
-        //Alliance 1 trajectories
-        Trajectory alliance1StrafeRight = bot.rr.trajectoryBuilder(forward.end())
-                .strafeRight(13)
-                .build();
-        Trajectory alliance1ApproachJunction = bot.rr.trajectoryBuilder(alliance1StrafeRight.end())
-                .forward(6)
-                .build();
-        Trajectory alliance1GoBack = bot.rr.trajectoryBuilder(alliance1ApproachJunction.end())
-                .back(4)
-                .build();
-        Trajectory alliance1GoToCone = bot.rr.trajectoryBuilder(alliance1GoBack.end())
-                .strafeLeft(28)
-                .build();
-        Trajectory alliance1GoForwardToCone = bot.rr.trajectoryBuilder(new Pose2d(alliance1GoToCone.end().getX(), alliance1GoToCone.end().getY(), Math.toRadians(90)))
-                .forward(4)
-                .build();
-        Trajectory alliance1GoToJunction = bot.rr.trajectoryBuilder(new Pose2d(alliance1GoForwardToCone.end().getX(), alliance1GoForwardToCone.end().getY(), Math.toRadians(0)))
-                .strafeRight(32)
-                .build();
-
-       /* Trajectory goBack = bot.rr.trajectoryBuilder(new Pose2d(allianceOneGoToJunction.end().getX(), allianceOneGoToJunction.end().getY(), -Math.toRadians(90)))
-                .back(6)
-                .build();
-        */
-
-        //Alliance 2 trajectories
-        Trajectory alliance2StrafeLeft= bot.rr.trajectoryBuilder(forward.end())
-                .strafeLeft(13)
-                .build();
-        Trajectory alliance2ApproachJunction= bot.rr.trajectoryBuilder(alliance2StrafeLeft.end())
-                .forward(6)
-                .build();
-        Trajectory alliance2GoBack = bot.rr.trajectoryBuilder(alliance2ApproachJunction.end())
-                .back(4)
-                .build();
-        Trajectory alliance2GoToCone = bot.rr.trajectoryBuilder(alliance2GoBack.end())
-                .strafeRight(28)
-                .build();
-        Trajectory alliance2GoForwardToCone = bot.rr.trajectoryBuilder(new Pose2d(alliance2GoToCone.end().getX(), alliance2GoToCone.end().getY(), -Math.toRadians(90)))
-                .forward(4)
-                .build();
-        Trajectory alliance2GoToJunction = bot.rr.trajectoryBuilder(new Pose2d(alliance2GoForwardToCone.end().getX(), alliance2GoForwardToCone.end().getY(), Math.toRadians(0)))
-                .strafeLeft(32)
-                .build();
-
-
-        bot.rr.followTrajectory(forward);
-
-        if(!isRight) {
-            bot.slides.runToTop();
-            bot.rr.followTrajectory(alliance1StrafeRight);
-
-            bot.rr.followTrajectory(alliance1ApproachJunction);
-            bot.slides.goDown();
-            sleep(100);
-            bot.claw.open();            //Cone placed
-            bot.rr.followTrajectory(alliance1GoBack);
-            bot.slides.runTo(580);
-            bot.rr.followTrajectory(alliance1GoToCone);
-            bot.rr.turn(Math.toRadians(90));
-            bot.rr.followTrajectory(alliance1GoForwardToCone);
-            bot.claw.close();
-            //new cone picked up
-            sleep(400);
-            bot.slides.runToTop();
-            bot.rr.turn(-Math.toRadians(90));
-            bot.rr.followTrajectory(alliance1GoToJunction);
-
-            bot.rr.followTrajectory(alliance1ApproachJunction);
-            bot.slides.goDown();
-            sleep(100);
-            bot.claw.open();
-            //cone placed
-            for(int i =0; i< 5; i++){
-                int runTo = 460;
-                bot.rr.followTrajectory(alliance1GoBack);
-                bot.slides.runTo(runTo);
-                bot.rr.followTrajectory(alliance1GoToCone);
-                bot.rr.turn(Math.toRadians(90));
-                bot.rr.followTrajectory(alliance1GoForwardToCone);
-                bot.claw.close();
-                //new cone picked up
-                sleep(400);
-                bot.slides.runToTop();
-                bot.rr.turn(-Math.toRadians(90));
-                bot.rr.followTrajectory(alliance1GoToJunction);
-
-                bot.rr.followTrajectory(alliance1ApproachJunction);
-                bot.slides.goDown();
-                sleep(100);
+            if(gp2.wasJustPressed(GamepadKeys.Button.B)){
                 bot.claw.open();
-
-                runTo -= 70;
+                bot.arm.intake();
+                bot.horizSlides.runToAutoIntake();
             }
-            bot.rr.followTrajectory(alliance1GoBack);
+            if(gp2.wasJustPressed(GamepadKeys.Button.A)){
+                bot.claw.close();
+                runBack = new Thread(() -> {try{
+                    Thread.sleep(1000);
+                }catch(InterruptedException ignored){
+
+                }
+                    bot.arm.storage(); bot.horizSlides.runToFullIn();});
+                runBack.start();
+            }
+            if(gp2.wasJustPressed(GamepadKeys.Button.X)){
+                bot.turret.runToAutoOuttake();
+                outtake = new Thread(() -> {try{
+                    Thread.sleep(1000);
+                }catch(InterruptedException e){}
+                    bot.arm.outtake();
+                    try{
+                        Thread.sleep(1000);
+                    }catch(InterruptedException e){}
+                    bot.arm.secure();
+                    bot.claw.open();});
+                outtake.start();
+
+            }
         }
-
-        else {
-
-            bot.slides.runToTop();
-            bot.rr.followTrajectory(alliance2StrafeLeft);
-
-            bot.rr.followTrajectory(alliance2ApproachJunction);
-            bot.slides.goDown();
-            sleep(100);
-            bot.claw.open();
-            //Cone placed
-            bot.rr.followTrajectory(alliance2GoBack);
-            bot.slides.runTo(580);
-            bot.rr.followTrajectory(alliance2GoToCone);
-            bot.rr.turn(Math.toRadians(90));
-            bot.rr.followTrajectory(alliance2GoForwardToCone);
-            bot.claw.close();
-            //new cone picked up
-            sleep(400);
-            bot.slides.runToTop();
-            bot.rr.turn(-Math.toRadians(90));
-            bot.rr.followTrajectory(alliance2GoToJunction);
-
-            bot.rr.followTrajectory(alliance2ApproachJunction);
-            bot.slides.goDown();
-            sleep(100);
-            bot.claw.open();
-            //cone placed
-            bot.rr.followTrajectory(alliance2GoBack);
-            bot.slides.runTo(460);
-            bot.rr.followTrajectory(alliance2GoToCone);
-            bot.rr.turn(Math.toRadians(90));
-            bot.rr.followTrajectory(alliance2GoForwardToCone);
-            bot.claw.close();
-            //new cone picked up
-            sleep(400);
-            bot.slides.runToTop();
-            bot.rr.turn(-Math.toRadians(90));
-            bot.rr.followTrajectory(alliance2GoToJunction);
-
-            bot.rr.followTrajectory(alliance2ApproachJunction);
-            bot.slides.goDown();
-            sleep(100);
-            bot.claw.open();
-            bot.rr.followTrajectory(alliance2GoBack);
-
-        }
-        bot.slides.runToBottom();
-        slidePeriodic.interrupt();
     }
 
 

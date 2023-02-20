@@ -34,7 +34,6 @@ public class Bot {
     public OpMode opMode;
 
     public BNO055IMU imu0;
-    public BNO055IMU imu1;
     public boolean fieldCentricRunMode = true;
 
     public static Bot getInstance() {
@@ -78,7 +77,6 @@ public class Bot {
         }
         catch(Exception e){
             imu0=null;
-            imu1=null;
             fieldCentricRunMode = false;
 
         }
@@ -118,7 +116,6 @@ public class Bot {
 
     public void initializeImus() {
         imu0 = opMode.hardwareMap.get(BNO055IMU.class, "imu");
-        imu1 = opMode.hardwareMap.get(BNO055IMU.class, "imu1");
 
         final BNO055IMU.Parameters parameters = new BNO055IMU.Parameters();
 
@@ -128,7 +125,6 @@ public class Bot {
         parameters.loggingEnabled = false;
 
         imu0.initialize(parameters);
-        imu1.initialize(parameters);
     }
 
 

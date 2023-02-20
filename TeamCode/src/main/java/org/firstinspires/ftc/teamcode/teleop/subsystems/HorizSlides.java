@@ -16,12 +16,12 @@ public class HorizSlides {
     private final PIDFController controller;
     private final OpMode opMode;
     public static double p = 0.04, i = 0, d = 0, f = 0;
-    public static double tolerance = 10, powerUp = 0.1, manualDivide = 1.5, manualPower = 0, powerMin = 0.1;
-    public static int fullOut = 580, fullIn = 0, outtake = 0;
+    private static double tolerance = 5, powerUp = 0.1, manualDivide = 1.5, manualPower = 0, powerMin = 0.1;
+    public static int fullOut = 580, fullIn = 0, outtake = 0, autoIntake = 520;
     private int target = 0;
-    private double profile_init_time = 0;
+    private double profile_init_time = 0, dt = 0;
 
-    private static MotionProfiler profiler = new MotionProfiler(1, 1);
+    public static MotionProfiler profiler = new MotionProfiler(3000, 6000);
 
     public HorizSlides(OpMode opMode){
         motor = new MotorEx(opMode.hardwareMap, "slidesHoriz", Motor.GoBILDA.RPM_1150);
@@ -46,6 +46,9 @@ public class HorizSlides {
     public void runToFullOut(){
         runTo(fullOut);
     }
+    public void runToAutoIntake(){
+        runTo(autoIntake);
+    }
     public void runToOuttake(){
         runTo(outtake);
     }
@@ -61,13 +64,17 @@ public class HorizSlides {
     public void periodic(){
         motor.setInverted(false);
         controller.setPIDF(p, i, d, f);
-        double dt = opMode.time - profile_init_time;
-        if(manualPower == 0 || dt < profiler.getEntire_dt()) {
+        dt = opMode.time - profile_init_time;
+        if(!profiler.isOver()) {
             controller.setSetPoint(profiler.motion_profile_pos(dt));
             motor.set(powerUp * controller.calculate(motor.getCurrentPosition()));
         }else{
-            controller.setSetPoint(motor.getCurrentPosition());
-            motor.set(manualPower/manualDivide);
+            if(manualPower != 0) {
+                controller.setSetPoint(motor.getCurrentPosition());
+                motor.set(manualPower / manualDivide);
+            }else{
+                motor.set(powerUp * controller.calculate(motor.getCurrentPosition()));
+            }
         }
     }
 
@@ -78,5 +85,10 @@ public class HorizSlides {
     public int getPosition(){
         return motor.getCurrentPosition();
     }
+
+    public double getTarget(){
+        return profiler.motion_profile_pos(dt);
+    }
+
 
 }

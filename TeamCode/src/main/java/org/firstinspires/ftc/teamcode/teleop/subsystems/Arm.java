@@ -9,6 +9,11 @@ public class Arm {
     private final Servo armLeft, armRight, bar;
 
     public static double armIntake = 0.25, armOuttake = 0.5, armStorage = 0.75, barIntake = 0.61, barOuttakeUp = 0.5, barOuttakeDown = 0.43;
+    public static double coneArm5 = 0.4, conebar5 = 0.5;
+    public static double coneArm4 = 0.37, conebar4 = 0.5 ;
+    public static double coneArm3 = 0.34, conebar3 = 0.53;
+    public static double coneArm2 = 0.3, conebar2 = 0.56;
+    public static double coneArm1 = 0.25, conebar1 =0.6;
 
     public Arm(OpMode opMode){
         armLeft = opMode.hardwareMap.servo.get("armLeft");

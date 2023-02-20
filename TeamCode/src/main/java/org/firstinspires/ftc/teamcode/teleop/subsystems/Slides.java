@@ -16,15 +16,15 @@ public class Slides {
     private final MotorEx motorLeft;
     private final MotorEx motorRight;
     private final PIDFController controller;
-    public static double p = 0, i = 0, d = 0, f = 0, staticF = 0;
-    public static double tolerance = 0, powerUp = 0, powerDown = 0, manualDivide = 1, manualPower = 0, powerMin = 0.1;
-    public static int MAXHEIGHT = 5000, top = -1761, mid = -1185, low = -280, ground = 0, inc = 100, dec = 100;
+    public static double p = 0.08, i = 0, d = 0, f = 0, staticF = 0.3;
+    private static double tolerance = 30, powerUp = 0.1, manualDivide = 1, manualPower = 0, powerMin = 0.1;
+    public static int MAXHEIGHT = -1800, top = -1758, mid = -1185, low = -280, ground = 0, inc = 100, dec = 100;
 
     private int target = 0;
 
     private final OpMode opMode;
     private double profile_init_time = 0;
-    private static MotionProfiler profiler = new MotionProfiler(1, 1);
+    public static MotionProfiler profiler = new MotionProfiler(10000, 10000);
 
     public Slides(OpMode opMode){
         motorLeft = new MotorEx(opMode.hardwareMap, "slidesLeft", Motor.GoBILDA.RPM_435);
@@ -84,20 +84,21 @@ public class Slides {
         motorLeft.setInverted(true);
         controller.setPIDF(p, i, d, f);
         double dt = opMode.time - profile_init_time;
-        if(manualPower == 0 || dt < profiler.getEntire_dt()) {
+        if(!profiler.isOver()) {
             controller.setSetPoint(profiler.motion_profile_pos(dt));
-            if(dt < profiler.getEntire_dt()){
-                double power = powerUp * controller.calculate(motorLeft.getCurrentPosition());
+            double power = powerUp * controller.calculate(motorLeft.getCurrentPosition());
+            motorLeft.set(power);
+            motorRight.set(power);
+        }else {
+            if(manualPower != 0) {
+                controller.setSetPoint(motorLeft.getCurrentPosition());
+                motorLeft.set(manualPower / manualDivide);
+                motorRight.set(manualPower / manualDivide);
+            }else{
+                double power = staticF * controller.calculate(motorLeft.getCurrentPosition());
                 motorLeft.set(power);
                 motorRight.set(power);
-            }else{
-                motorLeft.set(staticF);
-                motorRight.set(staticF);
             }
-        }else {
-            controller.setSetPoint(motorLeft.getCurrentPosition());
-            motorLeft.set(manualPower / manualDivide);
-            motorRight.set(manualPower / manualDivide);
         }
     }
     public double isHigh(){
@@ -115,5 +116,6 @@ public class Slides {
     public int getPosition(){
         return motorLeft.getCurrentPosition();
     }
+
 
 }

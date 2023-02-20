@@ -14,15 +14,11 @@ public class Turret {
     private final MotorEx motor;
     private final PIDFController controller;
 
-    public static double slideOut = 0, slideIn = 1;
-    public static double p = 0, i = 0, d = 0, f = 0, staticF = 0;
-    public static double tolerance = 0, powerUp = 0,    powerDown = 0, manualDivide = 1.5, manualPower = 0, powerMin = 0.1;
-    public static double tickToAngle = 1000;
-    public static int MAXHEIGHT = 5000, fullOut = 3700, fullIn = 2900, outtake = 1700, saveState = 0;
+    public static double p = 0.08, i = 0, d = 0, f = 0;
+    private static double tolerance = 5, powerUp = 0.1, manualDivide = 1.5, manualPower = 0, powerMin = 0.1;
+    public static double tickToAngle = 3200/Math.PI/2;
+    public static int saveState = 0, turretAuto = 3527, turretAutoIntake = -800, turretAutoOuttake = 454, limit = 5400;
     private int target = 0;
-    private final OpMode opMode;
-    private double profile_init_time = 0;
-    private static MotionProfiler profiler = new MotionProfiler(1, 1);
 
     public Turret(OpMode opMode){
         motor = new MotorEx(opMode.hardwareMap, "turret", Motor.GoBILDA.RPM_1150);
@@ -32,17 +28,23 @@ public class Turret {
         controller.setSetPoint(target);
         motor.setRunMode(Motor.RunMode.RawPower);
         motor.setZeroPowerBehavior(Motor.ZeroPowerBehavior.BRAKE);
-        this.opMode = opMode;
     }
 
     public void runTo(int t){
-        profiler.init_new_profile(motor.getCurrentPosition(), t);
-        profile_init_time = opMode.time;
+        controller.setSetPoint(t);
         target = t;
     }
 
     public void runToFront(){
         runTo(0);
+    }
+
+    public void runToAutoIntake(){
+        runTo(turretAutoIntake);
+    }
+
+    public void runToAutoOuttake(){
+        runTo(turretAutoOuttake);
     }
 
     public void runToSaveState(){
@@ -58,7 +60,15 @@ public class Turret {
     }
 
     public void runToAngle(double angle, double imu){
-        //TODO calculate ticksTOAngle
+        int target = (int)((angle - imu)*tickToAngle);
+        while(Math.abs(target - motor.getCurrentPosition()) > tickToAngle*3/5){
+            if(target < motor.getCurrentPosition()){
+                target += tickToAngle*2*Math.PI;
+            }else{
+                target -= tickToAngle*2*Math.PI;
+            }
+        }
+        runTo(target);
     }
 
     public void savePosition(){
@@ -68,13 +78,20 @@ public class Turret {
     public void periodic(){
         motor.setInverted(false);
         controller.setPIDF(p, i, d, f);
-        double dt = opMode.time - profile_init_time;
-        if(manualPower == 0 || dt < profiler.getEntire_dt()) {
-            controller.setSetPoint(profiler.motion_profile_pos(dt));
+        if(Math.abs(motor.getCurrentPosition()) > limit){
+            if(motor.getCurrentPosition() > 0){
+                controller.setSetPoint(limit-100);
+            }else{
+                controller.setSetPoint(100-limit);
+            }
             motor.set(powerUp * controller.calculate(motor.getCurrentPosition()));
-        }else{
-            controller.setSetPoint(motor.getCurrentPosition());
-            motor.set(manualPower/manualDivide);
+        }else {
+            if (manualPower != 0) {
+                motor.set(manualPower / manualDivide);
+                controller.setSetPoint(motor.getCurrentPosition());
+            } else {
+                motor.set(powerUp * controller.calculate(motor.getCurrentPosition()));
+            }
         }
     }
 

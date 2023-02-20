@@ -44,66 +44,70 @@ public class MainTeleOp extends LinearOpMode {
             if(gp2.wasJustPressed(GamepadKeys.Button.START)){
                 debugMode = !debugMode;
             }
+            if(gp1.wasJustPressed(GamepadKeys.Button.START)){
+                bot.fieldCentricRunMode = !bot.fieldCentricRunMode;
+            }
 
             if(!debugMode) {//finite state
-                if (bot.state == Bot.BotState.INTAKE || bot.state == Bot.BotState.INTAKE_OUT) {
-                    if(gp2.getButton(GamepadKeys.Button.A)){
-                        if(!cancelPrevAction) {
-                            bot.claw.close();
-                        }
-                        if(gp2.wasJustPressed(GamepadKeys.Button.X)){
-                            bot.claw.open();
-                            cancelPrevAction = true;
-                        }
-                    }
-                    if(gp2.wasJustReleased(GamepadKeys.Button.A)){
-                        if(!cancelPrevAction){
-                            bot.storage();
-                        }
-                        cancelPrevAction = false;
-                    }
-                } else if (bot.state == Bot.BotState.STORAGE) {
-                    if (gp2.wasJustPressed(GamepadKeys.Button.A)) {
-                        bot.intakeIn();
-                    } else if (gp2.wasJustPressed(GamepadKeys.Button.X)) {
-                        bot.intakeOut();
-                    } else if (gp2.wasJustPressed(GamepadKeys.Button.Y)) {
-                        bot.outtake();
-                    }
-                } else if (bot.state == Bot.BotState.OUTTAKE || bot.state == Bot.BotState.SECURE) {
-                    if(gp2.getButton(GamepadKeys.Button.A)){
-                        if(!cancelPrevAction) {
-                            bot.secure();
-                        }
-                        if(gp2.wasJustPressed(GamepadKeys.Button.X)){
-                            bot.outtake();
-                            cancelPrevAction = true;
-                        }
-                        if(gp2.wasJustReleased(GamepadKeys.Button.A)){
-                            if(!cancelPrevAction){
-                                bot.claw.open();
-                                bot.storage();
-//                                Thread storage = new Thread(() -> {sleep(1000); bot.storage();});
-//                                storage.start();
-                            }
-                            cancelPrevAction = false;
-                        }
-                    }
+//                if (bot.state == Bot.BotState.INTAKE || bot.state == Bot.BotState.INTAKE_OUT) {
+//                    if(gp2.getButton(GamepadKeys.Button.A)){
+//                        if(!cancelPrevAction) {
+//                            bot.claw.close();
+//                        }
+//                        if(gp2.wasJustPressed(GamepadKeys.Button.X)){
+//                            bot.claw.open();
+//                            cancelPrevAction = true;
+//                        }
+//                    }
+//                    if(gp2.wasJustReleased(GamepadKeys.Button.A)){
+//                        if(!cancelPrevAction){
+//                            bot.storage();
+//                        }
+//                        cancelPrevAction = false;
+//                    }
+//                } else if (bot.state == Bot.BotState.STORAGE) {
+//                    if (gp2.wasJustPressed(GamepadKeys.Button.A)) {
+//                        bot.intakeIn();
+//                    } else if (gp2.wasJustPressed(GamepadKeys.Button.X)) {
+//                        bot.intakeOut();
+//                    } else if (gp2.wasJustPressed(GamepadKeys.Button.Y)) {
+//                        bot.outtake();
+//                    }
+//                } else if (bot.state == Bot.BotState.OUTTAKE || bot.state == Bot.BotState.SECURE) {
+//                    if(gp2.getButton(GamepadKeys.Button.A)){
+//                        if(!cancelPrevAction) {
+//                            bot.secure();
+//                        }
+//                        if(gp2.wasJustPressed(GamepadKeys.Button.X)){
+//                            bot.outtake();
+//                            cancelPrevAction = true;
+//                        }
+//                        if(gp2.wasJustReleased(GamepadKeys.Button.A)){
+//                            if(!cancelPrevAction){
+//                                bot.claw.open();
+//                                bot.storage();
+////                                Thread storage = new Thread(() -> {sleep(1000); bot.storage();});
+////                                storage.start();
+//                            }
+//                            cancelPrevAction = false;
+//                        }
+//                    }
+//
+//
+//
+//                    if (gp2.getButton(GamepadKeys.Button.A)) {
+//                        bot.secure();
+//                    } else {
+//                        bot.outtake();
+//                    }
+//                    if (bot.state == Bot.BotState.SECURE && gp2.wasJustPressed(GamepadKeys.Button.B)) {
+//                        bot.claw.open();
+//                        bot.storage();
+//                    }
+//                }
+//                double gyro = getIMU() - fieldCentricOffset;
+//                bot.turret.runToAngle(0, gyro);//TODO calc angle from thing
 
-
-
-                    if (gp2.getButton(GamepadKeys.Button.A)) {
-                        bot.secure();
-                    } else {
-                        bot.outtake();
-                    }
-                    if (bot.state == Bot.BotState.SECURE && gp2.wasJustPressed(GamepadKeys.Button.B)) {
-                        bot.claw.open();
-                        bot.storage();
-                    }
-                }
-                double gyro = getIMU() - fieldCentricOffset;
-                bot.turret.runToAngle(0, gyro);//TODO calc angle from thing
             }else{
                 bot.horizSlides.runManual(-gp2.getRightY());
                 bot.slides.runManual(-gp2.getLeftY());
@@ -134,14 +138,13 @@ public class MainTeleOp extends LinearOpMode {
 
 
             bot.slides.periodic();
-//            bot.horizSlides.runToFullIn();
             bot.horizSlides.periodic();
             bot.turret.periodic();
-            bot.arm.storage();
 
             telemetry.addData("drive current", bot.getCurrent());
             telemetry.addData("slide current", bot.slides.getCurrent());
-            telemetry.addData("imu", bot.imu0.getAngularOrientation());
+            telemetry.addData("imu", bot.imu0.getAngularOrientation().firstAngle);
+            telemetry.addData("getIMU", getIMU());
             telemetry.update();
 
             drive();
@@ -157,26 +160,25 @@ public class MainTeleOp extends LinearOpMode {
         driveSpeed *= 1 - 0.5 * gp1.getTrigger(GamepadKeys.Trigger.RIGHT_TRIGGER);
         driveSpeed = Math.max(0, driveSpeed);
         bot.fixMotors();
-        Vector2d driveVector = new Vector2d(gp1.getLeftX(), gp1.getLeftY()),
+        Vector2d driveVector = new Vector2d(gp1.getLeftX(), -gp1.getLeftY()),
                 turnVector = new Vector2d(
                         gp1.getRightX() , 0);
         if (bot.fieldCentricRunMode) {
             bot.driveFieldCentric(
                     driveVector.getX() * driveSpeed,
                     driveVector.getY() * driveSpeed,
-                    -turnVector.getX() * driveSpeed,
+                    turnVector.getX() * driveSpeed,
                     getIMU() - fieldCentricOffset
             );
         } else {
             bot.driveRobotCentric(driveVector.getX() * driveSpeed,
                     driveVector.getY() * driveSpeed,
-                    -turnVector.getX() * driveSpeed
+                    turnVector.getX() * driveSpeed
             );
         }
     }
     private double getIMU(){
-        return -(bot.imu0.getAngularOrientation().toAngleUnit(AngleUnit.RADIANS).firstAngle +
-                bot.imu1.getAngularOrientation().toAngleUnit(AngleUnit.RADIANS).firstAngle) / 2 + 180;
+        return (bot.imu0.getAngularOrientation().toAngleUnit(AngleUnit.RADIANS).firstAngle+360)%360;
     }
 }
 
