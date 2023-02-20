@@ -9,6 +9,7 @@ import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 
 import org.firstinspires.ftc.robotcore.external.hardware.camera.WebcamName;
 import org.firstinspires.ftc.teamcode.teleop.subsystems.Bot;
+import org.firstinspires.ftc.teamcode.teleop.subsystems.Turret;
 import org.openftc.apriltag.AprilTagDetection;
 import org.openftc.easyopencv.OpenCvCamera;
 import org.openftc.easyopencv.OpenCvCameraFactory;
@@ -21,6 +22,8 @@ public class MainAutonomous extends LinearOpMode {
 
     Bot bot;
     boolean isRight;
+
+
 
     static final double FEET_PER_METER = 3.28084;
 
@@ -42,6 +45,7 @@ public class MainAutonomous extends LinearOpMode {
     public void runOpMode() throws InterruptedException {
         telemetry.setAutoClear(true);
         bot = Bot.getInstance(this);
+        Turret turret = new Turret(this);
 
         // Retrieve the IMU from the hardware map
 //        BNO055IMU imu = hardwareMap.get(BNO055IMU.class, "imu");
@@ -363,7 +367,13 @@ public class MainAutonomous extends LinearOpMode {
 //
 //            }
 //        }
+
         SampleMecanumDrive drive = new SampleMecanumDrive(hardwareMap);
+
+
+        bot.turret.periodic();
+        bot.slides.periodic();
+        bot.horizSlides.periodic();
 
         Pose2d startPose = new Pose2d(0,0,0);
         drive.setPoseEstimate(startPose);
@@ -372,16 +382,17 @@ public class MainAutonomous extends LinearOpMode {
                 .build();
 
         bot.claw.close();
+        bot.turret.runToAutoRightOuttake();
+        sleep(2000);
         drive.followTrajectory(forward);
+        bot.slides.runToTop();
+        sleep(1000);
+        bot.arm.outtake();
+        bot.claw.open();
+        telemetry.addLine("Scored preloaded");
 //        sleep(1000);
-//        bot.turret.runToAutoOuttake();
-//        bot.slides.runToTop();
-//        bot.arm.outtake();
-//        bot.claw.open();
-//        telemetry.addLine("Scored preloaded");
-//        sleep(1000);
-//        bot.arm.storage();
-//        bot.slides.runToBottom();
+        bot.arm.storage();
+        bot.slides.runToBottom();
 //
 //        for(int i=0; i<5; i++){
 //            bot.turret.runToAutoIntake();
