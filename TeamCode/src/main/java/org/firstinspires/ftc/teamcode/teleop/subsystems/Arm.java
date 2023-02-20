@@ -52,4 +52,26 @@ public class Arm {
         setBar(barOuttakeDown);
         setArm(armOuttake);
     }
+
+    public void intakeAuto5(){
+        setBar(conebar5);
+        setArm(coneArm5);
+    }
+    public void intakeAuto4(){
+        setBar(conebar4);
+        setArm(coneArm4);
+    }
+    public void intakeAuto3(){
+        setBar(conebar3);
+        setArm(coneArm3);
+    }
+    public void intakeAuto2(){
+        setBar(conebar2);
+        setArm(coneArm2);
+    }
+    public void intakeAuto1(){
+        setBar(conebar1);
+        setArm(coneArm1);
+    }
+
 }

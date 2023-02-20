@@ -19,8 +19,8 @@ import com.qualcomm.robotcore.hardware.PIDFCoefficients;
 public class DriveConstants {
 
 
-    public static final double TICKS_PER_REV = Motor.GoBILDA.RPM_435.getCPR();
-    public static final double MAX_RPM = 435;
+    public static final double TICKS_PER_REV = Motor.GoBILDA.RPM_312.getCPR();
+    public static final double MAX_RPM = 312;
 
     /*
      * Set RUN_USING_ENCODER to true to enable built-in hub velocity control using drive encoders.

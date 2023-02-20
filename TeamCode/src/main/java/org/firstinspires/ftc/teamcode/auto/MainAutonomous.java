@@ -56,105 +56,105 @@ public class MainAutonomous extends LinearOpMode {
 
         //CAMERA STUFF =====================
 
-        WebcamName camName = hardwareMap.get(WebcamName.class, "Webcam 1");
-        OpenCvCamera camera = OpenCvCameraFactory.getInstance().createWebcam(camName);
-        AprilTagDetectionPipeline aprilTagDetectionPipeline = new AprilTagDetectionPipeline(tagsize, fx, fy, cx, cy);
-
-        camera.setPipeline(aprilTagDetectionPipeline);
-        camera.openCameraDeviceAsync(new OpenCvCamera.AsyncCameraOpenListener()
-        {
-            @Override
-            public void onOpened()
-            {
-                camera.startStreaming(1280,720, OpenCvCameraRotation.UPRIGHT);
-            }
-
-            @Override
-            public void onError(int errorCode)
-            {
-
-            }
-        });
-
-        telemetry.setMsTransmissionInterval(50);
-
-
-
-        while(!isStarted()) {
-            if(gp1.wasJustPressed(GamepadKeys.Button.X)){
-                isRight=!isRight;
-            }
-            telemetry.addData("Current FPS:", camera.getFps());
-            telemetry.addData("Current Max FPS:", camera.getCurrentPipelineMaxFps());
-            telemetry.addData("Is right side?", isRight);
-
-            ArrayList<AprilTagDetection> currentDetections = aprilTagDetectionPipeline.getLatestDetections();
-
-            if(currentDetections.size() != 0)
-            {
-                boolean tagFound = false;
-
-                for(AprilTagDetection tag : currentDetections)
-                {
-                    if(tag.id == ID_ONE || tag.id == ID_TWO || tag.id == ID_THREE)
-                    {
-                        tagOfInterest = tag;
-                        tagFound = true;
-                        break;
-                    }
-                }
-
-                if(tagFound)
-                {
-                    telemetry.addLine("Tag of interest is in sight!\n\nLocation data:");
-                    tagToTelemetry(tagOfInterest);
-                }
-                else
-                {
-                    telemetry.addLine("Don't see tag of interest :(");
-
-                    if(tagOfInterest == null)
-                    {
-                        telemetry.addLine("(The tag has never been seen)");
-                    }
-                    else
-                    {
-                        telemetry.addLine("\nBut we HAVE seen the tag before; last seen at:");
-                        tagToTelemetry(tagOfInterest);
-                    }
-                }
-
-            }
-            else
-            {
-                telemetry.addLine("Don't see tag of interest :(");
-
-                if(tagOfInterest == null)
-                {
-                    telemetry.addLine("(The tag has never been seen)");
-                }
-                else
-                {
-                    telemetry.addLine("\nBut we HAVE seen the tag before; last seen at:");
-                    tagToTelemetry(tagOfInterest);
-                }
-
-            }
-
-            telemetry.update();
-            sleep(20);
-
-            gp1.readButtons();
-            if(gp1.wasJustPressed(GamepadKeys.Button.Y)) {
-                bot.claw.close();
-            }
-
-            telemetry.update();
-
-        }
-
-        camera.stopStreaming();
-        camera.closeCameraDevice();
+//        WebcamName camName = hardwareMap.get(WebcamName.class, "Webcam 1");
+//        OpenCvCamera camera = OpenCvCameraFactory.getInstance().createWebcam(camName);
+//        AprilTagDetectionPipeline aprilTagDetectionPipeline = new AprilTagDetectionPipeline(tagsize, fx, fy, cx, cy);
+//
+//        camera.setPipeline(aprilTagDetectionPipeline);
+//        camera.openCameraDeviceAsync(new OpenCvCamera.AsyncCameraOpenListener()
+//        {
+//            @Override
+//            public void onOpened()
+//            {
+//                camera.startStreaming(1280,720, OpenCvCameraRotation.UPRIGHT);
+//            }
+//
+//            @Override
+//            public void onError(int errorCode)
+//            {
+//
+//            }
+//        });
+//
+//        telemetry.setMsTransmissionInterval(50);
+//
+//
+//
+//        while(!isStarted()) {
+//            if(gp1.wasJustPressed(GamepadKeys.Button.X)){
+//                isRight=!isRight;
+//            }
+//            telemetry.addData("Current FPS:", camera.getFps());
+//            telemetry.addData("Current Max FPS:", camera.getCurrentPipelineMaxFps());
+//            telemetry.addData("Is right side?", isRight);
+//
+//            ArrayList<AprilTagDetection> currentDetections = aprilTagDetectionPipeline.getLatestDetections();
+//
+//            if(currentDetections.size() != 0)
+//            {
+//                boolean tagFound = false;
+//
+//                for(AprilTagDetection tag : currentDetections)
+//                {
+//                    if(tag.id == ID_ONE || tag.id == ID_TWO || tag.id == ID_THREE)
+//                    {
+//                        tagOfInterest = tag;
+//                        tagFound = true;
+//                        break;
+//                    }
+//                }
+//
+//                if(tagFound)
+//                {
+//                    telemetry.addLine("Tag of interest is in sight!\n\nLocation data:");
+//                    tagToTelemetry(tagOfInterest);
+//                }
+//                else
+//                {
+//                    telemetry.addLine("Don't see tag of interest :(");
+//
+//                    if(tagOfInterest == null)
+//                    {
+//                        telemetry.addLine("(The tag has never been seen)");
+//                    }
+//                    else
+//                    {
+//                        telemetry.addLine("\nBut we HAVE seen the tag before; last seen at:");
+//                        tagToTelemetry(tagOfInterest);
+//                    }
+//                }
+//
+//            }
+//            else
+//            {
+//                telemetry.addLine("Don't see tag of interest :(");
+//
+//                if(tagOfInterest == null)
+//                {
+//                    telemetry.addLine("(The tag has never been seen)");
+//                }
+//                else
+//                {
+//                    telemetry.addLine("\nBut we HAVE seen the tag before; last seen at:");
+//                    tagToTelemetry(tagOfInterest);
+//                }
+//
+//            }
+//
+//            telemetry.update();
+//            sleep(20);
+//
+//            gp1.readButtons();
+//            if(gp1.wasJustPressed(GamepadKeys.Button.Y)) {
+//                bot.claw.close();
+//            }
+//
+//            telemetry.update();
+//
+//        }
+//
+//        camera.stopStreaming();
+//        camera.closeCameraDevice();
 
         //END CAMERA STUFF ===============
 
@@ -327,42 +327,100 @@ public class MainAutonomous extends LinearOpMode {
 //        }
 //        bot.slides.runToBottom();
 //        slidePeriodic.interrupt();
-        Thread runBack, outtake;
-        while(!isStopRequested() && opModeIsActive()){
-            gp2.readButtons();
-            if(gp2.wasJustPressed(GamepadKeys.Button.Y)){
-                bot.turret.runToAutoIntake();
-            }
-            if(gp2.wasJustPressed(GamepadKeys.Button.B)){
-                bot.claw.open();
-                bot.arm.intake();
-                bot.horizSlides.runToAutoIntake();
-            }
-            if(gp2.wasJustPressed(GamepadKeys.Button.A)){
-                bot.claw.close();
-                runBack = new Thread(() -> {try{
-                    Thread.sleep(1000);
-                }catch(InterruptedException ignored){
+//        Thread runBack, outtake;
+//        while(!isStopRequested() && opModeIsActive()){
+//            gp2.readButtons();
+//            if(gp2.wasJustPressed(GamepadKeys.Button.Y)){
+//                bot.turret.runToAutoIntake();
+//            }
+//            if(gp2.wasJustPressed(GamepadKeys.Button.B)){
+//                bot.claw.open();
+//                bot.arm.intake();
+//                bot.horizSlides.runToAutoIntake();
+//            }
+//            if(gp2.wasJustPressed(GamepadKeys.Button.A)){
+//                bot.claw.close();
+//                runBack = new Thread(() -> {try{
+//                    Thread.sleep(1000);
+//                }catch(InterruptedException ignored){
+//
+//                }
+//                    bot.arm.storage(); bot.horizSlides.runToFullIn();});
+//                runBack.start();
+//            }
+//            if(gp2.wasJustPressed(GamepadKeys.Button.X)){
+//                bot.turret.runToAutoOuttake();
+//                outtake = new Thread(() -> {try{
+//                    Thread.sleep(1000);
+//                }catch(InterruptedException e){}
+//                    bot.arm.outtake();
+//                    try{
+//                        Thread.sleep(1000);
+//                    }catch(InterruptedException e){}
+//                    bot.arm.secure();
+//                    bot.claw.open();});
+//                outtake.start();
+//
+//            }
+//        }
+        SampleMecanumDrive drive = new SampleMecanumDrive(hardwareMap);
 
-                }
-                    bot.arm.storage(); bot.horizSlides.runToFullIn();});
-                runBack.start();
-            }
-            if(gp2.wasJustPressed(GamepadKeys.Button.X)){
-                bot.turret.runToAutoOuttake();
-                outtake = new Thread(() -> {try{
-                    Thread.sleep(1000);
-                }catch(InterruptedException e){}
-                    bot.arm.outtake();
-                    try{
-                        Thread.sleep(1000);
-                    }catch(InterruptedException e){}
-                    bot.arm.secure();
-                    bot.claw.open();});
-                outtake.start();
+        Pose2d startPose = new Pose2d(0,0,0);
+        drive.setPoseEstimate(startPose);
+        Trajectory forward = drive.trajectoryBuilder(startPose)
+                .forward(48)
+                .build();
 
-            }
-        }
+        bot.claw.close();
+        drive.followTrajectory(forward);
+//        sleep(1000);
+//        bot.turret.runToAutoOuttake();
+//        bot.slides.runToTop();
+//        bot.arm.outtake();
+//        bot.claw.open();
+//        telemetry.addLine("Scored preloaded");
+//        sleep(1000);
+//        bot.arm.storage();
+//        bot.slides.runToBottom();
+//
+//        for(int i=0; i<5; i++){
+//            bot.turret.runToAutoIntake();
+//            bot.horizSlides.runToAutoIntake();
+//            if(i==0){
+//                bot.arm.intakeAuto5();
+//                telemetry.addLine("Scored first cone");
+//                sleep(1000);
+//            }
+//            if(i==1){
+//                bot.arm.intakeAuto4();
+//                telemetry.addLine("Scored second cone");
+//                sleep(1000);
+//            }
+//            if(i==2){
+//                bot.arm.intakeAuto3();
+//                telemetry.addLine("Scored third cone");
+//                sleep(1000);
+//            }
+//            if(i==3){
+//                bot.arm.intakeAuto2();
+//                telemetry.addLine("Scored fourth cone");
+//                sleep(1000);
+//            }
+//            if(i==4){
+//                bot.arm.intakeAuto1();
+//                telemetry.addLine("Scored fifth cone");
+//                sleep(1000);
+//            }
+//
+//            bot.horizSlides.runToFullIn();
+//            bot.turret.runToAutoOuttake();
+//            bot.slides.runToTop();
+//            bot.arm.outtake();
+//            bot.claw.open();
+//            bot.arm.storage();
+//            bot.slides.runToBottom();
+//        }
+
     }
 
 

@@ -28,7 +28,7 @@ public class Bot {
     public final Turret turret;
 
     private final MotorEx fl, fr, bl, br;
-    public final SampleMecanumDrive rr;
+//    public final SampleMecanumDrive rr;
     public BotState state = BotState.STORAGE;
 
     public OpMode opMode;
@@ -55,6 +55,16 @@ public class Bot {
         this.opMode = opMode;
         enableAutoBulkRead();
 
+        try {
+            this.initializeImus();
+            fieldCentricRunMode=true;
+        }
+        catch(Exception e){
+            imu0=null;
+            fieldCentricRunMode = false;
+
+        }
+
 
         fl = new MotorEx(opMode.hardwareMap, "motorFL");
         fr = new MotorEx(opMode.hardwareMap, "motorFR");
@@ -69,17 +79,9 @@ public class Bot {
         this.horizSlides = new HorizSlides(opMode);
         this.turret = new Turret(opMode);
 
-        this.rr = new SampleMecanumDrive(opMode.hardwareMap);
+//        this.rr = new SampleMecanumDrive(opMode.hardwareMap);
 
-        try {
-            this.initializeImus();
-            fieldCentricRunMode=true;
-        }
-        catch(Exception e){
-            imu0=null;
-            fieldCentricRunMode = false;
 
-        }
     }
 
     public void intakeOut(){

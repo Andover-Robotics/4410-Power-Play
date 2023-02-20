@@ -16,7 +16,7 @@ public class Slides {
     private final MotorEx motorLeft;
     private final MotorEx motorRight;
     private final PIDFController controller;
-    public static double p = 0.08, i = 0, d = 0, f = 0, staticF = 0.3;
+    public static double p = 0.07, i = 0, d = 0, f = 0, staticF = 0.3;
     private static double tolerance = 30, powerUp = 0.1, manualDivide = 1, manualPower = 0, powerMin = 0.1;
     public static int MAXHEIGHT = -1800, top = -1758, mid = -1185, low = -280, ground = 0, inc = 100, dec = 100;
 
