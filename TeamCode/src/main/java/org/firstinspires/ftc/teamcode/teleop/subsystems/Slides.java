@@ -17,14 +17,14 @@ public class Slides {
     private final MotorEx motorRight;
     private final PIDFController controller;
     public static double p = 0.05, i = 0, d = 0, f = 0, staticF = 0.3;
-    private static double tolerance = 30, powerUp = 0.1, manualDivide = 1, manualPower = 0, powerMin = 0.1;
+    private double tolerance = 30, powerUp = 0.1, manualDivide = 1, manualPower = 0, powerMin = 0.1;
     public static int MAXHEIGHT = -1800, top = -1787, mid = -1185, low = -280, ground = 0, inc = 100, dec = 100;
 
     private int target = 0;
 
     private final OpMode opMode;
     private double profile_init_time = 0;
-    public static MotionProfiler profiler = new MotionProfiler(10000, 10000);
+    public MotionProfiler profiler = new MotionProfiler(10000, 10000);
 
     public Slides(OpMode opMode){
         motorLeft = new MotorEx(opMode.hardwareMap, "slidesLeft", Motor.GoBILDA.RPM_435);

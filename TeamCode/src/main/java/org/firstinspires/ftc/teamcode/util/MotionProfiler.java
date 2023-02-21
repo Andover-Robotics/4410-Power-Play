@@ -6,9 +6,9 @@ public class MotionProfiler {
         this.max_acceleration = max_acceleration;
         this.max_velocity = max_velocity;
     }
-    public double max_velocity, max_acceleration;
+    private final double max_velocity, max_acceleration;
     private boolean isOver;
-    private double temp_max_accel = max_acceleration, temp_max_vel = max_velocity;
+    private double temp_max_accel, temp_max_vel;
     private double start_pos, final_pos, distance, acceleration_dt, halfway_distance, acceleration_distance, new_max_velocity, deacceleration_dt, cruise_distance, cruise_dt, deacceleration_time, entire_dt;
 
     //MUST BE USED BEFORE RUNNING A NEW PATH

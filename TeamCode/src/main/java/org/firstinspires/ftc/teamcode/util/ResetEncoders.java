@@ -5,11 +5,15 @@ import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.hardware.DcMotor.RunMode;
 
+import org.firstinspires.ftc.teamcode.teleop.subsystems.Bot;
+
 import java.util.Map.Entry;
 
-@Autonomous(name = "Reset Encoders", group = "Utility")
+@Autonomous(name = "Reset Everything", group = "Utility")
 public class ResetEncoders extends LinearOpMode {
   public void runOpMode() {
+    Bot.instance = null;
+
     telemetry.setAutoClear(false);
     waitForStart();
 

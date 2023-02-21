@@ -110,7 +110,6 @@ public class AllPositionTester extends LinearOpMode {
             telemetry.addData("vert slides", bot.slides.getPosition());
             telemetry.addData("horiz slides", bot.horizSlides.getPosition());
             telemetry.addData("slides current", bot.slides.getCurrent());
-            telemetry.addData("slides total time", Slides.profiler.getEntire_dt());
             telemetry.update();
 
         }
