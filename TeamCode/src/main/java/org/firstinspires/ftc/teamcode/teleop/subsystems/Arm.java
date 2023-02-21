@@ -8,12 +8,11 @@ import com.qualcomm.robotcore.hardware.Servo;
 public class Arm {
     private final Servo armLeft, armRight, bar;
 
-    public static double armIntake = 0.25, armOuttake = 0.5, armStorage = 0.75, barIntake = 0.61, barOuttakeUp = 0.5, barOuttakeDown = 0.43;
-    public static double coneArm5 = 0.4, conebar5 = 0.5;
-    public static double coneArm4 = 0.37, conebar4 = 0.5 ;
-    public static double coneArm3 = 0.34, conebar3 = 0.53;
-    public static double coneArm2 = 0.3, conebar2 = 0.56;
-    public static double coneArm1 = 0.25, conebar1 =0.6;
+    public static double armIntake = 0.25, armOuttake = 0.5, armStorage = 0.75, barIntake = 0.61, barOuttakeUp = 0.5, barOuttakeDown = 0.43, preload = 0.25;
+
+    public static double armTest = 0.45, barTest = 0.4;
+    public static double barStack[] = {0.6, 0.56, 0.53, 0.5, 0.45, barTest};//{0.6, 0.56, 0.53, 0.5, 0.5};
+    public static double armStack[] = {0.24, 0.28, 0.33, 0.37, 0.4, armTest};//{0.4, 0.37, 0.34, 0.3, 0.25};
 
     public Arm(OpMode opMode){
         armLeft = opMode.hardwareMap.servo.get("armLeft");
@@ -43,6 +42,11 @@ public class Arm {
         setBar(barOuttakeUp);
     }
 
+    public void preload(){
+        setArm(armStorage);
+        setBar(preload);
+    }
+
     public void outtake(){
         setBar(barOuttakeUp);
         setArm(armOuttake);
@@ -53,25 +57,16 @@ public class Arm {
         setArm(armOuttake);
     }
 
-    public void intakeAuto5(){
-        setBar(conebar5);
-        setArm(coneArm5);
+    public void intakeAuto(int i){
+        barStack[5] = barTest;
+        armStack[5] = armTest;
+        setBar(barStack[i]);
+        setArm(armStack[i]);
     }
-    public void intakeAuto4(){
-        setBar(conebar4);
-        setArm(coneArm4);
-    }
-    public void intakeAuto3(){
-        setBar(conebar3);
-        setArm(coneArm3);
-    }
-    public void intakeAuto2(){
-        setBar(conebar2);
-        setArm(coneArm2);
-    }
-    public void intakeAuto1(){
-        setBar(conebar1);
-        setArm(coneArm1);
+
+    public void updateIntakeAuto(){
+        barStack[5] = barTest;
+        armStack[5] = armTest;
     }
 
 }

@@ -14,10 +14,10 @@ public class Turret {
     private final MotorEx motor;
     private final PIDFController controller;
 
-    public static double p = 0.08, i = 0, d = 0, f = 0;
+    public static double p = 0.07, i = 0, d = 0.003, f = 0;
     private static double tolerance = 5, powerUp = 0.1, manualDivide = 1.5, manualPower = 0, powerMin = 0.1;
     public static double tickToAngle = 3200/Math.PI/2;
-    public static int saveState = 0, turretAuto = 3527, turretAutoIntake = -800, turretAutoOuttake = 454, limit = 5400, turretRightOuttake = -398;
+    public static int saveState = 0, turretAuto = -422, turretAutoIntake = 830, turretAutoOuttake = 454, limit = 5400, turretRightOuttake = -398;
     private int target = 0;
 
     public Turret(OpMode opMode){
@@ -33,6 +33,10 @@ public class Turret {
     public void runTo(int t){
         controller.setSetPoint(t);
         target = t;
+    }
+
+    public void runToTurretAuto(){
+        runTo(turretAuto);
     }
 
     public void runToFront(){

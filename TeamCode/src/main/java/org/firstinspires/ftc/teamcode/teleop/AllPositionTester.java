@@ -28,6 +28,8 @@ public class AllPositionTester extends LinearOpMode {
 
         waitForStart();
 
+        int index = 5;
+
         while (opModeIsActive() && !isStopRequested()) {
             gp1.readButtons();
             gp2.readButtons();
@@ -46,7 +48,7 @@ public class AllPositionTester extends LinearOpMode {
             }
 
             if (gp2.getButton(GamepadKeys.Button.X)){
-                bot.arm.intake();
+                bot.arm.intakeAuto(index);
             }else if(gp2.getButton(GamepadKeys.Button.Y)){
                 bot.arm.outtake();
             }else if(gp2.getButton(GamepadKeys.Button.B)){
@@ -55,14 +57,29 @@ public class AllPositionTester extends LinearOpMode {
                 bot.arm.storage();
             }
 
+            if(gp1.wasJustPressed(GamepadKeys.Button.DPAD_UP)){
+                index++;
+                if(index > 5){
+                    index = 5;
+                }
+            }
+            if(gp1.wasJustPressed(GamepadKeys.Button.DPAD_DOWN)){
+                index--;
+                if(index<0){
+                    index=0;
+                }
+            }
+
+            bot.arm.updateIntakeAuto();
+
             if (gp2.wasJustPressed(GamepadKeys.Button.DPAD_UP)) {
-                bot.slides.runToTop();
+//                bot.slides.runToTop();
             }else if (gp2.wasJustPressed(GamepadKeys.Button.DPAD_LEFT)) {
-                bot.slides.runToMiddle();
+//                bot.slides.runToMiddle();
             } else if (gp2.wasJustPressed(GamepadKeys.Button.DPAD_RIGHT)) {
-                bot.slides.runToLow();
+//                bot.slides.runToLow();
             } else if (gp2.wasJustPressed(GamepadKeys.Button.DPAD_DOWN)) {
-                bot.slides.runToBottom();
+//                bot.slides.runToBottom();
             }
 
             if (gp2.wasJustPressed(GamepadKeys.Button.RIGHT_BUMPER)) {
@@ -70,7 +87,7 @@ public class AllPositionTester extends LinearOpMode {
             }
 
             if (gp2.wasJustPressed(GamepadKeys.Button.LEFT_BUMPER)) {
-                bot.slides.goUp();
+
             }
 
 
@@ -84,17 +101,16 @@ public class AllPositionTester extends LinearOpMode {
             if(gp2.wasJustPressed(GamepadKeys.Button.RIGHT_STICK_BUTTON)){
                 bot.resetEncoder();
             }
-
-            bot.horizSlides.periodic();
-            bot.slides.periodic();
-            bot.turret.periodic();
+//
+//            bot.horizSlides.periodic();
+//            bot.slides.periodic();
+//            bot.turret.periodic();
 
             telemetry.addData("turret", bot.turret.getPosition());
             telemetry.addData("vert slides", bot.slides.getPosition());
             telemetry.addData("horiz slides", bot.horizSlides.getPosition());
             telemetry.addData("slides current", bot.slides.getCurrent());
             telemetry.addData("slides total time", Slides.profiler.getEntire_dt());
-            telemetry.addData("horiz slides target", bot.horizSlides.getTarget());
             telemetry.update();
 
         }

@@ -1,5 +1,6 @@
 package org.firstinspires.ftc.teamcode.auto;
 
+import com.acmerobotics.dashboard.config.Config;
 import com.acmerobotics.roadrunner.geometry.Pose2d;
 import com.acmerobotics.roadrunner.trajectory.Trajectory;
 import com.arcrobotics.ftclib.gamepad.GamepadEx;
@@ -17,12 +18,15 @@ import org.openftc.easyopencv.OpenCvCameraRotation;
 
 import java.util.ArrayList;
 
+
+@Config
 @Autonomous(name="MainAutonomous")
 public class MainAutonomous extends LinearOpMode {
 
     Bot bot;
     boolean isRight;
 
+    public static int timeSlidesUp = 800, timeSlidesDown = 550, timeOuttake = 350, timeConeDrop = 250, timeIntakeDown = 200, timeIntakeOut = 700, timeIntakeClose = 250, timeIntakeUp = 300, timeIntakeIn = 400;
 
 
     static final double FEET_PER_METER = 3.28084;
@@ -45,7 +49,7 @@ public class MainAutonomous extends LinearOpMode {
     public void runOpMode() throws InterruptedException {
         telemetry.setAutoClear(true);
         bot = Bot.getInstance(this);
-        Turret turret = new Turret(this);
+        SampleMecanumDrive drive = new SampleMecanumDrive(hardwareMap);
 
         // Retrieve the IMU from the hardware map
 //        BNO055IMU imu = hardwareMap.get(BNO055IMU.class, "imu");
@@ -57,6 +61,13 @@ public class MainAutonomous extends LinearOpMode {
 
         GamepadEx gp1 = new GamepadEx(gamepad1);
         GamepadEx gp2 = new GamepadEx(gamepad2);
+        bot.arm.preload();
+        while(!isStarted()){
+            gp1.readButtons();
+            if(gp1.wasJustPressed(GamepadKeys.Button.A)){
+                bot.claw.close();
+            }
+        }
 
         //CAMERA STUFF =====================
 
@@ -368,83 +379,89 @@ public class MainAutonomous extends LinearOpMode {
 //            }
 //        }
 
-        SampleMecanumDrive drive = new SampleMecanumDrive(hardwareMap);
-
-
-        bot.turret.periodic();
-        bot.slides.periodic();
-        bot.horizSlides.periodic();
-
-        Pose2d startPose = new Pose2d(0,0,0);
-        drive.setPoseEstimate(startPose);
-        Trajectory forward = drive.trajectoryBuilder(startPose)
-                .forward(48)
-                .build();
-
         bot.claw.close();
-        bot.turret.runToAutoRightOuttake();
-        sleep(2000);
-        drive.followTrajectory(forward);
-        bot.slides.runToTop();
-        sleep(1000);
-        bot.arm.outtake();
-        bot.claw.open();
-        telemetry.addLine("Scored preloaded");
+
+        Thread periodic = new Thread(() -> {
+            while (opModeIsActive() && !isStopRequested()) {
+                bot.slides.periodic();
+                bot.turret.periodic();
+                bot.horizSlides.periodic();
+            }
+        });
+
+        periodic.start();
+
+//        Pose2d startPose = new Pose2d(0, 0, 0);
+//        drive.setPoseEstimate(startPose);
+//        Trajectory forward = drive.trajectoryBuilder(startPose)
+//                .forward(58)
+//                .build();
+//        drive.followTrajectory(forward);
+
+//        sleep(500);
+
+//        bot.turret.runTo(-650);
+//        bot.slides.runToTop();
 //        sleep(1000);
+//        bot.arm.outtake();
+//        sleep(200);
+//        bot.claw.open();
+//        telemetry.addLine("Scored preloaded");
+////        sleep(1000);
+//        bot.arm.storage();
+//        bot.slides.runToBottom();
+        outtake();
+        for(int i = 4; i >= 0; i--){
+            telemetry.addData("running cycle", i);
+            telemetry.update();
+            pickUpCone(i);
+            outtake();
+        }
+
+
+    }
+    private void outtake(){
+        bot.turret.runToTurretAuto();
+        bot.slides.runToTop();
+        sleep(timeSlidesUp);
+        bot.arm.outtake();
+        sleep(timeOuttake);
+        bot.arm.secure();
+        bot.claw.open();
+        sleep(timeConeDrop);
+        bot.claw.close();
         bot.arm.storage();
+        sleep(timeOuttake);
         bot.slides.runToBottom();
-//
-//        for(int i=0; i<5; i++){
-//            bot.turret.runToAutoIntake();
-//            bot.horizSlides.runToAutoIntake();
-//            if(i==0){
-//                bot.arm.intakeAuto5();
-//                telemetry.addLine("Scored first cone");
-//                sleep(1000);
-//            }
-//            if(i==1){
-//                bot.arm.intakeAuto4();
-//                telemetry.addLine("Scored second cone");
-//                sleep(1000);
-//            }
-//            if(i==2){
-//                bot.arm.intakeAuto3();
-//                telemetry.addLine("Scored third cone");
-//                sleep(1000);
-//            }
-//            if(i==3){
-//                bot.arm.intakeAuto2();
-//                telemetry.addLine("Scored fourth cone");
-//                sleep(1000);
-//            }
-//            if(i==4){
-//                bot.arm.intakeAuto1();
-//                telemetry.addLine("Scored fifth cone");
-//                sleep(1000);
-//            }
-//
-//            bot.horizSlides.runToFullIn();
-//            bot.turret.runToAutoOuttake();
-//            bot.slides.runToTop();
-//            bot.arm.outtake();
-//            bot.claw.open();
-//            bot.arm.storage();
-//            bot.slides.runToBottom();
-//        }
+        bot.turret.runToAutoIntake();
+        sleep(timeSlidesDown);
+    }
 
+    private void pickUpCone(int i){
+        bot.claw.open();
+        bot.arm.intakeAuto(i);
+        sleep(timeIntakeDown);
+        bot.horizSlides.runToAutoIntake();
+        sleep(timeIntakeOut);
+        bot.claw.close();
+        sleep(timeIntakeClose);
+        bot.arm.storage();
+        sleep(timeIntakeUp);
+        bot.horizSlides.runToFullIn();
+        sleep(timeIntakeIn);
     }
 
 
-    void tagToTelemetry(AprilTagDetection detection)
-    {
-        telemetry.addLine(String.format("\nDetected tag ID=%d", detection.id));
-        telemetry.addLine(String.format("Translation X: %.2f feet", detection.pose.x*FEET_PER_METER));
-        telemetry.addLine(String.format("Translation Y: %.2f feet", detection.pose.y*FEET_PER_METER));
-        telemetry.addLine(String.format("Translation Z: %.2f feet", detection.pose.z*FEET_PER_METER));
-        telemetry.addLine(String.format("Rotation Yaw: %.2f degrees", Math.toDegrees(detection.pose.yaw)));
-        telemetry.addLine(String.format("Rotation Pitch: %.2f degrees", Math.toDegrees(detection.pose.pitch)));
-        telemetry.addLine(String.format("Rotation Roll: %.2f degrees", Math.toDegrees(detection.pose.roll)));
-    }
+//    void tagToTelemetry(AprilTagDetection detection)
+//    {
+//        telemetry.addLine(String.format("\nDetected tag ID=%d", detection.id));
+//        telemetry.addLine(String.format("Translation X: %.2f feet", detection.pose.x*FEET_PER_METER));
+//        telemetry.addLine(String.format("Translation Y: %.2f feet", detection.pose.y*FEET_PER_METER));
+//        telemetry.addLine(String.format("Translation Z: %.2f feet", detection.pose.z*FEET_PER_METER));
+//        telemetry.addLine(String.format("Rotation Yaw: %.2f degrees", Math.toDegrees(detection.pose.yaw)));
+//        telemetry.addLine(String.format("Rotation Pitch: %.2f degrees", Math.toDegrees(detection.pose.pitch)));
+//        telemetry.addLine(String.format("Rotation Roll: %.2f degrees", Math.toDegrees(detection.pose.roll)));
+//    }
 
-}
+    }
 

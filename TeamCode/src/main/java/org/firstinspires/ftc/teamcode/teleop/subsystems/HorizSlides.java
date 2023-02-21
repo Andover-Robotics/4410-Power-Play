@@ -19,7 +19,7 @@ public class HorizSlides {
     private static double tolerance = 5, powerUp = 0.1, manualDivide = 1.5, manualPower = 0, powerMin = 0.1;
     public static int fullOut = 580, fullIn = 0, outtake = 0, autoIntake = 520;
     private int target = 0;
-    private double profile_init_time = 0, dt = 0;
+    private double profile_init_time = 0;
 
     public static MotionProfiler profiler = new MotionProfiler(3000, 6000);
 
@@ -64,7 +64,7 @@ public class HorizSlides {
     public void periodic(){
         motor.setInverted(false);
         controller.setPIDF(p, i, d, f);
-        dt = opMode.time - profile_init_time;
+        double dt = opMode.time - profile_init_time;
         if(!profiler.isOver()) {
             controller.setSetPoint(profiler.motion_profile_pos(dt));
             motor.set(powerUp * controller.calculate(motor.getCurrentPosition()));
@@ -84,10 +84,6 @@ public class HorizSlides {
 
     public int getPosition(){
         return motor.getCurrentPosition();
-    }
-
-    public double getTarget(){
-        return profiler.motion_profile_pos(dt);
     }
 
 
