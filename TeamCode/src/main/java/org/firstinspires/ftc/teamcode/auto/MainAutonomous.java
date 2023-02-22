@@ -2,6 +2,7 @@ package org.firstinspires.ftc.teamcode.auto;
 
 import com.acmerobotics.dashboard.config.Config;
 import com.acmerobotics.roadrunner.geometry.Pose2d;
+import com.acmerobotics.roadrunner.geometry.Vector2d;
 import com.acmerobotics.roadrunner.trajectory.Trajectory;
 import com.arcrobotics.ftclib.gamepad.GamepadEx;
 import com.arcrobotics.ftclib.gamepad.GamepadKeys;
@@ -23,6 +24,7 @@ import java.util.ArrayList;
 public class MainAutonomous extends LinearOpMode {
 
     Bot bot;
+    double turretPos;
 
     enum Side{
         RIGHT, LEFT, NULL;
@@ -30,7 +32,7 @@ public class MainAutonomous extends LinearOpMode {
 
     Side side = Side.NULL;
 
-    public static int driveTime = 2000, timeSlidesUp = 800, timeSlidesDown = 550, timeOuttake = 350, timeConeDrop = 150, timeIntakeDown = 200, timeIntakeOut = 700, timeIntakeClose = 150, timeIntakeUp = 500, timeIntakeIn = 400;
+    public static int driveTime = 2000, timeSlidesUp = 800, timeSlidesDown = 550, timeOuttake = 325, timeConeDrop = 150, timeIntakeDown = 200, timeIntakeOut = 700, timeIntakeClose = 150, timeIntakeUp = 500, timeIntakeIn = 400;
 
 
     static final double FEET_PER_METER = 3.28084;
@@ -184,6 +186,7 @@ public class MainAutonomous extends LinearOpMode {
                     bot.slides.periodic();
                     bot.turret.periodic();
                     bot.horizSlides.periodic();
+                    turretPos = bot.turret.getPosition();
                 }
             });
 
@@ -192,7 +195,20 @@ public class MainAutonomous extends LinearOpMode {
             Pose2d startPose = new Pose2d(0, 0, 0);
             drive.setPoseEstimate(startPose);
             Trajectory forward = drive.trajectoryBuilder(startPose)
-                    .forward(52)
+//                    .forward(52)
+                    .lineTo(
+                            new Vector2d(52, 3),
+                            SampleMecanumDrive.getVelocityConstraint(20, DriveConstants.MAX_ANG_VEL, DriveConstants.TRACK_WIDTH),
+                            SampleMecanumDrive.getAccelerationConstraint(DriveConstants.MAX_ACCEL)
+                    )
+                    .addDisplacementMarker(36, () -> {
+                        bot.slides.runToTop();
+                    })
+                    .addDisplacementMarker(() -> {
+                        bot.arm.outtake();
+                        bot.claw.open();
+                        bot.arm.secure();
+                    })
                     .build();
 
             Trajectory parkLeft = drive.trajectoryBuilder(forward.end())
@@ -206,10 +222,8 @@ public class MainAutonomous extends LinearOpMode {
             driveForward.start();
 
 
-            sleep(driveTime);
-
             if (side != Side.NULL) {
-                outtake(5);
+//                outtake(5);
                 for (int i = 4; i >= 0; i--) {
                     telemetry.addData("running cycle", i);
                     telemetry.update();
@@ -235,7 +249,7 @@ public class MainAutonomous extends LinearOpMode {
         }else{
             bot.turret.runToAutoOuttakeLeft();
         }
-        bot.slides.runToTop();
+//        bot.slides.runToTop();
         sleep(timeSlidesUp);
         if(i == 5){
             sleep(200);
@@ -248,11 +262,24 @@ public class MainAutonomous extends LinearOpMode {
         sleep(timeConeDrop);
         bot.claw.close();
         sleep(timeOuttake);
-        bot.slides.runToBottom();
+        bot.slides.runToLow();
         if(side==Side.RIGHT) {
             bot.turret.runToAutoIntakeRight();
-        }else{
+            while(turretPos != 830)
+            {
+                if(turretPos == 205){
+                    bot.horizSlides.runToAutoIntake();
+                    sleep(timeIntakeOut);
+                }
+            }
+        }else {
             bot.turret.runToAutoIntakeLeft();
+            while (turretPos != -830) {
+                if (turretPos == -205) {
+                    bot.horizSlides.runToAutoIntake();
+                    sleep(timeIntakeOut);
+                }
+            }
         }
         sleep(timeSlidesDown);
     }
@@ -261,11 +288,11 @@ public class MainAutonomous extends LinearOpMode {
         bot.claw.open();
         bot.arm.intakeAuto(i);
         sleep(timeIntakeDown);
-        bot.horizSlides.runToAutoIntake();
-        sleep(timeIntakeOut);
+//        bot.horizSlides.runToAutoIntake();
+//        sleep(timeIntakeOut);
         bot.claw.close();
         sleep(timeIntakeClose);
-        bot.slides.runToLow();
+        bot.slides.runToTop();
         bot.arm.autoStorage();
         if(i > 0) {
             sleep(timeIntakeUp);
