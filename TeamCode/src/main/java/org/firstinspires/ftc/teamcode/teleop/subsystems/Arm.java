@@ -69,4 +69,8 @@ public class Arm {
         armStack[5] = armTest;
     }
 
+    public void lift(double pos) {
+        setBar(pos + 10);
+    }
+
 }

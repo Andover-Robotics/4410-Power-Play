@@ -17,7 +17,7 @@ public class Turret {
     public static double p = 0.07, i = 0, d = 0.003, f = 0;
     private double tolerance = 5, powerUp = 0.1, manualDivide = 1.5, manualPower = 0, powerMin = 0.1;
     public static double tickToAngle = 3200/Math.PI/2;
-    public static int saveState = 0, turretAuto = -422, turretAutoIntake = 830, turretAutoOuttake = 454, limit = 5400, turretRightOuttake = -398;
+    public static int saveState = 0, turretAuto = -422, turretAutoIntake = 830, turretAutoOuttake = 454, limit = 5400, turretRightOuttake = -398, turretLeftOuttake = 401, turretLeftIntake = -838;
     private int target = 0;
 
     public Turret(OpMode opMode){
@@ -39,11 +39,15 @@ public class Turret {
         runTo(turretAuto);
     }
 
+    public void runToLeftOuttake() { runTo(turretLeftOuttake); }
+
     public void runToFront(){
         runTo(0);
     }
 
     public void runToAutoRightOuttake() { runTo(turretRightOuttake);}
+
+    public void runToLeftIntake() { runTo(turretLeftIntake); }
 
     public void runToAutoIntake(){
         runTo(turretAutoIntake);
