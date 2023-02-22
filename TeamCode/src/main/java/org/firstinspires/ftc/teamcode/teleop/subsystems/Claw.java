@@ -15,6 +15,7 @@ public class Claw {
     private final Servo claw;
     //private final DistanceSensor proxSensor;
     public static double open = 0.3, close = 0.12;
+    public boolean isOpen = false;
   //  public static int proximityBound = 85;
 
     public Claw(OpMode opMode){
@@ -27,10 +28,12 @@ public class Claw {
 
     public void open(){
         claw.setPosition(open);
+        isOpen = true;
     }
 
     public void close(){
         claw.setPosition(close);
+        isOpen = false;
     }
 
    /* public double getDistance(){

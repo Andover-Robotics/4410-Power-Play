@@ -5,26 +5,56 @@ import com.acmerobotics.dashboard.telemetry.MultipleTelemetry;
 import com.acmerobotics.roadrunner.geometry.Vector2d;
 import com.arcrobotics.ftclib.gamepad.GamepadEx;
 import com.arcrobotics.ftclib.gamepad.GamepadKeys;
-import com.qualcomm.hardware.bosch.BNO055IMU;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 
-import org.firstinspires.ftc.robotcore.external.navigation.AngleUnit;
 import org.firstinspires.ftc.teamcode.teleop.subsystems.Bot;
-import org.firstinspires.ftc.teamcode.teleop.subsystems.Claw;
 
+import java.util.Timer;
+import java.util.TimerTask;
+
+
+//TODO:
+// Slides(Vertical)
+// Slides(Horizontal)
+// Toggle Claw
+// Intake Position = Ground/Storage values
+// Turret
+// Outtake Position
+
+
+// Later Job:
+// Debug
+// Auto mode
 
 @TeleOp(name = "MainTeleOp", group = "Competition")
 public class MainTeleOp extends LinearOpMode {
-
     private Bot bot;
     private double driveSpeed = 1, fieldCentricOffset = 0;
 
     private boolean debugMode = false;
+    private boolean autoMode = false;
+    private boolean clicked = false;
     private boolean cancelPrevAction = false;
+    private boolean lastStep = false; // true - Storage
+                                    // false - Intake
 
     private GamepadEx gp1, gp2;
 
+
+    private double outtakeFinalHzSlides;
+    private double outtakeFinalVSlidesLeft;
+    private double outtakeFinalVSlidesRight;
+    private double outtakeFinalTurret;
+
+    int index = 4;
+
+    public void storeValues() {
+        outtakeFinalHzSlides = bot.horizSlides.motor.getCurrentPosition();
+        outtakeFinalVSlidesLeft = bot.slides.motorLeft.getCurrentPosition();
+        outtakeFinalVSlidesRight = bot.slides.motorRight.getCurrentPosition();
+        outtakeFinalTurret = bot.turret.getPosition();
+    }
 
     @Override
     public void runOpMode() throws InterruptedException {
@@ -34,152 +64,196 @@ public class MainTeleOp extends LinearOpMode {
         gp1 = new GamepadEx(gamepad1);
 
         bot.initializeImus();
+        storeValues();
 
         waitForStart();
 
         while (opModeIsActive() && !isStopRequested()) {
-            gp1.readButtons();
+            gp1.readButtons(); // read buttons pressed
             gp2.readButtons();
 
             if(gp2.wasJustPressed(GamepadKeys.Button.START)){
                 debugMode = !debugMode;
             }
-            if(gp1.wasJustPressed(GamepadKeys.Button.START)){
+            if (gp1.wasJustPressed(GamepadKeys.Button.BACK)) {
                 bot.fieldCentricRunMode = !bot.fieldCentricRunMode;
             }
+            
+            
+            if (!debugMode) { // Driver 2 mode
+                if (gp2.wasJustPressed(GamepadKeys.Button.DPAD_UP)) { // Slides DPAD
+                    bot.slides.runToTop();
+                } else if (gp2.wasJustPressed(GamepadKeys.Button.DPAD_LEFT)) {
+                    bot.slides.runToMiddle();
+                } else if (gp2.wasJustPressed(GamepadKeys.Button.DPAD_RIGHT)) {
+                    bot.slides.runToLow();
+                } else if (gp2.wasJustPressed(GamepadKeys.Button.DPAD_DOWN)) {
+                    bot.slides.runToBottom();
+                }
 
-            if(!debugMode) {//finite state
-//                if (bot.state == Bot.BotState.INTAKE || bot.state == Bot.BotState.INTAKE_OUT) {
-//                    if(gp2.getButton(GamepadKeys.Button.A)){
-//                        if(!cancelPrevAction) {
-//                            bot.claw.close();
-//                        }
-//                        if(gp2.wasJustPressed(GamepadKeys.Button.X)){
-//                            bot.claw.open();
-//                            cancelPrevAction = true;
-//                        }
-//                    }
-//                    if(gp2.wasJustReleased(GamepadKeys.Button.A)){
-//                        if(!cancelPrevAction){
-//                            bot.storage();
-//                        }
-//                        cancelPrevAction = false;
-//                    }
-//                } else if (bot.state == Bot.BotState.STORAGE) {
-//                    if (gp2.wasJustPressed(GamepadKeys.Button.A)) {
-//                        bot.intakeIn();
-//                    } else if (gp2.wasJustPressed(GamepadKeys.Button.X)) {
-//                        bot.intakeOut();
-//                    } else if (gp2.wasJustPressed(GamepadKeys.Button.Y)) {
-//                        bot.outtake();
-//                    }
-//                } else if (bot.state == Bot.BotState.OUTTAKE || bot.state == Bot.BotState.SECURE) {
-//                    if(gp2.getButton(GamepadKeys.Button.A)){
-//                        if(!cancelPrevAction) {
-//                            bot.secure();
-//                        }
-//                        if(gp2.wasJustPressed(GamepadKeys.Button.X)){
-//                            bot.outtake();
-//                            cancelPrevAction = true;
-//                        }
-//                        if(gp2.wasJustReleased(GamepadKeys.Button.A)){
-//                            if(!cancelPrevAction){
-//                                bot.claw.open();
-//                                bot.storage();
-////                                Thread storage = new Thread(() -> {sleep(1000); bot.storage();});
-////                                storage.start();
-//                            }
-//                            cancelPrevAction = false;
-//                        }
-//                    }
-//
-//
-//
-//                    if (gp2.getButton(GamepadKeys.Button.A)) {
-//                        bot.secure();
-//                    } else {
-//                        bot.outtake();
-//                    }
-//                    if (bot.state == Bot.BotState.SECURE && gp2.wasJustPressed(GamepadKeys.Button.B)) {
-//                        bot.claw.open();
-//                        bot.storage();
-//                    }
-//                }
-//                double gyro = getIMU() - fieldCentricOffset;
-//                bot.turret.runToAngle(0, gyro);//TODO calc angle from thing
+                if (gp2.wasJustPressed(GamepadKeys.Button.X)) {
+                    if (lastStep) {
+                        bot.slides.runToBottom();
+                        bot.arm.intake();
+                        bot.claw.open();
+                    } else {
+                        bot.arm.storage();
+                    }
+                } else if (gp2.wasJustPressed(GamepadKeys.Button.A)) {
+                    bot.arm.secure();
+                    if (bot.claw.isOpen) {
+                        bot.claw.close();
+                    } else {
+                        bot.claw.open();
+                    }
+                } else if (gp2.wasJustPressed(GamepadKeys.Button.Y)) {
+                    bot.arm.outtake();
+                } else if (gp2.wasJustPressed(GamepadKeys.Button.B)) {
+                    autoMode = !autoMode;
+                } else if (gp2.wasJustPressed(GamepadKeys.Button.RIGHT_STICK_BUTTON)) {
+                    storeValues();
+                }
 
-            }else{
+                Vector2d hzSlideVector = new Vector2d(gp2.getLeftX(), gp2.getLeftY());
+                bot.horizSlides.runManual(hzSlideVector.getY());
+
+                Vector2d turretVector = new Vector2d(gp2.getRightX(), gp2.getRightY());
+                bot.turret.runManual(turretVector.getX());
+
+
+
+
+
+            } else { // debug mode
+
+                if (gp2.getButton(GamepadKeys.Button.A)) {
+                    bot.claw.open();
+                } else {
+                    bot.claw.close();
+                }
+
+
+                if (gp2.getButton(GamepadKeys.Button.X)) {
+                    bot.arm.intakeAuto(index);
+                } else if (gp2.getButton(GamepadKeys.Button.Y)) {
+                    bot.arm.outtake();
+                } else if (gp2.getButton(GamepadKeys.Button.B)) {
+                    bot.arm.secure();
+                } else {
+                    bot.arm.storage();
+                }
+
+                if (gp1.wasJustPressed(GamepadKeys.Button.RIGHT_BUMPER)) {
+                    index++;
+                    if (index > 5) {
+                        index = 5;
+                    }
+                }
+                if (gp1.wasJustPressed(GamepadKeys.Button.LEFT_BUMPER)) {
+                    index--;
+                    if (index < 0) {
+                        index = 0;
+                    }
+                }
+
+                bot.arm.updateIntakeAuto();
+
+//            if (gp2.wasJustPressed(GamepadKeys.Button.DPAD_UP)) {
+////                bot.slides.runToTop();
+//            }else if (gp2.wasJustPressed(GamepadKeys.Button.DPAD_LEFT)) {
+////                bot.slides.runToMiddle();
+//            } else if (gp2.wasJustPressed(GamepadKeys.Button.DPAD_RIGHT)) {
+////                bot.slides.runToLow();
+//            } else if (gp2.wasJustPressed(GamepadKeys.Button.DPAD_DOWN)) {
+////                bot.slides.runToBottom();
+//            }
+//
+//            if (gp2.wasJustPressed(GamepadKeys.Button.RIGHT_BUMPER)) {
+//                bot.slides.goDown();
+//            }
+//
+//            if (gp2.wasJustPressed(GamepadKeys.Button.LEFT_BUMPER)) {
+//
+//            }
+
+//
+//            if(gp2.wasJustPressed(GamepadKeys.Button.LEFT_STICK_BUTTON)){
+//                bot.turret.runToFront();
+//            }
+
                 bot.horizSlides.runManual(-gp2.getRightY());
                 bot.slides.runManual(-gp2.getLeftY());
                 bot.turret.runManual(gp2.getLeftX());
-                if(gp2.wasJustPressed(GamepadKeys.Button.X)){
+                if (gp2.wasJustPressed(GamepadKeys.Button.RIGHT_STICK_BUTTON)) {
                     bot.resetEncoder();
                 }
+
             }
 
+            while (autoMode) {
+                bot.claw.open();
+                bot.arm.intake();
 
-            if (gp2.wasJustPressed(GamepadKeys.Button.DPAD_UP)) {
-                bot.slides.runToTop();
-            } else if (gp2.wasJustPressed(GamepadKeys.Button.DPAD_LEFT)) {
-                bot.slides.runToMiddle();
-            }else if (gp2.wasJustPressed(GamepadKeys.Button.DPAD_RIGHT)) {
-                bot.slides.runToLow();
-            }else if (gp2.wasJustPressed(GamepadKeys.Button.DPAD_DOWN)) {
-                bot.slides.runToBottom();
+                //checkpoint # 1
+                Timer timer = new Timer();
+                timer.schedule(new TimerTask() {
+                    @Override
+                    public void run() {
+                        if (gp2.wasJustPressed(GamepadKeys.Button.BACK)) {
+                            clicked = true;
+                            timer.cancel();
+                        }
+                    }
+                }, 0, 1000);
+
+                try {
+                    Thread.sleep(2000); // Wait for 2 seconds
+                } catch (InterruptedException e) {
+                    e.printStackTrace();
+                }
+                timer.cancel();
+
+                if (clicked) {
+                    bot.claw.close();
+                    bot.arm.storage();
+                    bot.turret.runTo((int) -outtakeFinalTurret);
+                    bot.slides.runTo((int) outtakeFinalVSlidesLeft);
+                    bot.arm.secure();
+
+                    //checkpoint
+                    clicked = false;
+                    Timer timer2 = new Timer();
+                    timer.schedule(new TimerTask() {
+                        @Override
+                        public void run() {
+                            if (gp2.wasJustPressed(GamepadKeys.Button.BACK)) {
+                                clicked = true;
+                                timer2.cancel();
+                            }
+                        }
+                    }, 0, 1000);
+
+                    try {
+                        Thread.sleep(2000); // Wait for 2 seconds
+                    } catch (InterruptedException e) {
+                        e.printStackTrace();
+                    }
+                    timer2.cancel();
+
+                    if (clicked) {
+                        bot.claw.open();
+                        bot.arm.storage();
+                        bot.slides.runToBottom();
+                        bot.turret.runTo((int) outtakeFinalTurret);
+                    }
+                }
+
+
+
+                if (gp2.wasJustPressed(GamepadKeys.Button.B)) {
+                    autoMode = !autoMode;
+                }
             }
-
-            if (gp2.wasJustPressed(GamepadKeys.Button.RIGHT_BUMPER)) {
-                bot.slides.goDown();
-            }
-
-            if (gp2.wasJustPressed(GamepadKeys.Button.LEFT_BUMPER)) {
-                bot.slides.goUp();
-            }
-
-
-            bot.slides.periodic();
-            bot.horizSlides.periodic();
-            bot.turret.periodic();
-
-            telemetry.addData("drive current", bot.getCurrent());
-            telemetry.addData("slide current", bot.slides.getCurrent());
-            telemetry.addData("imu", bot.imu0.getAngularOrientation().firstAngle);
-            telemetry.addData("getIMU", getIMU());
-            telemetry.update();
-
-            drive();
         }
-    }
-
-    private void drive() {
-        if (gp1.wasJustReleased(GamepadKeys.Button.LEFT_STICK_BUTTON)){
-            fieldCentricOffset = getIMU();
-        }
-        driveSpeed = 1;
-//        driveSpeed -= bot.slides.isHigh()/3;
-        driveSpeed *= 1 - 0.5 * gp1.getTrigger(GamepadKeys.Trigger.RIGHT_TRIGGER);
-        driveSpeed = Math.max(0, driveSpeed);
-        bot.fixMotors();
-        Vector2d driveVector = new Vector2d(gp1.getLeftX(), -gp1.getLeftY()),
-                turnVector = new Vector2d(
-                        gp1.getRightX() , 0);
-        if (bot.fieldCentricRunMode) {
-            bot.driveFieldCentric(
-                    driveVector.getX() * driveSpeed,
-                    driveVector.getY() * driveSpeed,
-                    turnVector.getX() * driveSpeed,
-                    getIMU() - fieldCentricOffset
-            );
-        } else {
-            bot.driveRobotCentric(driveVector.getX() * driveSpeed,
-                    driveVector.getY() * driveSpeed,
-                    turnVector.getX() * driveSpeed
-            );
-        }
-    }
-    private double getIMU(){
-        return (bot.imu0.getAngularOrientation().toAngleUnit(AngleUnit.RADIANS).firstAngle+360)%360;
     }
 }
-
-

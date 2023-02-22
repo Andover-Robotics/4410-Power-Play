@@ -13,8 +13,8 @@ import org.firstinspires.ftc.teamcode.util.MotionProfiler;
 @Config
 public class Slides {
 
-    private final MotorEx motorLeft;
-    private final MotorEx motorRight;
+    public final MotorEx motorLeft;
+    public final MotorEx motorRight;
     private final PIDFController controller;
     public static double p = 0.05, i = 0, d = 0, f = 0, staticF = 0.3;
     private double tolerance = 20, powerUp = 0.1, manualDivide = 1, manualPower = 0, powerMin = 0.1;

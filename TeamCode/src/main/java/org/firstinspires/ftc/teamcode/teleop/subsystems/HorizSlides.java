@@ -12,7 +12,7 @@ import org.firstinspires.ftc.teamcode.util.MotionProfiler;
 @Config
 public class HorizSlides {
 
-    private final MotorEx motor;
+    public final MotorEx motor;
     private final PIDFController controller;
     private final OpMode opMode;
     public static double p = 0.04, i = 0, d = 0, f = 0;
@@ -53,9 +53,9 @@ public class HorizSlides {
         runTo(outtake);
     }
 
-    public void runManual(double manual){
-        if(manual > powerMin || manual < -powerMin){
-            manualPower = manual;
+    public void runManual(double power){
+        if(power > powerMin || power < -powerMin){
+            manualPower = power;
         }else{
             manualPower = 0;
         }
