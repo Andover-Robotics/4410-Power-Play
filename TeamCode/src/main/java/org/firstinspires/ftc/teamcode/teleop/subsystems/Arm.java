@@ -8,7 +8,7 @@ import com.qualcomm.robotcore.hardware.Servo;
 public class Arm {
     private final Servo armLeft, armRight, bar;
 
-    public static double armIntake = 0.25, armOuttake = 0.5, armStorage = 0.75, barIntake = 0.61, barOuttakeUp = 0.5, barOuttakeDown = 0.43, preload = 0.25;
+    public static double armIntake = 0.25, armOuttake = 0.58, armStorage = 0.75, barIntake = 0.61, barOuttakeUp = 0.38, barOuttakeDown = 0.36, preload = 0.25, autoStorage = 0.7;
 
     public static double armTest = 0.45, barTest = 0.4;
     public static double barStack[] = {0.6, 0.56, 0.53, 0.5, 0.45, barTest};//{0.6, 0.56, 0.53, 0.5, 0.5};
@@ -35,6 +35,11 @@ public class Arm {
     public void intake(){
         setBar(barIntake);
         setArm(armIntake);
+    }
+
+    public void autoStorage(){
+        setArm(armStorage);
+        setBar(autoStorage);
     }
 
     public void storage(){

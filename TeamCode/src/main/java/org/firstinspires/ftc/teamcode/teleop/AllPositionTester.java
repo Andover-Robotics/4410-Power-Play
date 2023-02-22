@@ -24,11 +24,11 @@ public class AllPositionTester extends LinearOpMode {
         GamepadEx gp2 = new GamepadEx(gamepad2);
         GamepadEx gp1 = new GamepadEx(gamepad1);
 
-         bot.initializeImus();
+        bot.initializeImus();
 
         waitForStart();
 
-        int index = 5;
+        int index = 4;
 
         while (opModeIsActive() && !isStopRequested()) {
             gp1.readButtons();
@@ -40,12 +40,12 @@ public class AllPositionTester extends LinearOpMode {
                 bot.claw.close();
             }
 
-            if(gp2.wasJustPressed(GamepadKeys.Button.START)){
-                bot.horizSlides.runToFullOut();
-                telemetry.addLine("running thing");
-            }else if(gp2.wasJustPressed(GamepadKeys.Button.BACK)){
-                bot.horizSlides.runToFullIn();
-            }
+//            if(gp2.wasJustPressed(GamepadKeys.Button.START)){
+//                bot.horizSlides.runToFullOut();
+//                telemetry.addLine("running thing");
+//            }else if(gp2.wasJustPressed(GamepadKeys.Button.BACK)){
+//                bot.horizSlides.runToFullIn();
+//            }
 
             if (gp2.getButton(GamepadKeys.Button.X)){
                 bot.arm.intakeAuto(index);
@@ -57,13 +57,13 @@ public class AllPositionTester extends LinearOpMode {
                 bot.arm.storage();
             }
 
-            if(gp1.wasJustPressed(GamepadKeys.Button.DPAD_UP)){
+            if(gp1.wasJustPressed(GamepadKeys.Button.RIGHT_BUMPER)){
                 index++;
                 if(index > 5){
                     index = 5;
                 }
             }
-            if(gp1.wasJustPressed(GamepadKeys.Button.DPAD_DOWN)){
+            if(gp1.wasJustPressed(GamepadKeys.Button.LEFT_BUMPER)){
                 index--;
                 if(index<0){
                     index=0;
@@ -72,28 +72,28 @@ public class AllPositionTester extends LinearOpMode {
 
             bot.arm.updateIntakeAuto();
 
-            if (gp2.wasJustPressed(GamepadKeys.Button.DPAD_UP)) {
-//                bot.slides.runToTop();
-            }else if (gp2.wasJustPressed(GamepadKeys.Button.DPAD_LEFT)) {
-//                bot.slides.runToMiddle();
-            } else if (gp2.wasJustPressed(GamepadKeys.Button.DPAD_RIGHT)) {
-//                bot.slides.runToLow();
-            } else if (gp2.wasJustPressed(GamepadKeys.Button.DPAD_DOWN)) {
-//                bot.slides.runToBottom();
-            }
+//            if (gp2.wasJustPressed(GamepadKeys.Button.DPAD_UP)) {
+////                bot.slides.runToTop();
+//            }else if (gp2.wasJustPressed(GamepadKeys.Button.DPAD_LEFT)) {
+////                bot.slides.runToMiddle();
+//            } else if (gp2.wasJustPressed(GamepadKeys.Button.DPAD_RIGHT)) {
+////                bot.slides.runToLow();
+//            } else if (gp2.wasJustPressed(GamepadKeys.Button.DPAD_DOWN)) {
+////                bot.slides.runToBottom();
+//            }
+//
+//            if (gp2.wasJustPressed(GamepadKeys.Button.RIGHT_BUMPER)) {
+//                bot.slides.goDown();
+//            }
+//
+//            if (gp2.wasJustPressed(GamepadKeys.Button.LEFT_BUMPER)) {
+//
+//            }
 
-            if (gp2.wasJustPressed(GamepadKeys.Button.RIGHT_BUMPER)) {
-                bot.slides.goDown();
-            }
-
-            if (gp2.wasJustPressed(GamepadKeys.Button.LEFT_BUMPER)) {
-
-            }
-
-
-            if(gp2.wasJustPressed(GamepadKeys.Button.LEFT_STICK_BUTTON)){
-                bot.turret.runToFront();
-            }
+//
+//            if(gp2.wasJustPressed(GamepadKeys.Button.LEFT_STICK_BUTTON)){
+//                bot.turret.runToFront();
+//            }
 
             bot.horizSlides.runManual(-gp2.getRightY());
             bot.slides.runManual(-gp2.getLeftY());
@@ -102,14 +102,15 @@ public class AllPositionTester extends LinearOpMode {
                 bot.resetEncoder();
             }
 //
-//            bot.horizSlides.periodic();
-//            bot.slides.periodic();
-//            bot.turret.periodic();
+            bot.horizSlides.periodic();
+            bot.slides.periodic();
+            bot.turret.periodic();
 
             telemetry.addData("turret", bot.turret.getPosition());
             telemetry.addData("vert slides", bot.slides.getPosition());
             telemetry.addData("horiz slides", bot.horizSlides.getPosition());
             telemetry.addData("slides current", bot.slides.getCurrent());
+            telemetry.addData("arm index", index);
             telemetry.update();
 
         }

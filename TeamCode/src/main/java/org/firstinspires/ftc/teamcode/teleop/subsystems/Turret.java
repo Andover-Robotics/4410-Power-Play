@@ -1,13 +1,10 @@
 package org.firstinspires.ftc.teamcode.teleop.subsystems;
 
 import com.acmerobotics.dashboard.config.Config;
-import com.arcrobotics.ftclib.command.SubsystemBase;
 import com.arcrobotics.ftclib.controller.PIDFController;
 import com.arcrobotics.ftclib.hardware.motors.Motor;
 import com.arcrobotics.ftclib.hardware.motors.MotorEx;
 import com.qualcomm.robotcore.eventloop.opmode.OpMode;
-
-import org.firstinspires.ftc.teamcode.util.MotionProfiler;
 
 @Config
 public class Turret {
@@ -17,7 +14,7 @@ public class Turret {
     public static double p = 0.07, i = 0, d = 0.003, f = 0;
     private double tolerance = 5, powerUp = 0.1, manualDivide = 1.5, manualPower = 0, powerMin = 0.1;
     public static double tickToAngle = 3200/Math.PI/2;
-    public static int saveState = 0, turretAuto = -422, turretAutoIntake = 830, turretAutoOuttake = 454, limit = 5400, turretRightOuttake = -398, turretLeftOuttake = 401, turretLeftIntake = -838;
+    public static int saveState = 0, turretAutoOuttakeRight = -420, turretAutoIntakeRight = 830, turretAutoOuttakeLeft = 420, turretAutoIntakeLeft = -830, limit = 5400;
     private int target = 0;
 
     public Turret(OpMode opMode){
@@ -35,27 +32,22 @@ public class Turret {
         target = t;
     }
 
-    public void runToTurretAuto(){
-        runTo(turretAuto);
+    public void runToAutoOuttakeRight(){
+        runTo(turretAutoOuttakeRight);
     }
 
-    public void runToLeftOuttake() { runTo(turretLeftOuttake); }
+    public void runToAutoIntakeRight(){
+        runTo(turretAutoIntakeRight);
+    }
+    public void runToAutoOuttakeLeft(){runTo(turretAutoOuttakeLeft);}
+
+    public void runToAutoIntakeLeft(){runTo(turretAutoIntakeLeft);}
 
     public void runToFront(){
         runTo(0);
     }
 
-    public void runToAutoRightOuttake() { runTo(turretRightOuttake);}
 
-    public void runToLeftIntake() { runTo(turretLeftIntake); }
-
-    public void runToAutoIntake(){
-        runTo(turretAutoIntake);
-    }
-
-    public void runToAutoOuttake(){
-        runTo(turretAutoOuttake);
-    }
 
     public void runToSaveState(){
         runTo(saveState);

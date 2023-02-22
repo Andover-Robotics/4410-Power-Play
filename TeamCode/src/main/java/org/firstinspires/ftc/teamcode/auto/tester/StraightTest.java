@@ -17,7 +17,7 @@ import org.firstinspires.ftc.teamcode.teleop.subsystems.Bot;
 @Config
 @Autonomous(name="straight test")
 public class StraightTest extends LinearOpMode {
-    public static double DISTANCE = 24; // in
+    public static double DISTANCE = 52; // in
 
     @Override
     public void runOpMode() throws InterruptedException {
@@ -38,7 +38,7 @@ public class StraightTest extends LinearOpMode {
         Pose2d poseEstimate = drive.getPoseEstimate();
         telemetry.addData("finalX", poseEstimate.getX());
         telemetry.addData("finalY", poseEstimate.getY());
-        telemetry.addData("finalHeading", poseEstimate.getHeading());
+        telemetry.addData("finalHeading", poseEstimate.getHeading()*180/Math.PI);
         telemetry.update();
 
         while (!isStopRequested() && opModeIsActive()) ;

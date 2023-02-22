@@ -17,7 +17,7 @@ public class HorizSlides {
     private final OpMode opMode;
     public static double p = 0.04, i = 0, d = 0, f = 0;
     private double tolerance = 5, powerUp = 0.1, manualDivide = 1.5, manualPower = 0, powerMin = 0.1;
-    public static int fullOut = 580, fullIn = 0, outtake = 0, autoIntake = 520;
+    public static int fullOut = 580, fullIn = 0, outtake = 0, autoIntake = 530;
     private int target = 0;
     private double profile_init_time = 0;
 
