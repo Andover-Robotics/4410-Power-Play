@@ -5,57 +5,26 @@ import com.acmerobotics.dashboard.telemetry.MultipleTelemetry;
 import com.acmerobotics.roadrunner.geometry.Vector2d;
 import com.arcrobotics.ftclib.gamepad.GamepadEx;
 import com.arcrobotics.ftclib.gamepad.GamepadKeys;
-import com.qualcomm.hardware.ams.AMSColorSensor;
+import com.qualcomm.hardware.bosch.BNO055IMU;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 
+import org.firstinspires.ftc.robotcore.external.navigation.AngleUnit;
 import org.firstinspires.ftc.teamcode.teleop.subsystems.Bot;
+import org.firstinspires.ftc.teamcode.teleop.subsystems.Claw;
 
-import java.util.Timer;
-import java.util.TimerTask;
-
-
-//TODO:
-// Slides(Vertical)
-// Slides(Horizontal)
-// Toggle Claw
-// Intake Position = Ground/Storage values
-// Turret
-// Outtake Position
-
-
-// Later Job:
-// Debug
-// Auto mode
 
 @TeleOp(name = "MainTeleOp", group = "Competition")
 public class MainTeleOp extends LinearOpMode {
+
     private Bot bot;
-    private double driveSpeed = 1, fieldCentricOffset = 0;
+    private double driveSpeed = 1;
 
     private boolean debugMode = false;
-    private boolean autoMode = false;
-    private boolean clicked = false;
     private boolean cancelPrevAction = false;
-    private boolean lastStep = false; // true - Storage
-                                    // false - Intake
 
     private GamepadEx gp1, gp2;
 
-
-    private double outtakeFinalHzSlides;
-    private double outtakeFinalVSlidesLeft;
-    private double outtakeFinalVSlidesRight;
-    private double outtakeFinalTurret;
-
-    int index = 4;
-
-    public void storeValues() {
-        outtakeFinalHzSlides = bot.horizSlides.motor.getCurrentPosition();
-        outtakeFinalVSlidesLeft = bot.slides.motorLeft.getCurrentPosition();
-        outtakeFinalVSlidesRight = bot.slides.motorRight.getCurrentPosition();
-        outtakeFinalTurret = bot.turret.getPosition();
-    }
 
     @Override
     public void runOpMode() throws InterruptedException {
@@ -65,243 +34,152 @@ public class MainTeleOp extends LinearOpMode {
         gp1 = new GamepadEx(gamepad1);
 
         bot.initializeImus();
-        storeValues();
 
         waitForStart();
 
         while (opModeIsActive() && !isStopRequested()) {
-            gp1.readButtons(); // read buttons pressed
+            gp1.readButtons();
             gp2.readButtons();
 
             if(gp2.wasJustPressed(GamepadKeys.Button.START)){
                 debugMode = !debugMode;
             }
-            if (gp1.wasJustPressed(GamepadKeys.Button.BACK)) {
+            if(gp1.wasJustPressed(GamepadKeys.Button.START)){
                 bot.fieldCentricRunMode = !bot.fieldCentricRunMode;
             }
-            
-            
-            if (!debugMode) { // Driver 2 mode
-                if (gp2.wasJustPressed(GamepadKeys.Button.DPAD_UP)) { // Slides DPAD
-                    bot.slides.runToTop();
-                } else if (gp2.wasJustPressed(GamepadKeys.Button.DPAD_LEFT)) {
-                    bot.slides.runToMiddle();
-                } else if (gp2.wasJustPressed(GamepadKeys.Button.DPAD_RIGHT)) {
-                    bot.slides.runToLow();
-                } else if (gp2.wasJustPressed(GamepadKeys.Button.DPAD_DOWN)) {
-                    bot.slides.runToBottom();
-                }
 
-                if (gp2.wasJustPressed(GamepadKeys.Button.X)) {
-                    if (lastStep) {
-                        bot.slides.runToBottom();
-                        bot.arm.intake();
-                        bot.claw.open();
-                    } else {
-                        bot.arm.storage();
-                    }
-                } else if (gp2.wasJustPressed(GamepadKeys.Button.A)) {
-                    bot.arm.secure();
-                    if (bot.claw.isOpen) {
-                        bot.claw.close();
-                    } else {
-                        bot.claw.open();
-                    }
-                } else if (gp2.wasJustPressed(GamepadKeys.Button.Y)) {
-                    bot.arm.outtake();
-                } else if (gp2.wasJustPressed(GamepadKeys.Button.B)) {
-                    autoMode = !autoMode;
-                } else if (gp2.wasJustPressed(GamepadKeys.Button.RIGHT_STICK_BUTTON)) {
-                    storeValues();
-                }
+            telemetry.addData("imu", bot.getIMU());
 
-                Vector2d hzSlideVector = new Vector2d(gp2.getLeftX(), gp2.getLeftY());
-                bot.horizSlides.runManual(hzSlideVector.getY());
+            if(!debugMode) {//finite state
+//                if (bot.state == Bot.BotState.INTAKE || bot.state == Bot.BotState.INTAKE_OUT) {
+//                    if(gp2.getButton(GamepadKeys.Button.A)){
+//                        if(!cancelPrevAction) {
+//                            bot.claw.close();
+//                        }
+//                        if(gp2.wasJustPressed(GamepadKeys.Button.X)){
+//                            bot.claw.open();
+//                            cancelPrevAction = true;
+//                        }
+//                    }
+//                    if(gp2.wasJustReleased(GamepadKeys.Button.A)){
+//                        if(!cancelPrevAction){
+//                            bot.storage();
+//                        }
+//                        cancelPrevAction = false;
+//                    }
+//                } else if (bot.state == Bot.BotState.STORAGE) {
+//                    if (gp2.wasJustPressed(GamepadKeys.Button.A)) {
+//                        bot.intakeIn();
+//                    } else if (gp2.wasJustPressed(GamepadKeys.Button.X)) {
+//                        bot.intakeOut();
+//                    } else if (gp2.wasJustPressed(GamepadKeys.Button.Y)) {
+//                        bot.outtake();
+//                    }
+//                } else if (bot.state == Bot.BotState.OUTTAKE || bot.state == Bot.BotState.SECURE) {
+//                    if(gp2.getButton(GamepadKeys.Button.A)){
+//                        if(!cancelPrevAction) {
+//                            bot.secure();
+//                        }
+//                        if(gp2.wasJustPressed(GamepadKeys.Button.X)){
+//                            bot.outtake();
+//                            cancelPrevAction = true;
+//                        }
+//                        if(gp2.wasJustReleased(GamepadKeys.Button.A)){
+//                            if(!cancelPrevAction){
+//                                bot.claw.open();
+//                                bot.storage();
+////                                Thread storage = new Thread(() -> {sleep(1000); bot.storage();});
+////                                storage.start();
+//                            }
+//                            cancelPrevAction = false;
+//                        }
+//                    }
+//
+//
+//
+//                    if (gp2.getButton(GamepadKeys.Button.A)) {
+//                        bot.secure();
+//                    } else {
+//                        bot.outtake();
+//                    }
+//                    if (bot.state == Bot.BotState.SECURE && gp2.wasJustPressed(GamepadKeys.Button.B)) {
+//                        bot.claw.open();
+//                        bot.storage();
+//                    }
+//                }
+//                double gyro = getIMU() - fieldCentricOffset;
+//                bot.turret.runToAngle(0, gyro);//TODO calc angle from thing
 
-                Vector2d turretVector = new Vector2d(gp2.getRightX(), gp2.getRightY());
-
-                bot.turret.runToAngle(turretVector.angle(), bot.getIMU());
-
-
-
-
-
-            } else { // debug mode
-
-                if (gp2.getButton(GamepadKeys.Button.A)) {
-                    bot.claw.open();
-                } else {
-                    bot.claw.close();
-                }
-
-
-                if (gp2.getButton(GamepadKeys.Button.X)) {
-                    bot.arm.intakeAuto(index);
-                } else if (gp2.getButton(GamepadKeys.Button.Y)) {
-                    bot.arm.outtake();
-                } else if (gp2.getButton(GamepadKeys.Button.B)) {
-                    bot.arm.secure();
-                } else {
-                    bot.arm.storage();
-                }
-
-                if (gp1.wasJustPressed(GamepadKeys.Button.RIGHT_BUMPER)) {
-                    index++;
-                    if (index > 5) {
-                        index = 5;
-                    }
-                }
-                if (gp1.wasJustPressed(GamepadKeys.Button.LEFT_BUMPER)) {
-                    index--;
-                    if (index < 0) {
-                        index = 0;
-                    }
-                }
-
-                bot.arm.updateIntakeAuto();
-
-
+            }else{
                 bot.horizSlides.runManual(-gp2.getRightY());
                 bot.slides.runManual(-gp2.getLeftY());
                 bot.turret.runManual(gp2.getLeftX());
-                if (gp2.wasJustPressed(GamepadKeys.Button.RIGHT_STICK_BUTTON)) {
+                if(gp2.wasJustPressed(GamepadKeys.Button.X)){
                     bot.resetEncoder();
                 }
-
             }
 
-            AutoMode am = new AutoMode(bot, gp2, autoMode, clicked, outtakeFinalTurret, outtakeFinalVSlidesLeft);
-            WaitForBreak wfb = new WaitForBreak(gp2, autoMode, clicked);
 
-            am.start(); //starts thread for automode
-            wfb.start(); //starts thread for listening to break out of automode
+            if (gp2.wasJustPressed(GamepadKeys.Button.DPAD_UP)) {
+                bot.slides.runToTop();
+            } else if (gp2.wasJustPressed(GamepadKeys.Button.DPAD_LEFT)) {
+                bot.slides.runToMiddle();
+            }else if (gp2.wasJustPressed(GamepadKeys.Button.DPAD_RIGHT)) {
+                bot.slides.runToLow();
+            }else if (gp2.wasJustPressed(GamepadKeys.Button.DPAD_DOWN)) {
+                bot.slides.runToBottom();
+            }
 
-//            while (autoMode) {
-//                bot.claw.open();
-//                bot.arm.intake();
-//
-//                //checkpoint # 1
-//                Timer timer = new Timer();
-//                timer.schedule(new TimerTask() {
-//                    @Override
-//                    public void run() {
-//                        if (gp2.wasJustPressed(GamepadKeys.Button.BACK)) {
-//                            clicked = true;
-//                            timer.cancel();
-//                        }
-//                    }
-//                }, 0, 1000);
-//
-//                try {
-//                    Thread.sleep(2000); // Wait for 2 seconds
-//                } catch (InterruptedException e) {
-//                    e.printStackTrace();
-//                }
-//                timer.cancel();
-//
-//                if (clicked) {
-//                    bot.claw.close();
-//                    bot.arm.storage();
-//                    bot.turret.runTo((int) -outtakeFinalTurret);
-//                    bot.slides.runTo((int) outtakeFinalVSlidesLeft);
-//                    bot.arm.secure();
-//
-//                    //checkpoint
-//                    clicked = false;
-//                    Timer timer2 = new Timer();
-//                    timer.schedule(new TimerTask() {
-//                        @Override
-//                        public void run() {
-//                            if (gp2.wasJustPressed(GamepadKeys.Button.BACK)) {
-//                                clicked = true;
-//                                timer2.cancel();
-//                            }
-//                        }
-//                    }, 0, 1000);
-//
-//                    try {
-//                        Thread.sleep(2000); // Wait for 2 seconds
-//                    } catch (InterruptedException e) {
-//                        e.printStackTrace();
-//                    }
-//                    timer2.cancel();
-//
-//                    if (clicked) {
-//                        bot.claw.open();
-//                        bot.arm.storage();
-//                        bot.slides.runToBottom();
-//                        bot.turret.runTo((int) outtakeFinalTurret);
-//                    }
-//                }
-//
-//
-//
-//                if (gp2.wasJustPressed(GamepadKeys.Button.B)) {
-//                    autoMode = !autoMode;
-//                }
-//            }
+            if (gp2.wasJustPressed(GamepadKeys.Button.RIGHT_BUMPER)) {
+                bot.slides.goDown();
+            }
+
+            if (gp2.wasJustPressed(GamepadKeys.Button.LEFT_BUMPER)) {
+                bot.slides.goUp();
+            }
+
+
+            bot.slides.periodic();
+            bot.horizSlides.periodic();
+            bot.turret.periodic();
+
+            telemetry.addData("drive current", bot.getCurrent());
+            telemetry.addData("slide current", bot.slides.getCurrent());
+            telemetry.addData("imu", bot.imu0.getAngularOrientation().firstAngle);
+            telemetry.addData("getIMU", bot.getIMU());
+            telemetry.update();
+
+            drive();
         }
     }
-}
 
-class AutoMode extends Thread {
-    private Bot bot;
-    private GamepadEx gp2;
-    private boolean autoMode;
-    private boolean breakOut;
-    private double outtakeFinalTurret;
-    private double outtakeFinalVSlidesLeft;
-
-    public AutoMode(Bot bot, GamepadEx gp2, boolean autoMode, boolean breakOut, double outtakeFinalTurret, double outtakeFinalVSlidesLeft) {
-        this.bot = bot;
-        this.gp2 = gp2;
-        this.autoMode = autoMode;
-        this.breakOut = breakOut;
-        this.outtakeFinalTurret = outtakeFinalTurret;
-        this.outtakeFinalVSlidesLeft = outtakeFinalVSlidesLeft;
-    }
-
-    public void run () {
-        while (autoMode) {
-            bot.claw.open();
-            bot.arm.intake();
-            if (!breakOut) {
-                bot.claw.close();
-                bot.arm.storage();
-                bot.turret.runTo((int) -outtakeFinalTurret);
-                bot.slides.runTo((int) outtakeFinalVSlidesLeft);
-                bot.arm.secure();
-                if (!breakOut) {
-                    bot.claw.open();
-                    bot.arm.storage();
-                    bot.slides.runToBottom();
-                    bot.turret.runTo((int) outtakeFinalTurret);
-                }
-            }
-
-            if (gp2.wasJustPressed(GamepadKeys.Button.B) || breakOut) {
-                autoMode = false;
-            }
+    private void drive() {
+        if (gp1.wasJustReleased(GamepadKeys.Button.LEFT_STICK_BUTTON)){
+            bot.resetIMU();
+        }
+        driveSpeed = 1;
+//        driveSpeed -= bot.slides.isHigh()/3;
+        driveSpeed *= 1 - 0.5 * gp1.getTrigger(GamepadKeys.Trigger.RIGHT_TRIGGER);
+        driveSpeed = Math.max(0, driveSpeed);
+        bot.fixMotors();
+        Vector2d driveVector = new Vector2d(gp1.getLeftX(), -gp1.getLeftY()),
+                turnVector = new Vector2d(
+                        gp1.getRightX() , 0);
+        if (bot.fieldCentricRunMode) {
+            bot.driveFieldCentric(
+                    driveVector.getX() * driveSpeed,
+                    driveVector.getY() * driveSpeed,
+                    turnVector.getX() * driveSpeed,
+                    bot.getIMU()
+            );
+        } else {
+            bot.driveRobotCentric(driveVector.getX() * driveSpeed,
+                    driveVector.getY() * driveSpeed,
+                    turnVector.getX() * driveSpeed
+            );
         }
     }
+
 }
 
-class WaitForBreak extends Thread {
-    private GamepadEx gp2;
-    private boolean autoMode;
-    private boolean breakOut;
 
-    public WaitForBreak(GamepadEx gp2, boolean autoMode, boolean breakOut) {
-        this.gp2 = gp2;
-        this.autoMode = autoMode;
-        this.breakOut = breakOut;
-    }
-
-    public void run() {
-        while (autoMode) {
-            if (gp2.wasJustPressed(GamepadKeys.Button.BACK)) {
-                breakOut = true;
-            }
-        }
-    }
-}

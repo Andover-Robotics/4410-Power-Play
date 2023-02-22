@@ -1,5 +1,7 @@
 package org.firstinspires.ftc.teamcode.teleop.subsystems;
 
+import android.util.Log;
+
 import com.acmerobotics.dashboard.config.Config;
 import com.arcrobotics.ftclib.controller.PIDFController;
 import com.arcrobotics.ftclib.hardware.motors.Motor;
@@ -13,8 +15,9 @@ public class Turret {
 
     public static double p = 0.07, i = 0, d = 0.003, f = 0;
     private double tolerance = 5, powerUp = 0.1, manualDivide = 1.5, manualPower = 0, powerMin = 0.1;
-    public static double tickToAngle = 3200/Math.PI/2;
-    public static int saveState = 0, turretAutoOuttakeRight = -420, turretAutoIntakeRight = 830, turretAutoOuttakeLeft = 420, turretAutoIntakeLeft = -830, limit = 5400;
+    public static double tickToAngle = 3300.0/360;
+    public static int saveState = 0, turretAutoOuttakeRight = -455, turretAutoIntakeRight = 830, turretAutoOuttakeLeft = 455, turretAutoIntakeLeft = -830, limit = 5400,
+            turretAutoOuttakeMidRight = -1260, turretAutoOuttakeMidLeft = 1260;
     private int target = 0;
 
     public Turret(OpMode opMode){
@@ -32,16 +35,24 @@ public class Turret {
         target = t;
     }
 
-    public void runToAutoOuttakeRight(){
-        runTo(turretAutoOuttakeRight);
+
+    public void runToAutoOuttakeRight(double imu){
+        Log.d("imu double", Double.toString(imu));
+
+        Log.d("turret target", Integer.toString(turretAutoOuttakeRight + (int)(imu*tickToAngle)));
+        runTo(turretAutoOuttakeRight + (int)(imu*tickToAngle));
     }
 
-    public void runToAutoIntakeRight(){
-        runTo(turretAutoIntakeRight);
+    public void runToAutoIntakeRight(double imu){
+        runTo(turretAutoIntakeRight + (int)(imu*tickToAngle));
     }
-    public void runToAutoOuttakeLeft(){runTo(turretAutoOuttakeLeft);}
+    public void runToAutoOuttakeLeft(double imu){
+        runTo(turretAutoOuttakeLeft - (int)(imu*tickToAngle));
+    }
 
-    public void runToAutoIntakeLeft(){runTo(turretAutoIntakeLeft);}
+    public void runToAutoIntakeLeft(double imu){
+        runTo(turretAutoIntakeLeft - (int)(imu*tickToAngle));
+    }
 
     public void runToFront(){
         runTo(0);

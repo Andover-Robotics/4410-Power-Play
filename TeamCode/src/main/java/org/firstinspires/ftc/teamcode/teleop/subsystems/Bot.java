@@ -6,6 +6,7 @@ import com.qualcomm.hardware.bosch.BNO055IMU;
 import com.qualcomm.hardware.lynx.LynxModule;
 import com.qualcomm.robotcore.eventloop.opmode.OpMode;
 
+import org.firstinspires.ftc.robotcore.external.navigation.AngleUnit;
 import org.firstinspires.ftc.robotcore.external.navigation.CurrentUnit;
 import org.firstinspires.ftc.teamcode.auto.SampleMecanumDrive;
 
@@ -35,6 +36,8 @@ public class Bot {
 
     public BNO055IMU imu0;
     public boolean fieldCentricRunMode = true;
+
+    private double imuOffset = 0;
 
     public static Bot getInstance() {
         if (instance == null) {
@@ -127,6 +130,7 @@ public class Bot {
         parameters.loggingEnabled = false;
 
         imu0.initialize(parameters);
+        resetIMU();
     }
 
 
@@ -220,5 +224,20 @@ public class Bot {
         horizSlides.resetEncoder();
         slides.resetEncoder();
         turret.resetEncoder();
+    }
+
+    public void setImuOffset(double offset){
+        imuOffset += offset;
+    }
+
+    public void resetIMU(){
+        imuOffset += getIMU();
+    }
+    public double getIMU(){
+        double angle = (imu0.getAngularOrientation().toAngleUnit(AngleUnit.DEGREES).firstAngle-imuOffset)%360;
+        if(angle > 180){
+            angle = angle - 360;
+        }
+        return angle;
     }
 }

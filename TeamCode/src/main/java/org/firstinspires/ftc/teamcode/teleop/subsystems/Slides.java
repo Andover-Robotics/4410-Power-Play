@@ -18,7 +18,7 @@ public class Slides {
     private final PIDFController controller;
     public static double p = 0.05, i = 0, d = 0, f = 0, staticF = 0.3;
     private double tolerance = 20, powerUp = 0.1, manualDivide = 1, manualPower = 0, powerMin = 0.1;
-    public static int MAXHEIGHT = -1800, top = -1690, mid = -1185, low = -280, ground = 0, inc = 100, dec = 100;
+    public static int MAXHEIGHT = -1800, top = -1700, mid = -1185, low = -280, ground = 0, inc = 100, dec = 100;
 
     private int target = 0;
 

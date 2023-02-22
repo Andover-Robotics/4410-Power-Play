@@ -4,6 +4,7 @@ import com.acmerobotics.dashboard.FtcDashboard;
 import com.acmerobotics.dashboard.config.Config;
 import com.acmerobotics.dashboard.telemetry.MultipleTelemetry;
 import com.acmerobotics.roadrunner.geometry.Pose2d;
+import com.acmerobotics.roadrunner.geometry.Vector2d;
 import com.acmerobotics.roadrunner.trajectory.Trajectory;
 import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
@@ -15,9 +16,10 @@ import org.firstinspires.ftc.teamcode.teleop.subsystems.Bot;
 
 
 @Config
-@Autonomous(name="straight test")
+@Autonomous(name="'straight' test")
 public class StraightTest extends LinearOpMode {
-    public static double DISTANCE = 52; // in
+
+    public static double X = 52, Y = 1;
 
     @Override
     public void runOpMode() throws InterruptedException {
@@ -26,7 +28,7 @@ public class StraightTest extends LinearOpMode {
         SampleMecanumDrive drive = new SampleMecanumDrive(hardwareMap);
 
         Trajectory trajectory = drive.trajectoryBuilder(new Pose2d())
-                .forward(DISTANCE)
+                .lineTo(new Vector2d(X, Y))
                 .build();
 
         waitForStart();

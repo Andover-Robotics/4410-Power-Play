@@ -48,133 +48,133 @@ public class AlternateAuto extends LinearOpMode {
 
     @Override
     public void runOpMode() throws InterruptedException {
-        telemetry.setAutoClear(true);
-        bot = Bot.getInstance(this);
-        SampleMecanumDrive drive = new SampleMecanumDrive(hardwareMap);
-
-        // Retrieve the IMU from the hardware map
-//        BNO055IMU imu = hardwareMap.get(BNO055IMU.class, "imu");
-//        BNO055IMU.Parameters parameters = new BNO055IMU.Parameters();
-//        // Technically this is the default, however specifying it is clearer
-//        parameters.angleUnit = BNO055IMU.AngleUnit.RADIANS;
-//        // Without this, data retrieving from the IMU throws an exception
-//        imu.initialize(parameters);
-
-        GamepadEx gp1 = new GamepadEx(gamepad1);
-        GamepadEx gp2 = new GamepadEx(gamepad2);
-        bot.arm.preload();
-        while(!isStarted()){
-            gp1.readButtons();
-            if(gp1.wasJustPressed(GamepadKeys.Button.A)){
-                bot.claw.close();
-            }
-        }
-
-        waitForStart();
-
-
-        bot.claw.close();
-
-        Thread periodic = new Thread(() -> {
-            while (opModeIsActive() && !isStopRequested()) {
-                bot.slides.periodic();
-                bot.turret.periodic();
-                bot.horizSlides.periodic();
-            }
-        });
-
-        periodic.start();
-
-        drive.followTrajectory(trajectory);
-
-//        outtake();
-//        for(int i = 4; i >= 0; i--){
-//            telemetry.addData("running cycle", i);
-//            telemetry.update();
-//            pickUpCone(i);
-//            outtake();
+//        telemetry.setAutoClear(true);
+//        bot = Bot.getInstance(this);
+//        SampleMecanumDrive drive = new SampleMecanumDrive(hardwareMap);
+//
+//        // Retrieve the IMU from the hardware map
+////        BNO055IMU imu = hardwareMap.get(BNO055IMU.class, "imu");
+////        BNO055IMU.Parameters parameters = new BNO055IMU.Parameters();
+////        // Technically this is the default, however specifying it is clearer
+////        parameters.angleUnit = BNO055IMU.AngleUnit.RADIANS;
+////        // Without this, data retrieving from the IMU throws an exception
+////        imu.initialize(parameters);
+//
+//        GamepadEx gp1 = new GamepadEx(gamepad1);
+//        GamepadEx gp2 = new GamepadEx(gamepad2);
+//        bot.arm.preload();
+//        while(!isStarted()){
+//            gp1.readButtons();
+//            if(gp1.wasJustPressed(GamepadKeys.Button.A)){
+//                bot.claw.close();
+//            }
 //        }
-
-
+//
+//        waitForStart();
+//
+//
+//        bot.claw.close();
+//
+//        Thread periodic = new Thread(() -> {
+//            while (opModeIsActive() && !isStopRequested()) {
+//                bot.slides.periodic();
+//                bot.turret.periodic();
+//                bot.horizSlides.periodic();
+//            }
+//        });
+//
+//        periodic.start();
+//
+//        drive.followTrajectory(trajectory);
+//
+////        outtake();
+////        for(int i = 4; i >= 0; i--){
+////            telemetry.addData("running cycle", i);
+////            telemetry.update();
+////            pickUpCone(i);
+////            outtake();
+////        }
+//
+//
+//    }
+//    private void outtake(){
+//        bot.turret.runToTurretAuto();
+//        bot.slides.runToTop();
+//        sleep(timeSlidesUp);
+//        bot.arm.outtake();
+//        sleep(timeOuttake);
+//        bot.arm.secure();
+//        bot.claw.open();
+//        sleep(timeConeDrop);
+//        bot.claw.close();
+//        bot.arm.storage();
+//        sleep(timeOuttake);
+//        bot.slides.runToBottom();
+//        bot.turret.runToAutoIntake();
+//        sleep(timeSlidesDown);
+//    }
+//
+//    private void pickUpCone(int i){
+//        bot.claw.open();
+//        bot.arm.intakeAuto(i);
+//        sleep(timeIntakeDown);
+//        bot.horizSlides.runToAutoIntake();
+//        sleep(timeIntakeOut);
+//        bot.claw.close();
+//        sleep(timeIntakeClose);
+//        bot.arm.storage();
+//        sleep(timeIntakeUp);
+//        bot.horizSlides.runToFullIn();
+//        sleep(timeIntakeIn);
     }
-    private void outtake(){
-        bot.turret.runToTurretAuto();
-        bot.slides.runToTop();
-        sleep(timeSlidesUp);
-        bot.arm.outtake();
-        sleep(timeOuttake);
-        bot.arm.secure();
-        bot.claw.open();
-        sleep(timeConeDrop);
-        bot.claw.close();
-        bot.arm.storage();
-        sleep(timeOuttake);
-        bot.slides.runToBottom();
-        bot.turret.runToAutoIntake();
-        sleep(timeSlidesDown);
-    }
-
-    private void pickUpCone(int i){
-        bot.claw.open();
-        bot.arm.intakeAuto(i);
-        sleep(timeIntakeDown);
-        bot.horizSlides.runToAutoIntake();
-        sleep(timeIntakeOut);
-        bot.claw.close();
-        sleep(timeIntakeClose);
-        bot.arm.storage();
-        sleep(timeIntakeUp);
-        bot.horizSlides.runToFullIn();
-        sleep(timeIntakeIn);
-    }
-
-    private void step1() {
-        bot.slides.runTo(-338);
-        bot.turret.runToAutoIntake();
-        bot.horizSlides.runToAutoIntake();
-    }
-
-    private void step2() {
-        bot.arm.lift(0.61);
-        bot.turret.runToAutoOuttake();
-        bot.horizSlides.runToFullIn();
-        bot.slides.runToTop();
-    }
-
-
-    private void pickUpCone2(int i) {
-        bot.arm.intakeAuto(i);
-        sleep(timeIntakeIn);
-        bot.claw.close();
-    }
-
-    Trajectory trajectory = drive.trajectoryBuilder(new Pose2d(0,0,0), 0)
-            .lineTo(
-                    new Vector2d(50, 2),
-                    SampleMecanumDrive.getVelocityConstraint(15, DriveConstants.MAX_ANG_VEL, DriveConstants.TRACK_WIDTH),
-                    SampleMecanumDrive.getAccelerationConstraint(DriveConstants.MAX_ACCEL)
-            )
-            .addDisplacementMarker(30, () -> {
-                bot.turret.runToTurretAuto();
-            })
-            .addDisplacementMarker(48, () -> {
-                bot.slides.runToTop();
-                sleep(timeSlidesUp);
-                bot.arm.outtake();
-                sleep(timeOuttake);
-                bot.claw.open();
-                for(int i = 4; i >= 0; i--){
-                    telemetry.addData("running cycle", i);
-                    telemetry.update();
-                    step1();
-                    pickUpCone2(i);
-                    step2();
-                    bot.arm.outtake();
-                    sleep(timeOuttake);
-                    bot.claw.open();
-                }
-            })
-            .build();
+//
+//    private void step1() {
+//        bot.slides.runTo(-338);
+//        bot.turret.runToAutoIntake();
+//        bot.horizSlides.runToAutoIntake();
+//    }
+//
+//    private void step2() {
+//        bot.arm.lift(0.61);
+//        bot.turret.runToAutoOuttake();
+//        bot.horizSlides.runToFullIn();
+//        bot.slides.runToTop();
+//    }
+//
+//
+//    private void pickUpCone2(int i) {
+//        bot.arm.intakeAuto(i);
+//        sleep(timeIntakeIn);
+//        bot.claw.close();
+//    }
+//
+//    Trajectory trajectory = drive.trajectoryBuilder(new Pose2d(0,0,0), 0)
+//            .lineTo(
+//                    new Vector2d(50, 2),
+//                    SampleMecanumDrive.getVelocityConstraint(15, DriveConstants.MAX_ANG_VEL, DriveConstants.TRACK_WIDTH),
+//                    SampleMecanumDrive.getAccelerationConstraint(DriveConstants.MAX_ACCEL)
+//            )
+//            .addDisplacementMarker(30, () -> {
+//                bot.turret.runToTurretAuto();
+//            })
+//            .addDisplacementMarker(48, () -> {
+//                bot.slides.runToTop();
+//                sleep(timeSlidesUp);
+//                bot.arm.outtake();
+//                sleep(timeOuttake);
+//                bot.claw.open();
+//                for(int i = 4; i >= 0; i--){
+//                    telemetry.addData("running cycle", i);
+//                    telemetry.update();
+//                    step1();
+//                    pickUpCone2(i);
+//                    step2();
+//                    bot.arm.outtake();
+//                    sleep(timeOuttake);
+//                    bot.claw.open();
+//                }
+//            })
+//            .build();
 
 //    void tagToTelemetry(AprilTagDetection detection)
 //    {
