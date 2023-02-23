@@ -118,6 +118,11 @@ public class Bot {
         arm.secure();
     }
 
+    public void initTeleOp(){
+
+
+    }
+
     public void initializeImus() {
         imu0 = opMode.hardwareMap.get(BNO055IMU.class, "imu");
 

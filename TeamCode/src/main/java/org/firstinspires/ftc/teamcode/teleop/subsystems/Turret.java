@@ -13,7 +13,7 @@ public class Turret {
     private final MotorEx motor;
     private final PIDFController controller;
 
-    public static double p = 0.07, i = 0, d = 0.003, f = 0;
+    public static double p = 0.07, i = 0, d = 0.003, f = 0;//TODO experiment with increasing P and D to get more precision
     private double tolerance = 5, powerUp = 0.1, manualDivide = 1.5, manualPower = 0, powerMin = 0.1;
     public static double tickToAngle = 3300.0/360;
     public static int saveState = 0, turretAutoOuttakeRight = -455, turretAutoIntakeRight = 830, turretAutoOuttakeLeft = 420, turretAutoIntakeLeft = -838, limit = 5400,

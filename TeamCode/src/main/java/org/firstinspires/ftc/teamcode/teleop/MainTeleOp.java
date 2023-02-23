@@ -8,11 +8,14 @@ import com.arcrobotics.ftclib.gamepad.GamepadKeys;
 import com.qualcomm.hardware.bosch.BNO055IMU;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
+import com.qualcomm.robotcore.hardware.DcMotor;
 
 import org.firstinspires.ftc.robotcore.external.navigation.AngleUnit;
 import org.firstinspires.ftc.teamcode.auto.MainAutonomous;
 import org.firstinspires.ftc.teamcode.teleop.subsystems.Bot;
 import org.firstinspires.ftc.teamcode.teleop.subsystems.Claw;
+
+import java.util.Map;
 
 
 @TeleOp(name = "MainTeleOp", group = "Competition")
@@ -41,6 +44,19 @@ public class MainTeleOp extends LinearOpMode {
 
     @Override
     public void runOpMode() throws InterruptedException {
+        //TODO EXPERIMENTAL CODE =================
+        Bot.instance = null;
+        for (Map.Entry<String, DcMotor> entry : hardwareMap.dcMotor.entrySet()) {
+            entry.getValue().setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
+//            while (!isStopRequested() && Math.abs(entry.getValue().getCurrentPosition()) > 1) {
+//                idle();
+//            }
+        }
+        //End experimental code ===================
+
+        telemetry = new MultipleTelemetry(telemetry, FtcDashboard.getInstance().getTelemetry());
+        bot = Bot.getInstance(this);
+
         Thread periodic = new Thread(() -> {
             while (opModeIsActive() && !isStopRequested()) {
                 bot.slides.periodic();
@@ -53,12 +69,11 @@ public class MainTeleOp extends LinearOpMode {
                 autoMode = false;
             }
         });
-        telemetry = new MultipleTelemetry(telemetry, FtcDashboard.getInstance().getTelemetry());
-        bot = Bot.getInstance(this);
+
         gp2 = new GamepadEx(gamepad2);
         gp1 = new GamepadEx(gamepad1);
 
-        bot.initializeImus();
+//        bot.initializeImus(); TODO see if this is required
 
         bot.state = Bot.BotState.STORAGE;
         bot.arm.storage();

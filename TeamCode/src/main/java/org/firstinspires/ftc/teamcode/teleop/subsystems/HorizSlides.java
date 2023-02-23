@@ -16,12 +16,13 @@ public class HorizSlides {
     private final PIDFController controller;
     private final OpMode opMode;
     public static double p = 0.04, i = 0, d = 0, f = 0;
-    private double tolerance = 5, powerUp = 0.1, manualDivide = 1.5, manualPower = 0, powerMin = 0.1;
+    private final double tolerance = 5, powerUp = 0.1, manualDivide = 1.5, powerMin = 0.1;
+    private double manualPower = 0;
     public static int fullOut = 580, fullIn = 0, outtake = 0, autoIntake = 540;
     private int target = 0;
     private double profile_init_time = 0;
 
-    public MotionProfiler profiler = new MotionProfiler(3000, 6000);
+    private final MotionProfiler profiler = new MotionProfiler(3000, 6000);
 
     public HorizSlides(OpMode opMode){
         motor = new MotorEx(opMode.hardwareMap, "slidesHoriz", Motor.GoBILDA.RPM_1150);

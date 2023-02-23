@@ -8,6 +8,7 @@ import com.arcrobotics.ftclib.gamepad.GamepadEx;
 import com.arcrobotics.ftclib.gamepad.GamepadKeys;
 import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
+import com.qualcomm.robotcore.hardware.DcMotor;
 
 import org.firstinspires.ftc.robotcore.external.hardware.camera.WebcamName;
 import org.firstinspires.ftc.teamcode.teleop.subsystems.Bot;
@@ -17,6 +18,7 @@ import org.openftc.easyopencv.OpenCvCameraFactory;
 import org.openftc.easyopencv.OpenCvCameraRotation;
 
 import java.util.ArrayList;
+import java.util.Map;
 
 
 @Config
@@ -30,6 +32,8 @@ public class MainAutonomous extends LinearOpMode {
     }
 
     Side side = Side.NULL;
+
+    boolean isTestMode = false;
 
     public static int driveTime = 2200, timeSlidesUp = 850, timeSlidesDown = 550, timeOuttake = 350, timeConeDrop = 150, timeIntakeDown = 200, timeIntakeOut = 700, timeIntakeClose = 150, timeIntakeUp = 500, timeIntakeIn = 400;//old 400
 
@@ -52,6 +56,16 @@ public class MainAutonomous extends LinearOpMode {
 
     @Override
     public void runOpMode() throws InterruptedException {
+        //TODO EXPERIMENTAL CODE =================
+        Bot.instance = null;
+        for (Map.Entry<String, DcMotor> entry : hardwareMap.dcMotor.entrySet()) {
+            entry.getValue().setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
+//            while (!isStopRequested() && Math.abs(entry.getValue().getCurrentPosition()) > 1) {
+//                idle();
+//            }
+        }
+        //End experimental code ===================
+
         telemetry.setAutoClear(true);
         bot = Bot.getInstance(this);
         SampleMecanumDrive drive = new SampleMecanumDrive(hardwareMap);
@@ -121,7 +135,9 @@ public class MainAutonomous extends LinearOpMode {
             if(gp1.wasJustPressed(GamepadKeys.Button.A)){
                 bot.claw.close();
             }
-            //TODO add just park
+            if(gp1.wasJustPressed(GamepadKeys.Button.BACK)){
+                isTestMode = true;
+            }
 
             telemetry.addData("Current FPS:", camera.getFps());
             telemetry.addData("Current Max FPS:", camera.getCurrentPipelineMaxFps());
@@ -213,17 +229,25 @@ public class MainAutonomous extends LinearOpMode {
             } else {
                 sleep(3000);
             }
-            try {
 
-                if (tagOfInterest.id == ID_ONE) {
-                    drive.followTrajectory(parkLeft);
-                } else if (tagOfInterest.id == ID_THREE) {
-                    drive.followTrajectory(parkRight);
-                } else {
+            if(isTestMode){
+                Trajectory goBack = drive.trajectoryBuilder(forward.end())
+                                .lineTo(new Vector2d())
+                                        .build();
+                drive.followTrajectory(goBack);
+            }else {
+                try {
+
+                    if (tagOfInterest.id == ID_ONE) {
+                        drive.followTrajectory(parkLeft);
+                    } else if (tagOfInterest.id == ID_THREE) {
+                        drive.followTrajectory(parkRight);
+                    } else {
+                        sleep(1500);
+                    }
+                } catch (NullPointerException e) {
                     sleep(1500);
                 }
-            }catch (NullPointerException e){
-                sleep(1500);
             }
             driveForward.interrupt();
             periodic.interrupt();
