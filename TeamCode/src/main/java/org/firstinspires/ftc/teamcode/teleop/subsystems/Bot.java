@@ -8,7 +8,6 @@ import com.qualcomm.robotcore.eventloop.opmode.OpMode;
 
 import org.firstinspires.ftc.robotcore.external.navigation.AngleUnit;
 import org.firstinspires.ftc.robotcore.external.navigation.CurrentUnit;
-import org.firstinspires.ftc.teamcode.auto.SampleMecanumDrive;
 
 public class Bot {
 
@@ -35,7 +34,7 @@ public class Bot {
     public OpMode opMode;
 
     public BNO055IMU imu0;
-    public boolean fieldCentricRunMode = true;
+    public boolean fieldCentricRunMode = false;
 
     private double imuOffset = 0;
 
@@ -60,7 +59,7 @@ public class Bot {
 
         try {
             this.initializeImus();
-            fieldCentricRunMode=true;
+            fieldCentricRunMode=false;
         }
         catch(Exception e){
             imu0=null;

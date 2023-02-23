@@ -16,7 +16,7 @@ public class Turret {
     public static double p = 0.07, i = 0, d = 0.003, f = 0;
     private double tolerance = 5, powerUp = 0.1, manualDivide = 1.5, manualPower = 0, powerMin = 0.1;
     public static double tickToAngle = 3300.0/360;
-    public static int saveState = 0, turretAutoOuttakeRight = -455, turretAutoIntakeRight = 830, turretAutoOuttakeLeft = 455, turretAutoIntakeLeft = -830, limit = 5400,
+    public static int saveState = 0, turretAutoOuttakeRight = -455, turretAutoIntakeRight = 830, turretAutoOuttakeLeft = 420, turretAutoIntakeLeft = -838, limit = 5400,
             turretAutoOuttakeMidRight = -1260, turretAutoOuttakeMidLeft = 1260;
     private int target = 0;
 
@@ -37,21 +37,16 @@ public class Turret {
 
 
     public void runToAutoOuttakeRight(double imu){
-        Log.d("imu double", Double.toString(imu));
-
-        Log.d("turret target", Integer.toString(turretAutoOuttakeRight + (int)(imu*tickToAngle)));
         runTo(turretAutoOuttakeRight + (int)(imu*tickToAngle));
     }
-
     public void runToAutoIntakeRight(double imu){
         runTo(turretAutoIntakeRight + (int)(imu*tickToAngle));
     }
     public void runToAutoOuttakeLeft(double imu){
-        runTo(turretAutoOuttakeLeft - (int)(imu*tickToAngle));
+        runTo(turretAutoOuttakeLeft + (int)(imu*tickToAngle));
     }
-
     public void runToAutoIntakeLeft(double imu){
-        runTo(turretAutoIntakeLeft - (int)(imu*tickToAngle));
+        runTo(turretAutoIntakeLeft + (int)(imu*tickToAngle));
     }
 
     public void runToFront(){
@@ -73,12 +68,17 @@ public class Turret {
     }
 
     public void runToAngle(double angle, double imu){
-        int target = (int)((angle - imu)*tickToAngle);
-        while(Math.abs(target - motor.getCurrentPosition()) > tickToAngle*3/5){
+        int target = (int)((angle + imu)*tickToAngle);
+        while(Math.abs(target - motor.getCurrentPosition()) > tickToAngle*360*3/5){
             if(target < motor.getCurrentPosition()){
-                target += tickToAngle*2*Math.PI;
+                target += tickToAngle*360;
             }else{
-                target -= tickToAngle*2*Math.PI;
+                target -= tickToAngle*360;
+            }
+            if(target > limit){
+                target -= tickToAngle*360;
+            }else if(target < -limit){
+                target += tickToAngle*360;
             }
         }
         runTo(target);

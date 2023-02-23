@@ -1,7 +1,5 @@
 package org.firstinspires.ftc.teamcode.auto;
 
-import android.util.Log;
-
 import com.acmerobotics.dashboard.config.Config;
 import com.acmerobotics.roadrunner.geometry.Pose2d;
 import com.acmerobotics.roadrunner.geometry.Vector2d;
@@ -12,7 +10,6 @@ import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 
 import org.firstinspires.ftc.robotcore.external.hardware.camera.WebcamName;
-import org.firstinspires.ftc.robotcore.external.navigation.AngleUnit;
 import org.firstinspires.ftc.teamcode.teleop.subsystems.Bot;
 import org.openftc.apriltag.AprilTagDetection;
 import org.openftc.easyopencv.OpenCvCamera;
@@ -34,7 +31,7 @@ public class MainAutonomous extends LinearOpMode {
 
     Side side = Side.NULL;
 
-    public static int driveTime = 2700, timeSlidesUp = 800, timeSlidesDown = 550, timeOuttake = 350, timeConeDrop = 150, timeIntakeDown = 200, timeIntakeOut = 700, timeIntakeClose = 150, timeIntakeUp = 500, timeIntakeIn = 400;//old 400
+    public static int driveTime = 2200, timeSlidesUp = 850, timeSlidesDown = 550, timeOuttake = 350, timeConeDrop = 150, timeIntakeDown = 200, timeIntakeOut = 700, timeIntakeClose = 150, timeIntakeUp = 500, timeIntakeIn = 400;//old 400
 
 
     static final double FEET_PER_METER = 3.28084;
@@ -89,7 +86,7 @@ public class MainAutonomous extends LinearOpMode {
         Pose2d startPose = new Pose2d(0, 0, 0);
         drive.setPoseEstimate(startPose);
         Trajectory forward = drive.trajectoryBuilder(startPose)
-                .lineTo(new Vector2d(52, 1))
+                .lineTo(new Vector2d(52, 0.5))
                 .build();
 
         Trajectory parkLeft = drive.trajectoryBuilder(forward.end())
@@ -198,6 +195,7 @@ public class MainAutonomous extends LinearOpMode {
         waitForStart();
         if(!isStopRequested()) {
             bot.claw.close();
+            bot.arm.autoStorage();
 
             periodic.start();
 
@@ -227,6 +225,8 @@ public class MainAutonomous extends LinearOpMode {
             }catch (NullPointerException e){
                 sleep(1500);
             }
+            driveForward.interrupt();
+            periodic.interrupt();
         }
     }
     private void outtake(int i){
@@ -238,11 +238,11 @@ public class MainAutonomous extends LinearOpMode {
         bot.slides.runToTop();
         sleep(timeSlidesUp);
         if(i == 5){
-            sleep(200);
+            sleep(400);
         }
-        bot.arm.outtake();
+        bot.arm.autoOuttake();
         sleep(timeOuttake);
-        bot.arm.secure();
+        bot.arm.autoSecure();
         bot.claw.open();
         bot.arm.storage();
         sleep(timeConeDrop);

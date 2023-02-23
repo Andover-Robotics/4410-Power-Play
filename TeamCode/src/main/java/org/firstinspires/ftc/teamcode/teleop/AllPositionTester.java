@@ -4,13 +4,10 @@ import com.acmerobotics.dashboard.FtcDashboard;
 import com.acmerobotics.dashboard.telemetry.MultipleTelemetry;
 import com.arcrobotics.ftclib.gamepad.GamepadEx;
 import com.arcrobotics.ftclib.gamepad.GamepadKeys;
-import com.qualcomm.hardware.bosch.BNO055IMU;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 
-import org.firstinspires.ftc.robotcore.external.navigation.AngleUnit;
 import org.firstinspires.ftc.teamcode.teleop.subsystems.Bot;
-import org.firstinspires.ftc.teamcode.teleop.subsystems.Slides;
 
 @TeleOp(name="all position tester")
 public class AllPositionTester extends LinearOpMode {
@@ -50,9 +47,9 @@ public class AllPositionTester extends LinearOpMode {
             if (gp2.getButton(GamepadKeys.Button.X)){
                 bot.arm.intakeAuto(index);
             }else if(gp2.getButton(GamepadKeys.Button.Y)){
-                bot.arm.outtake();
+                bot.arm.autoOuttake();
             }else if(gp2.getButton(GamepadKeys.Button.B)){
-                bot.arm.secure();
+                bot.arm.autoSecure();
             }else{
                 bot.arm.storage();
             }
