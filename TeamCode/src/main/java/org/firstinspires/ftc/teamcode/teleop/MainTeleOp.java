@@ -5,6 +5,7 @@ import com.acmerobotics.dashboard.telemetry.MultipleTelemetry;
 import com.acmerobotics.roadrunner.geometry.Vector2d;
 import com.arcrobotics.ftclib.gamepad.GamepadEx;
 import com.arcrobotics.ftclib.gamepad.GamepadKeys;
+import com.qualcomm.hardware.ams.AMSColorSensor;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 
@@ -118,7 +119,8 @@ public class MainTeleOp extends LinearOpMode {
                 bot.horizSlides.runManual(hzSlideVector.getY());
 
                 Vector2d turretVector = new Vector2d(gp2.getRightX(), gp2.getRightY());
-                bot.turret.runManual(turretVector.getX());
+
+                bot.turret.runToAngle(turretVector.angle(), bot.getIMU());
 
 
 
@@ -158,28 +160,6 @@ public class MainTeleOp extends LinearOpMode {
 
                 bot.arm.updateIntakeAuto();
 
-//            if (gp2.wasJustPressed(GamepadKeys.Button.DPAD_UP)) {
-////                bot.slides.runToTop();
-//            }else if (gp2.wasJustPressed(GamepadKeys.Button.DPAD_LEFT)) {
-////                bot.slides.runToMiddle();
-//            } else if (gp2.wasJustPressed(GamepadKeys.Button.DPAD_RIGHT)) {
-////                bot.slides.runToLow();
-//            } else if (gp2.wasJustPressed(GamepadKeys.Button.DPAD_DOWN)) {
-////                bot.slides.runToBottom();
-//            }
-//
-//            if (gp2.wasJustPressed(GamepadKeys.Button.RIGHT_BUMPER)) {
-//                bot.slides.goDown();
-//            }
-//
-//            if (gp2.wasJustPressed(GamepadKeys.Button.LEFT_BUMPER)) {
-//
-//            }
-
-//
-//            if(gp2.wasJustPressed(GamepadKeys.Button.LEFT_STICK_BUTTON)){
-//                bot.turret.runToFront();
-//            }
 
                 bot.horizSlides.runManual(-gp2.getRightY());
                 bot.slides.runManual(-gp2.getLeftY());
@@ -190,69 +170,137 @@ public class MainTeleOp extends LinearOpMode {
 
             }
 
-            while (autoMode) {
-                bot.claw.open();
-                bot.arm.intake();
+            AutoMode am = new AutoMode(bot, gp2, autoMode, clicked, outtakeFinalTurret, outtakeFinalVSlidesLeft);
+            WaitForBreak wfb = new WaitForBreak(gp2, autoMode, clicked);
 
-                //checkpoint # 1
-                Timer timer = new Timer();
-                timer.schedule(new TimerTask() {
-                    @Override
-                    public void run() {
-                        if (gp2.wasJustPressed(GamepadKeys.Button.BACK)) {
-                            clicked = true;
-                            timer.cancel();
-                        }
-                    }
-                }, 0, 1000);
+            am.start(); //starts thread for automode
+            wfb.start(); //starts thread for listening to break out of automode
 
-                try {
-                    Thread.sleep(2000); // Wait for 2 seconds
-                } catch (InterruptedException e) {
-                    e.printStackTrace();
-                }
-                timer.cancel();
+//            while (autoMode) {
+//                bot.claw.open();
+//                bot.arm.intake();
+//
+//                //checkpoint # 1
+//                Timer timer = new Timer();
+//                timer.schedule(new TimerTask() {
+//                    @Override
+//                    public void run() {
+//                        if (gp2.wasJustPressed(GamepadKeys.Button.BACK)) {
+//                            clicked = true;
+//                            timer.cancel();
+//                        }
+//                    }
+//                }, 0, 1000);
+//
+//                try {
+//                    Thread.sleep(2000); // Wait for 2 seconds
+//                } catch (InterruptedException e) {
+//                    e.printStackTrace();
+//                }
+//                timer.cancel();
+//
+//                if (clicked) {
+//                    bot.claw.close();
+//                    bot.arm.storage();
+//                    bot.turret.runTo((int) -outtakeFinalTurret);
+//                    bot.slides.runTo((int) outtakeFinalVSlidesLeft);
+//                    bot.arm.secure();
+//
+//                    //checkpoint
+//                    clicked = false;
+//                    Timer timer2 = new Timer();
+//                    timer.schedule(new TimerTask() {
+//                        @Override
+//                        public void run() {
+//                            if (gp2.wasJustPressed(GamepadKeys.Button.BACK)) {
+//                                clicked = true;
+//                                timer2.cancel();
+//                            }
+//                        }
+//                    }, 0, 1000);
+//
+//                    try {
+//                        Thread.sleep(2000); // Wait for 2 seconds
+//                    } catch (InterruptedException e) {
+//                        e.printStackTrace();
+//                    }
+//                    timer2.cancel();
+//
+//                    if (clicked) {
+//                        bot.claw.open();
+//                        bot.arm.storage();
+//                        bot.slides.runToBottom();
+//                        bot.turret.runTo((int) outtakeFinalTurret);
+//                    }
+//                }
+//
+//
+//
+//                if (gp2.wasJustPressed(GamepadKeys.Button.B)) {
+//                    autoMode = !autoMode;
+//                }
+//            }
+        }
+    }
+}
 
-                if (clicked) {
-                    bot.claw.close();
+class AutoMode extends Thread {
+    private Bot bot;
+    private GamepadEx gp2;
+    private boolean autoMode;
+    private boolean breakOut;
+    private double outtakeFinalTurret;
+    private double outtakeFinalVSlidesLeft;
+
+    public AutoMode(Bot bot, GamepadEx gp2, boolean autoMode, boolean breakOut, double outtakeFinalTurret, double outtakeFinalVSlidesLeft) {
+        this.bot = bot;
+        this.gp2 = gp2;
+        this.autoMode = autoMode;
+        this.breakOut = breakOut;
+        this.outtakeFinalTurret = outtakeFinalTurret;
+        this.outtakeFinalVSlidesLeft = outtakeFinalVSlidesLeft;
+    }
+
+    public void run () {
+        while (autoMode) {
+            bot.claw.open();
+            bot.arm.intake();
+            if (!breakOut) {
+                bot.claw.close();
+                bot.arm.storage();
+                bot.turret.runTo((int) -outtakeFinalTurret);
+                bot.slides.runTo((int) outtakeFinalVSlidesLeft);
+                bot.arm.secure();
+                if (!breakOut) {
+                    bot.claw.open();
                     bot.arm.storage();
-                    bot.turret.runTo((int) -outtakeFinalTurret);
-                    bot.slides.runTo((int) outtakeFinalVSlidesLeft);
-                    bot.arm.secure();
-
-                    //checkpoint
-                    clicked = false;
-                    Timer timer2 = new Timer();
-                    timer.schedule(new TimerTask() {
-                        @Override
-                        public void run() {
-                            if (gp2.wasJustPressed(GamepadKeys.Button.BACK)) {
-                                clicked = true;
-                                timer2.cancel();
-                            }
-                        }
-                    }, 0, 1000);
-
-                    try {
-                        Thread.sleep(2000); // Wait for 2 seconds
-                    } catch (InterruptedException e) {
-                        e.printStackTrace();
-                    }
-                    timer2.cancel();
-
-                    if (clicked) {
-                        bot.claw.open();
-                        bot.arm.storage();
-                        bot.slides.runToBottom();
-                        bot.turret.runTo((int) outtakeFinalTurret);
-                    }
+                    bot.slides.runToBottom();
+                    bot.turret.runTo((int) outtakeFinalTurret);
                 }
+            }
 
+            if (gp2.wasJustPressed(GamepadKeys.Button.B) || breakOut) {
+                autoMode = false;
+            }
+        }
+    }
+}
 
+class WaitForBreak extends Thread {
+    private GamepadEx gp2;
+    private boolean autoMode;
+    private boolean breakOut;
 
-                if (gp2.wasJustPressed(GamepadKeys.Button.B)) {
-                    autoMode = !autoMode;
-                }
+    public WaitForBreak(GamepadEx gp2, boolean autoMode, boolean breakOut) {
+        this.gp2 = gp2;
+        this.autoMode = autoMode;
+        this.breakOut = breakOut;
+    }
+
+    public void run() {
+        while (autoMode) {
+            if (gp2.wasJustPressed(GamepadKeys.Button.BACK)) {
+                breakOut = true;
             }
         }
     }
