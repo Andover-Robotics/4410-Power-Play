@@ -5,15 +5,11 @@ import com.acmerobotics.dashboard.telemetry.MultipleTelemetry;
 import com.acmerobotics.roadrunner.geometry.Vector2d;
 import com.arcrobotics.ftclib.gamepad.GamepadEx;
 import com.arcrobotics.ftclib.gamepad.GamepadKeys;
-import com.qualcomm.hardware.bosch.BNO055IMU;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 import com.qualcomm.robotcore.hardware.DcMotor;
 
-import org.firstinspires.ftc.robotcore.external.navigation.AngleUnit;
-import org.firstinspires.ftc.teamcode.auto.MainAutonomous;
 import org.firstinspires.ftc.teamcode.teleop.subsystems.Bot;
-import org.firstinspires.ftc.teamcode.teleop.subsystems.Claw;
 
 import java.util.Map;
 
@@ -27,15 +23,11 @@ public class MainTeleOp extends LinearOpMode {
     private boolean debugMode = false;
     private boolean cancelPrevAction = false;
     private boolean autoMode = false;
-    private boolean clicked = false;
-    private boolean lastStep = false; // true - Storage
-    // false - Intake
-
     private double outtakeFinalHzSlides;//TODO find presets
     private double outtakeFinalVSlides;
     private double outtakeFinalTurret;
 
-    private int index;
+    private int index = 4;
 
 
 
@@ -62,6 +54,7 @@ public class MainTeleOp extends LinearOpMode {
                 bot.slides.periodic();
                 bot.turret.periodic();
                 bot.horizSlides.periodic();
+                drive();
             }
         });
         Thread checkForCycleMode = new Thread(() -> {
@@ -113,13 +106,16 @@ public class MainTeleOp extends LinearOpMode {
                 } else if (bot.state == Bot.BotState.STORAGE) {
                     if (gp2.wasJustPressed(GamepadKeys.Button.A)) {
                         bot.intakeIn();
+                        cancelPrevAction = true;
                     } else if (gp2.wasJustPressed(GamepadKeys.Button.X)) {
                         bot.intakeOut();
                     } else if (gp2.wasJustPressed(GamepadKeys.Button.Y)) {
                         bot.outtake();
                     }
-                    if(gp2.wasJustPressed(GamepadKeys.Button.START)){
+                    if(gp2.wasJustPressed(GamepadKeys.Button.B)){
+                        bot.state = Bot.BotState.OUTTAKE;
                         autoMode = true;
+                        goToOuttake();
                     }
                 } else if (bot.state == Bot.BotState.OUTTAKE || bot.state == Bot.BotState.SECURE) {
                     if(gp2.wasJustPressed(GamepadKeys.Button.X) && bot.state == Bot.BotState.OUTTAKE){
@@ -138,11 +134,15 @@ public class MainTeleOp extends LinearOpMode {
                         if(!cancelPrevAction){
                             bot.claw.open();
                             bot.storage();
+                            if(autoMode) {
+                                bot.turret.runToFront();//TODO switch with values
+                            }
+                            autoMode = false;
                         }
                         cancelPrevAction = false;
                     }
                 }
-//                Vector2d stickVector = new Vector2d(gp2.getRightX(), gp2.getRightY());
+//                Vector2d stickVector = new Vector2d(gp2.getRightX(), gp2.getRightY()); // TODO get this working
 //                double angle = stickVector.angle() * 180/Math.PI;
 //                if(stickVector.norm() > 0.5) {
 //                    bot.turret.runToAngle(angle, bot.getIMU());
@@ -185,22 +185,18 @@ public class MainTeleOp extends LinearOpMode {
                     bot.arm.storage();
                 }
 
-                if (gp1.wasJustPressed(GamepadKeys.Button.RIGHT_BUMPER)) {
+                if (gp2.wasJustPressed(GamepadKeys.Button.RIGHT_BUMPER)) {
                     index++;
                     if (index > 5) {
                         index = 5;
                     }
                 }
-                if (gp1.wasJustPressed(GamepadKeys.Button.LEFT_BUMPER)) {
+                if (gp2.wasJustPressed(GamepadKeys.Button.LEFT_BUMPER)) {
                     index--;
                     if (index < 0) {
                         index = 0;
                     }
                 }
-            }
-
-            while(autoMode){
-                doCycle();
             }
 
             telemetry.addData("drive current", bot.getCurrent());
@@ -210,8 +206,6 @@ public class MainTeleOp extends LinearOpMode {
             telemetry.addData("fieldCentric", bot.fieldCentricRunMode);
             telemetry.addData("state", bot.state.toString());
             telemetry.update();
-
-            drive();
         }
     }
 
@@ -221,54 +215,20 @@ public class MainTeleOp extends LinearOpMode {
         outtakeFinalTurret = bot.turret.getPosition();
     }
 
-    private void doCycle(){
-        outtake();
-        if(autoMode == false){
-            return;
-        }
-        pickUpCone();
-        if(autoMode == false){
-            return;
-        }
-    }
-
 
     //copied from auto
     public static int driveTime = 2200, timeSlidesUp = 850, timeSlidesDown = 550, timeOuttake = 350, timeConeDrop = 150, timeIntakeDown = 200, timeIntakeOut = 700, timeIntakeClose = 150, timeIntakeUp = 500, timeIntakeIn = 400;//old 400
 
 
-    private void outtake(){//TODO change values to use the stored values
+    private void goToOuttake() {//TODO change values to use the stored values
 
-        bot.turret.runToAutoOuttakeRight(bot.getIMU());
-        bot.slides.runToTop();
+        bot.turret.runToAutoOuttakeRight(bot.getIMU());//this line
+        bot.slides.runToTop();//this line
         sleep(timeSlidesUp);
         bot.arm.autoOuttake();
         sleep(timeOuttake);
         bot.arm.autoSecure();
-        bot.claw.open();
-        bot.arm.storage();
-        sleep(timeConeDrop);
-        bot.claw.close();
-        sleep(timeOuttake);
-        bot.slides.runToBottom();
-        bot.turret.runToAutoIntakeRight(bot.getIMU());
-        sleep(timeSlidesDown);
     }
-
-    private void pickUpCone(){
-        bot.claw.open();
-        bot.arm.intake();
-        sleep(timeIntakeDown);
-        bot.horizSlides.runToAutoIntake();
-        sleep(timeIntakeOut);
-        bot.claw.close();
-        sleep(timeIntakeClose);
-        bot.slides.runToLow();
-        bot.arm.autoStorage();
-        bot.horizSlides.runToFullIn();
-        sleep(timeIntakeIn);
-    }
-
 
     private void drive() {
         if (gp1.wasJustReleased(GamepadKeys.Button.LEFT_STICK_BUTTON)){
