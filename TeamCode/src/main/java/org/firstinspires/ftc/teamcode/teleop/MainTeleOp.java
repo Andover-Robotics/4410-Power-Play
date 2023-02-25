@@ -112,9 +112,11 @@ public class MainTeleOp extends LinearOpMode {
                         bot.outtake();
                     }
                     if(gp2.wasJustPressed(GamepadKeys.Button.RIGHT_BUMPER)){
-                        bot.turret.runToAutoOuttakeLeft(bot.getIMU());
+                        bot.turret.runToTeleOpOuttakeLeft(bot.getIMU());
+                        autoMode = true;
                     }else if(gp2.wasJustPressed(GamepadKeys.Button.LEFT_BUMPER)){
                         bot.turret.runToTeleOpOuttakeRight(bot.getIMU());
+                        autoMode = true;
                     }
 //                    if(gp2.wasJustPressed(GamepadKeys.Button.B)){
 //                        bot.state = Bot.BotState.OUTTAKE;
@@ -238,7 +240,7 @@ public class MainTeleOp extends LinearOpMode {
             bot.storage();
             bot.state = Bot.BotState.OUTTAKE;
             sleep(400);
-            bot.turret.runToAutoOuttakeLeft(bot.getIMU());
+            bot.turret.runToTeleOpOuttakeLeft(bot.getIMU());
             bot.slides.runToTopTeleOp();
         });
         armOuttake.start();

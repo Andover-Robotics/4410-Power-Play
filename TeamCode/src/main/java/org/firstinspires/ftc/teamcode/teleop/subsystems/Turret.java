@@ -16,6 +16,10 @@ public class Turret {
     public static double p = 0.07, i = 0, d = 0.003, f = 0;//TODO experiment with increasing P and D to get more precision
     private double tolerance = 5, powerUp = 0.1, manualDivide = 1.5, manualPower = 0, powerMin = 0.05;
     public static double tickToAngle = 3300.0/360, fullRotation = 3300.0;
+    enum Side{
+        RIGHT, LEFT, CENTER;
+    }
+    private Side side = Side.CENTER;
     public static int saveState = 0, turretAutoOuttakeRight = -420, turretAutoIntakeRight = 830, turretAutoOuttakeLeft = 420, turretAutoIntakeLeft = -838, limit = 5400,
             turretAutoOuttakeMidRight = -1260, turretAutoOuttakeMidLeft = 1260;
     public Turret(OpMode opMode){
@@ -50,12 +54,27 @@ public class Turret {
         runTo(turretAutoIntakeLeft + (int)(imu*tickToAngle));
     }
     public void runToTeleOpOuttakeRight(double imu){
-        runTo(turretAutoOuttakeRight + (int)fullRotation + (int)(imu*tickToAngle));
+        if(side == Side.LEFT){
+            runTo(turretAutoOuttakeRight + (int) (imu * tickToAngle));
+        }else {
+            side = Side.RIGHT;
+            runTo(turretAutoOuttakeRight + (int) fullRotation + (int) (imu * tickToAngle));
+        }
     }
+    public void runToTeleOpOuttakeLeft(double imu){
+        if(side == Side.RIGHT){
+            runTo(turretAutoOuttakeLeft + (int)fullRotation + (int) (imu * tickToAngle));
+        }else {
+            side = Side.LEFT;
+            runTo(turretAutoOuttakeLeft + (int) (imu * tickToAngle));
+        }
+    }
+
 
     public void runToIntake(double imu){
         int target = (int)tickToAngle*360/2 + (int)(imu*tickToAngle);
         runTo(target);
+        side = Side.CENTER;
     }
 
     public void runToFront(){
