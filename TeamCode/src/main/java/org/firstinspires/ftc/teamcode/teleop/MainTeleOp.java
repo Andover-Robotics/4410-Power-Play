@@ -56,6 +56,7 @@ public class MainTeleOp extends LinearOpMode {
         bot.claw.open();
 
         waitForStart();
+        bot.turret.runToIntake(bot.getIMU());
 
         while (opModeIsActive() && !isStopRequested()) {
             telemetry.addData("cycle", time - cycleTime);
@@ -151,11 +152,6 @@ public class MainTeleOp extends LinearOpMode {
                         bot.storageNotDown();
                     }
                 }
-//                Vector2d stickVector = new Vector2d(gp2.getRightX(), gp2.getRightY()); // TODO get this working
-//                double angle = stickVector.angle() * 180/Math.PI;
-//                if(stickVector.norm() > 0.5) {
-//                    bot.turret.runToAngle(angle, bot.getIMU());
-//                }
                 bot.turret.runManual(gp2.getLeftX());
                 bot.horizSlides.runManual(-gp2.getLeftY());
 //                bot.slides.runManual(-gp2.getLeftY());
@@ -256,7 +252,7 @@ public class MainTeleOp extends LinearOpMode {
             bot.storage();
             bot.state = Bot.BotState.OUTTAKE;
             sleep(400);
-            bot.turret.runToAutoOuttakeRight(bot.getIMU());
+            bot.turret.runToTeleOpOuttakeRight(bot.getIMU());
             bot.slides.runToTopTeleOp();
         });
         armOuttake.start();
