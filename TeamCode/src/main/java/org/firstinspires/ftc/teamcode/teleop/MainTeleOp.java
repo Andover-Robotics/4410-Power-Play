@@ -114,7 +114,7 @@ public class MainTeleOp extends LinearOpMode {
                     if(gp2.wasJustPressed(GamepadKeys.Button.RIGHT_BUMPER)){
                         bot.turret.runToAutoOuttakeLeft(bot.getIMU());
                     }else if(gp2.wasJustPressed(GamepadKeys.Button.LEFT_BUMPER)){
-                        bot.turret.runToAutoOuttakeRight(bot.getIMU());
+                        bot.turret.runToTeleOpOuttakeRight(bot.getIMU());
                     }
 //                    if(gp2.wasJustPressed(GamepadKeys.Button.B)){
 //                        bot.state = Bot.BotState.OUTTAKE;
