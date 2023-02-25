@@ -8,6 +8,7 @@ public class MotionProfiler {
     }
     private final double max_velocity, max_acceleration;
     private boolean isOver = true;
+    private boolean isDone = false;
     private double temp_max_accel, temp_max_vel;
     private double start_pos, final_pos, distance, acceleration_dt, halfway_distance, acceleration_distance, new_max_velocity, deacceleration_dt, cruise_distance, cruise_dt, deacceleration_time, entire_dt;
 
@@ -60,6 +61,7 @@ public class MotionProfiler {
 
         if (current_dt > entire_dt) {
             isOver = true;
+            isDone = true;
             return final_pos;
         }
 
@@ -141,6 +143,10 @@ public class MotionProfiler {
 
     public boolean isOver(){
         return isOver;
+    }
+
+    public boolean isDone(){
+        return isDone;
     }
 }
 

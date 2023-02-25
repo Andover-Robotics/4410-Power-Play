@@ -14,6 +14,7 @@ import org.firstinspires.ftc.robotcore.external.hardware.camera.WebcamName;
 import org.firstinspires.ftc.teamcode.teleop.subsystems.Bot;
 import org.openftc.apriltag.AprilTagDetection;
 import org.openftc.easyopencv.OpenCvCamera;
+import org.openftc.easyopencv.OpenCvCameraException;
 import org.openftc.easyopencv.OpenCvCameraFactory;
 import org.openftc.easyopencv.OpenCvCameraRotation;
 
@@ -35,9 +36,9 @@ public class MainAutonomous extends LinearOpMode {
 
     boolean isTestMode = false;
 
-    public static int driveTime = 2200, timeSlidesUp = 850, timeSlidesDown = 550, timeOuttake = 350, timeConeDrop = 150, timeIntakeDown = 200, timeIntakeOut = 700, timeIntakeClose = 150, timeIntakeUp = 500, timeIntakeIn = 400;//old 400
+    public static int driveTime = 2000, timeSlidesUp = 900, timeSlidesDown = 550, timeOuttake = 350, timeConeDrop = 150, timeIntakeDown = 200, timeIntakeOut = 700, timeIntakeClose = 350, timeIntakeUp = 450, timeIntakeIn = 400;//old 400
 
-
+//    private static int horizIntake = {}
     static final double FEET_PER_METER = 3.28084;
 
     double fx = 1078.03779;
@@ -57,13 +58,13 @@ public class MainAutonomous extends LinearOpMode {
     @Override
     public void runOpMode() throws InterruptedException {
         //TODO EXPERIMENTAL CODE =================
-        Bot.instance = null;
-        for (Map.Entry<String, DcMotor> entry : hardwareMap.dcMotor.entrySet()) {
-            entry.getValue().setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
-//            while (!isStopRequested() && Math.abs(entry.getValue().getCurrentPosition()) > 1) {
-//                idle();
-//            }
-        }
+//        Bot.instance = null;
+//        for (Map.Entry<String, DcMotor> entry : hardwareMap.dcMotor.entrySet()) {
+//            entry.getValue().setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
+////            while (!isStopRequested() && Math.abs(entry.getValue().getCurrentPosition()) > 1) {
+////                idle();
+////            }
+//        }
         //End experimental code ===================
 
         telemetry.setAutoClear(true);
@@ -100,7 +101,7 @@ public class MainAutonomous extends LinearOpMode {
         Pose2d startPose = new Pose2d(0, 0, 0);
         drive.setPoseEstimate(startPose);
         Trajectory forward = drive.trajectoryBuilder(startPose)
-                .lineTo(new Vector2d(52, 0.5))
+                .lineTo(new Vector2d(52, side == Side.RIGHT ? 0 : -1))
                 .build();
 
         Trajectory parkLeft = drive.trajectoryBuilder(forward.end())
@@ -142,6 +143,7 @@ public class MainAutonomous extends LinearOpMode {
             telemetry.addData("Current FPS:", camera.getFps());
             telemetry.addData("Current Max FPS:", camera.getCurrentPipelineMaxFps());
             telemetry.addData("side?", side.toString());
+            telemetry.addData("testmode", isTestMode);
 
             ArrayList<AprilTagDetection> currentDetections = aprilTagDetectionPipeline.getLatestDetections();
 
@@ -201,9 +203,12 @@ public class MainAutonomous extends LinearOpMode {
 
         }
 
-        camera.stopStreaming();
-        camera.closeCameraDevice();
+        try {
+            camera.stopStreaming();
+            camera.closeCameraDevice();
+        }catch(OpenCvCameraException e){
 
+        }
         //END CAMERA STUFF ===============
 
         bot.resetIMU();
@@ -273,10 +278,15 @@ public class MainAutonomous extends LinearOpMode {
         bot.claw.close();
         sleep(timeOuttake);
         bot.slides.runToBottom();
-        if(side==Side.RIGHT) {
-            bot.turret.runToAutoIntakeRight(bot.getIMU());
+        if(i > 0) {
+            if (side == Side.RIGHT) {
+                bot.turret.runToAutoIntakeRight(bot.getIMU());
+            } else {
+                bot.turret.runToAutoIntakeLeft(bot.getIMU());
+            }
         }else{
-            bot.turret.runToAutoIntakeLeft(bot.getIMU());
+            bot.turret.runToFront();
+            bot.arm.preload();
         }
         sleep(timeSlidesDown);
     }

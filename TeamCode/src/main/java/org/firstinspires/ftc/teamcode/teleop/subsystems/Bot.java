@@ -91,6 +91,7 @@ public class Bot {
         slides.runToBottom();
         arm.intake();
         horizSlides.runToFullOut();
+        claw.open();
     }
 
     public void intakeIn(){
@@ -98,10 +99,18 @@ public class Bot {
         slides.runToBottom();
         arm.intake();
         horizSlides.runToFullIn();
+        claw.open();
     }
     public void storage(){
         state = BotState.STORAGE;
         slides.runToBottom();
+        arm.storage();
+        horizSlides.runToFullIn();
+    }
+
+    public void storageNotDown(){
+        state = BotState.STORAGE;
+//        slides.runToBottom();
         arm.storage();
         horizSlides.runToFullIn();
     }
@@ -243,5 +252,10 @@ public class Bot {
             angle = angle - 360;
         }
         return angle;
+    }
+
+    public void resetProfiler(){
+        slides.resetProfiler();
+        horizSlides.resetProfiler();
     }
 }

@@ -11,28 +11,29 @@ import com.qualcomm.robotcore.eventloop.opmode.OpMode;
 @Config
 public class Turret {
     private final MotorEx motor;
-    private final PIDFController controller;
+    private PIDFController controller;
 
     public static double p = 0.07, i = 0, d = 0.003, f = 0;//TODO experiment with increasing P and D to get more precision
-    private double tolerance = 5, powerUp = 0.1, manualDivide = 1.5, manualPower = 0, powerMin = 0.1;
+    private double tolerance = 5, powerUp = 0.1, manualDivide = 1.5, manualPower = 0, powerMin = 0.05;
     public static double tickToAngle = 3300.0/360;
-    public static int saveState = 0, turretAutoOuttakeRight = -455, turretAutoIntakeRight = 830, turretAutoOuttakeLeft = 420, turretAutoIntakeLeft = -838, limit = 5400,
+    public static int saveState = 0, turretAutoOuttakeRight = -420, turretAutoIntakeRight = 830, turretAutoOuttakeLeft = 420, turretAutoIntakeLeft = -838, limit = 5400,
             turretAutoOuttakeMidRight = -1260, turretAutoOuttakeMidLeft = 1260;
-    private int target = 0;
-
     public Turret(OpMode opMode){
         motor = new MotorEx(opMode.hardwareMap, "turret", Motor.GoBILDA.RPM_1150);
         motor.setInverted(false);
         controller = new PIDFController(p, i, d, f);
         controller.setTolerance(tolerance);
-        controller.setSetPoint(target);
+        controller.setSetPoint(0);
         motor.setRunMode(Motor.RunMode.RawPower);
         motor.setZeroPowerBehavior(Motor.ZeroPowerBehavior.BRAKE);
     }
 
     public void runTo(int t){
+        motor.setRunMode(Motor.RunMode.RawPower);
+        motor.setZeroPowerBehavior(Motor.ZeroPowerBehavior.BRAKE);
+        controller = new PIDFController(p, i, d, f);
+        controller.setTolerance(tolerance);
         controller.setSetPoint(t);
-        target = t;
     }
 
 
@@ -47,6 +48,14 @@ public class Turret {
     }
     public void runToAutoIntakeLeft(double imu){
         runTo(turretAutoIntakeLeft + (int)(imu*tickToAngle));
+    }
+
+    public void runToIntake(double imu){
+        int target = (int)tickToAngle*360/2 + (int)(imu*tickToAngle);
+        if(motor.getCurrentPosition() < 0 && target > 0){
+            target -= tickToAngle*360;
+        }
+        runTo(target);
     }
 
     public void runToFront(){

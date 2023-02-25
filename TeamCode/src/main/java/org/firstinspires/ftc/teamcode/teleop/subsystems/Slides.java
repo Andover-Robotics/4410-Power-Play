@@ -15,18 +15,17 @@ public class Slides {
 
     public final MotorEx motorLeft;
     public final MotorEx motorRight;
-    private final PIDFController controller;
-    public static double p = 0.05, i = 0, d = 0, f = 0, staticF = 0.3;
+    private PIDFController controller;
+    public static double p = 0.015, i = 0, d = 0, f = 0, staticF = 0.3;
     private final double tolerance = 20, powerUp = 0.1, manualDivide = 1, powerMin = 0.1;
     private double manualPower = 0;
 
-    public static int MAXHEIGHT = -1800, top = -1700, mid = -1185, low = -280, ground = 0, inc = 100, dec = 100;
+    public static int MAXHEIGHT = -1800, top = -1700, topTeleOp = -1650, mid = -1185, low = -200, ground = 0, inc = 100, dec = 100;
 
-    private int target = 0;
 
     private final OpMode opMode;
     private double profile_init_time = 0;
-    private final MotionProfiler profiler = new MotionProfiler(10000, 10000);
+    private MotionProfiler profiler = new MotionProfiler(30000, 20000);
 
     public Slides(OpMode opMode){
         motorLeft = new MotorEx(opMode.hardwareMap, "slidesLeft", Motor.GoBILDA.RPM_435);
@@ -35,7 +34,7 @@ public class Slides {
         motorLeft.setInverted(false);
         controller = new PIDFController(p, i, d, f);
         controller.setTolerance(tolerance);
-        controller.setSetPoint(target);
+        controller.setSetPoint(0);
         motorLeft.setRunMode(Motor.RunMode.RawPower);
         motorLeft.setZeroPowerBehavior(Motor.ZeroPowerBehavior.BRAKE);
         motorRight.setRunMode(Motor.RunMode.RawPower);
@@ -44,21 +43,23 @@ public class Slides {
     }
 
     public void runTo(int t){
+        motorLeft.setRunMode(Motor.RunMode.RawPower);
+        motorLeft.setZeroPowerBehavior(Motor.ZeroPowerBehavior.BRAKE);
+        motorRight.setRunMode(Motor.RunMode.RawPower);
+        motorRight.setZeroPowerBehavior(Motor.ZeroPowerBehavior.BRAKE);
+        controller = new PIDFController(p, i, d, f);
+        controller.setTolerance(tolerance);
+        resetProfiler();
         profiler.init_new_profile(motorLeft.getCurrentPosition(), t);
         profile_init_time = opMode.time;
-        target = t;
-    }
-    public void goDown() {
-        runTo(target-dec);
-    }
-
-    public void goUp()
-    {
-        runTo(target+inc);
     }
 
     public void runToTop(){
         runTo(top);
+    }
+
+    public void runToTopTeleOp(){
+        runTo(topTeleOp);
     }
 
     public void runToMiddle(){
@@ -92,6 +93,9 @@ public class Slides {
             motorLeft.set(power);
             motorRight.set(power);
         }else {
+            if(profiler.isDone()){
+                profiler = new MotionProfiler(30000, 20000);
+            }
             if(manualPower != 0) {
                 controller.setSetPoint(motorLeft.getCurrentPosition());
                 motorLeft.set(manualPower / manualDivide);
@@ -100,6 +104,12 @@ public class Slides {
                 double power = staticF * controller.calculate(motorLeft.getCurrentPosition());
                 motorLeft.set(power);
                 motorRight.set(power);
+//                if(motorLeft.getCurrentPosition() < -20) {
+//
+//                }else{
+//                    motorLeft.set(0);
+//                    motorRight.set(0);
+//                }
             }
         }
     }
@@ -119,5 +129,7 @@ public class Slides {
         return motorLeft.getCurrentPosition();
     }
 
-
+    public void resetProfiler(){
+        profiler = new MotionProfiler(30000, 20000);
+    }
 }
