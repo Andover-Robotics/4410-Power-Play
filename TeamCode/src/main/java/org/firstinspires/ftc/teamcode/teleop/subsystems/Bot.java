@@ -90,7 +90,7 @@ public class Bot {
         state = BotState.INTAKE_OUT;
         slides.runToBottom();
         arm.intake();
-        horizSlides.runToFullOut();
+        horizSlides.runToTeleOpIntake();
         claw.open();
     }
 

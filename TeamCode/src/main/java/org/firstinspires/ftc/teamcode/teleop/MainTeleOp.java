@@ -1,19 +1,18 @@
 package org.firstinspires.ftc.teamcode.teleop;
 
 import com.acmerobotics.dashboard.FtcDashboard;
+import com.acmerobotics.dashboard.config.Config;
 import com.acmerobotics.dashboard.telemetry.MultipleTelemetry;
 import com.acmerobotics.roadrunner.geometry.Vector2d;
+import com.arcrobotics.ftclib.controller.PIDController;
 import com.arcrobotics.ftclib.gamepad.GamepadEx;
 import com.arcrobotics.ftclib.gamepad.GamepadKeys;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
-import com.qualcomm.robotcore.hardware.DcMotor;
 
 import org.firstinspires.ftc.teamcode.teleop.subsystems.Bot;
 
-import java.util.Map;
-
-
+@Config
 @TeleOp(name = "MainTeleOp", group = "Competition")
 public class MainTeleOp extends LinearOpMode {
 
@@ -21,9 +20,11 @@ public class MainTeleOp extends LinearOpMode {
     private double driveSpeed = 1, cycleTime = 1;
 
     private boolean debugMode = false;
-    private boolean cancelPrevAction = false;
-    private boolean autoMode = false;
+    private boolean cancelPrevAction = false, autoAlignForward = false, autoMode = false;
     private int index = 4;
+    public static double p = 0.025, i = 0, d = 0;
+
+    private PIDController headingAligner = new PIDController(p, i, d);
 
     Thread armOuttake;
 
@@ -42,6 +43,9 @@ public class MainTeleOp extends LinearOpMode {
 //        }
         //End experimental code ===================
 
+        headingAligner.setTolerance(1);
+        headingAligner.setSetPoint(0);
+
         telemetry = new MultipleTelemetry(telemetry, FtcDashboard.getInstance().getTelemetry());
         bot.instance = null;
         bot = Bot.getInstance(this);
@@ -56,9 +60,11 @@ public class MainTeleOp extends LinearOpMode {
         bot.claw.open();
 
         waitForStart();
+        bot.resetIMU();
         bot.turret.runToIntake(bot.getIMU());
 
         while (opModeIsActive() && !isStopRequested()) {
+            headingAligner.setPID(p, i, d);
             telemetry.addData("cycle", time - cycleTime);
             cycleTime = time;
 
@@ -69,7 +75,7 @@ public class MainTeleOp extends LinearOpMode {
                 debugMode = !debugMode;
             }
             if(gp1.wasJustPressed(GamepadKeys.Button.BACK)){
-                bot.fieldCentricRunMode = !bot.fieldCentricRunMode;
+                autoAlignForward = !autoAlignForward;
             }
 
             if(!debugMode) {//finite state
@@ -77,7 +83,7 @@ public class MainTeleOp extends LinearOpMode {
                     if(gp2.wasJustPressed(GamepadKeys.Button.A) || gp2.wasJustPressed(GamepadKeys.Button.B) || gp2.wasJustPressed(GamepadKeys.Button.RIGHT_BUMPER) || gp2.wasJustPressed(GamepadKeys.Button.LEFT_BUMPER)){
                         bot.claw.close();
                     }
-                    if(gp2.getButton(GamepadKeys.Button.X) || gp2.getButton(GamepadKeys.Button.Y)){
+                    if(gp2.wasJustPressed(GamepadKeys.Button.X) || gp2.wasJustPressed(GamepadKeys.Button.Y)){
                         bot.claw.open();
                         cancelPrevAction = true;
                     }
@@ -87,9 +93,14 @@ public class MainTeleOp extends LinearOpMode {
                         }
                         cancelPrevAction = false;
                     }
+                    if(!gp2.getButton(GamepadKeys.Button.A) && !gp2.getButton(GamepadKeys.Button.B)){//TODO experimental fix
+                        cancelPrevAction = false;
+                    }
                     if(gp2.wasJustReleased(GamepadKeys.Button.LEFT_BUMPER)){
                         if(!cancelPrevAction){
                             autoMode = true;
+                            bot.horizSlides.saveIntake();
+                            bot.turret.saveIntakePosition(bot.getIMU());
                             goToOuttakeLeft();
                         }
                         cancelPrevAction = false;
@@ -97,6 +108,8 @@ public class MainTeleOp extends LinearOpMode {
                     if(gp2.wasJustReleased(GamepadKeys.Button.RIGHT_BUMPER)){
                         if(!cancelPrevAction){
                             autoMode = true;
+                            bot.horizSlides.saveIntake();
+                            bot.turret.saveIntakePosition(bot.getIMU());
                             goToOuttakeRight();
                         }
                         cancelPrevAction = false;
@@ -111,12 +124,22 @@ public class MainTeleOp extends LinearOpMode {
                     } else if (gp2.wasJustPressed(GamepadKeys.Button.Y)) {
                         bot.outtake();
                     }
+                    if(gp2.wasJustReleased(GamepadKeys.Button.X)){
+                        bot.claw.open();
+                        bot.storage();
+                        armOuttake = new Thread(() -> {
+                            sleep(400);
+                            bot.turret.runToIntake(bot.getIMU());
+                        });
+                        armOuttake.start();
+                    }
+                    if(gp2.wasJustPressed(GamepadKeys.Button.START)){
+                        bot.turret.runToIntake(bot.getIMU());
+                    }
                     if(gp2.wasJustPressed(GamepadKeys.Button.RIGHT_BUMPER)){
                         bot.turret.runToTeleOpOuttakeLeft(bot.getIMU());
-                        autoMode = true;
                     }else if(gp2.wasJustPressed(GamepadKeys.Button.LEFT_BUMPER)){
                         bot.turret.runToTeleOpOuttakeRight(bot.getIMU());
-                        autoMode = true;
                     }
 //                    if(gp2.wasJustPressed(GamepadKeys.Button.B)){
 //                        bot.state = Bot.BotState.OUTTAKE;
@@ -140,13 +163,15 @@ public class MainTeleOp extends LinearOpMode {
                         if(!cancelPrevAction){
                             bot.claw.open();
                             bot.storage();
-                            if(autoMode) {
-                                armOuttake = new Thread(() -> {
-                                    sleep(400);
-                                    bot.turret.runToIntake(bot.getIMU());
-                                });
+                            armOuttake = new Thread(() -> {
+                                sleep(400);
+                                bot.turret.runToIntake(bot.getIMU());
+                            });
+                            armOuttake.start();
+                            if(autoMode){
+                                bot.turret.saveOuttakePosition(bot.getIMU());
+                                autoMode = false;
                             }
-                            autoMode = false;
                         }
                         cancelPrevAction = false;
                     }
@@ -154,8 +179,9 @@ public class MainTeleOp extends LinearOpMode {
                         bot.storageNotDown();
                     }
                 }
-                bot.turret.runManual(gp2.getLeftX());
-                bot.horizSlides.runManual(-gp2.getLeftY());
+                double rightX = gp2.getRightX(), leftY = gp2.getLeftY();
+                bot.turret.runManual(rightX * Math.abs(rightX) / (1 + bot.horizSlides.getPosition()/580.0));
+                bot.horizSlides.runManual(leftY * Math.abs(leftY));
 //                bot.slides.runManual(-gp2.getLeftY());
                 if (gp2.wasJustPressed(GamepadKeys.Button.DPAD_UP)) {
                     bot.slides.runToTopTeleOp();
@@ -217,7 +243,7 @@ public class MainTeleOp extends LinearOpMode {
             telemetry.addData("slide current", bot.slides.getCurrent());
             telemetry.addData("getIMU", bot.getIMU());
             telemetry.addData("debug", debugMode);
-            telemetry.addData("fieldCentric", bot.fieldCentricRunMode);
+            telemetry.addData("autoalign", autoAlignForward);
             telemetry.addData("state", bot.state.toString());
             telemetry.update();
 
@@ -239,9 +265,12 @@ public class MainTeleOp extends LinearOpMode {
         armOuttake = new Thread(() ->{
             bot.storage();
             bot.state = Bot.BotState.OUTTAKE;
-            sleep(400);
+            sleep(600);
             bot.turret.runToTeleOpOuttakeLeft(bot.getIMU());
             bot.slides.runToTopTeleOp();
+            bot.horizSlides.runToFullIn();
+            sleep(timeSlidesUp);
+            bot.arm.outtake();
         });
         armOuttake.start();
 
@@ -253,9 +282,12 @@ public class MainTeleOp extends LinearOpMode {
         armOuttake = new Thread(() ->{
             bot.storage();
             bot.state = Bot.BotState.OUTTAKE;
-            sleep(400);
+            sleep(600);
             bot.turret.runToTeleOpOuttakeRight(bot.getIMU());
             bot.slides.runToTopTeleOp();
+            bot.horizSlides.runToFullIn();
+            sleep(timeSlidesUp);
+            bot.arm.outtake();
         });
         armOuttake.start();
 
@@ -274,17 +306,16 @@ public class MainTeleOp extends LinearOpMode {
         Vector2d driveVector = new Vector2d(gp1.getLeftX(), -gp1.getLeftY()),
                 turnVector = new Vector2d(
                         gp1.getRightX() , 0);
-        if (bot.fieldCentricRunMode) {
-            bot.driveFieldCentric(
-                    driveVector.getX() * driveSpeed,
-                    driveVector.getY() * driveSpeed,
-                    turnVector.getX() * driveSpeed/1.7,
-                    (bot.getIMU() + 360) % 360
-            );
-        } else {
+        if(autoAlignForward) {
+            double power = headingAligner.calculate(bot.getIMU());
             bot.driveRobotCentric(driveVector.getX() * driveSpeed,
                     driveVector.getY() * driveSpeed,
-                    turnVector.getX() * driveSpeed/1.7
+                    -power
+            );
+        }else{
+            bot.driveRobotCentric(driveVector.getX() * driveSpeed,
+                    driveVector.getY() * driveSpeed,
+                    turnVector.getX() * driveSpeed / 1.7
             );
         }
     }

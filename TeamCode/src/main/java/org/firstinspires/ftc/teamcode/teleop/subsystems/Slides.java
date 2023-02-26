@@ -20,7 +20,7 @@ public class Slides {
     private final double tolerance = 20, powerUp = 0.1, manualDivide = 1, powerMin = 0.1;
     private double manualPower = 0;
 
-    public static int MAXHEIGHT = -1800, top = -1700, topTeleOp = -1650, mid = -1185, low = -200, ground = 0, inc = 100, dec = 100;
+    public static int MAXHEIGHT = -1800, top = -1700, topTeleOp = -1650, mid = -1050, low = -200, ground = 0, inc = 100, dec = 100;
 
 
     private final OpMode opMode;

@@ -18,7 +18,7 @@ public class HorizSlides {
     public static double p = 0.04, i = 0, d = 0, f = 0;
     private final double tolerance = 5, powerUp = 0.1, manualDivide = 1.5, powerMin = 0.1;
     private double manualPower = 0;
-    public static int fullOut = 580, fullIn = 0, outtake = 0, autoIntake = 540;
+    public static int fullOut = 540, fullIn = 0, autoIntake = 540, teleOpIntake = 540;
     private double profile_init_time = 0;
 
     private MotionProfiler profiler = new MotionProfiler(8000, 8000);
@@ -44,6 +44,10 @@ public class HorizSlides {
         profile_init_time = opMode.time;
     }
 
+    public void saveIntake(){
+        teleOpIntake = motor.getCurrentPosition();
+    }
+
     public void runToFullIn(){
         runTo(fullIn);
     }
@@ -53,8 +57,8 @@ public class HorizSlides {
     public void runToAutoIntake(){
         runTo(autoIntake);
     }
-    public void runToOuttake(){
-        runTo(outtake);
+    public void runToTeleOpIntake(){
+        runTo(teleOpIntake);
     }
 
     public void runManual(double power){

@@ -1,7 +1,5 @@
 package org.firstinspires.ftc.teamcode.teleop.subsystems;
 
-import android.util.Log;
-
 import com.acmerobotics.dashboard.config.Config;
 import com.arcrobotics.ftclib.controller.PIDFController;
 import com.arcrobotics.ftclib.hardware.motors.Motor;
@@ -14,14 +12,15 @@ public class Turret {
     private PIDFController controller;
 
     public static double p = 0.07, i = 0, d = 0.003, f = 0;//TODO experiment with increasing P and D to get more precision
-    private double tolerance = 5, powerUp = 0.1, manualDivide = 1.5, manualPower = 0, powerMin = 0.05;
+    private double tolerance = 5, powerUp = 0.1, manualDivide = 1.5, manualPower = 0, powerMin = 0.05, veloMin = 10;
     public static double tickToAngle = 3300.0/360, fullRotation = 3300.0;
+
+    private boolean isManual = false;
     enum Side{
         RIGHT, LEFT, CENTER;
     }
     private Side side = Side.CENTER;
-    public static int saveState = 0, turretAutoOuttakeRight = -420, turretAutoIntakeRight = 830, turretAutoOuttakeLeft = 420, turretAutoIntakeLeft = -838, limit = 5400,
-            turretAutoOuttakeMidRight = -1260, turretAutoOuttakeMidLeft = 1260;
+    private int intake = 1650, turretAutoOuttakeRight = -420, turretAutoIntakeRight = 830, turretAutoOuttakeLeft = 420, turretAutoIntakeLeft = -838, limit = 5400;
     public Turret(OpMode opMode){
         motor = new MotorEx(opMode.hardwareMap, "turret", Motor.GoBILDA.RPM_1150);
         motor.setInverted(false);
@@ -72,23 +71,32 @@ public class Turret {
 
 
     public void runToIntake(double imu){
-        int target = (int)tickToAngle*360/2 + (int)(imu*tickToAngle);
+        int target = intake + (int)(imu*tickToAngle);
         runTo(target);
         side = Side.CENTER;
     }
+
+
 
     public void runToFront(){
         runTo(0);
     }
 
+    public void saveOuttakePosition(double imu){
+        if(side == Side.RIGHT){
+            turretAutoOuttakeRight = motor.getCurrentPosition() - (int) (imu * tickToAngle);
+        }else if(side == Side.LEFT){
+            turretAutoOuttakeLeft = motor.getCurrentPosition() - (int) (imu * tickToAngle);
+        }
+    }
 
-
-    public void runToSaveState(){
-        runTo(saveState);
+    public void saveIntakePosition(double imu){
+        intake = motor.getCurrentPosition() - (int)(imu * tickToAngle);
     }
 
     public void runManual(double manual){
         if(manual > powerMin || manual < -powerMin){
+            isManual = true;
             manualPower = manual;
         }else{
             manualPower = 0;
@@ -112,9 +120,6 @@ public class Turret {
         runTo(target);
     }
 
-    public void savePosition(){
-        saveState = motor.getCurrentPosition();
-    }
 
     public void periodic(){
         motor.setInverted(false);
@@ -131,7 +136,17 @@ public class Turret {
                 motor.set(manualPower / manualDivide);
                 controller.setSetPoint(motor.getCurrentPosition());
             } else {
-                motor.set(powerUp * controller.calculate(motor.getCurrentPosition()));
+                if(!isManual) {
+                    motor.set(powerUp * controller.calculate(motor.getCurrentPosition()));
+                }else{
+                    if(Math.abs(motor.getCorrectedVelocity()) > veloMin){
+                        if(motor.getCorrectedVelocity() > 0) {
+                            motor.set(-0.5);
+                        }else{
+                            motor.set(0.5);
+                        }
+                    }
+                }
             }
         }
     }
