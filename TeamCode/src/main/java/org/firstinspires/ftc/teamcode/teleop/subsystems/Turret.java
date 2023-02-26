@@ -145,6 +145,8 @@ public class Turret {
                         }else{
                             motor.set(0.5);
                         }
+                    }else{
+                        isManual = false;
                     }
                 }
             }
