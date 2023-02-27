@@ -48,6 +48,10 @@ public class HorizSlides {
         teleOpIntake = motor.getCurrentPosition();
     }
 
+    public void saveAutoIntake(){
+        autoIntake = motor.getCurrentPosition();
+    }
+
     public void runToFullIn(){
         runTo(fullIn);
     }

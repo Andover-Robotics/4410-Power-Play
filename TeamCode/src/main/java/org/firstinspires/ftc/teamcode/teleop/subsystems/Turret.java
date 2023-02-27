@@ -103,6 +103,22 @@ public class Turret {
         }
     }
 
+    public void saveAutoIntake(boolean isRight, double imu){
+        if(isRight){
+            turretAutoIntakeRight = motor.getCurrentPosition() - (int)(imu * tickToAngle);
+        }else{
+            turretAutoIntakeLeft = motor.getCurrentPosition() - (int)(imu * tickToAngle);
+        }
+    }
+
+    public void saveAutoOuttake(boolean isRight, double imu){
+        if(isRight){
+            turretAutoOuttakeRight = motor.getCurrentPosition() - (int)(imu * tickToAngle);
+        }else{
+            turretAutoOuttakeLeft = motor.getCurrentPosition() - (int)(imu * tickToAngle);
+        }
+    }
+
     public void runToAngle(double angle, double imu){
         int target = (int)((angle + imu)*tickToAngle);
         while(Math.abs(target - motor.getCurrentPosition()) > tickToAngle*360*3/5){

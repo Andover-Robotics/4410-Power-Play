@@ -96,6 +96,14 @@ public class Bot {
         claw.open();
     }
 
+    public void sideStackIntake(int i){
+        state = BotState.INTAKE_OUT;
+        slides.runToBottom();
+        arm.intakeAuto(i);
+        horizSlides.runToAutoIntake();
+        claw.open();
+    }
+
     public void intakeIn(){
         state = BotState.INTAKE;
         slides.runToBottom();
