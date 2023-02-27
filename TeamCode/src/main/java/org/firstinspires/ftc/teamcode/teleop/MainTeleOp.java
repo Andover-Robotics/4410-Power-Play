@@ -20,7 +20,7 @@ public class MainTeleOp extends LinearOpMode {
     private double driveSpeed = 1, cycleTime = 1;
 
     private boolean debugMode = false;
-    private boolean cancelPrevAction = false, autoAlignForward = false, autoMode = false, isRight = false;
+    private boolean cancelPrevAction = false, autoAlignForward = false, autoMode = false, isRight = false, isConeStack = false;
     private int index = 4;
     public static double p = 0.025, i = 0, d = 0;
 
@@ -222,16 +222,54 @@ public class MainTeleOp extends LinearOpMode {
                     bot.slides.resetProfiler();
                     bot.horizSlides.resetProfiler();
                 }
-
-                if(gp2.wasJustPressed(GamepadKeys.Button.RIGHT_BUMPER)){
-                    isRight = true;
-                    bot.turret.runToAutoIntakeRight(bot.getIMU());
-                    bot.claw.open();
-                    bot.arm.intakeAuto(index);
-                }
-                if(gp2.wasJustPressed(GamepadKeys.Button.LEFT_BUMPER)){
-                    isRight = false;
-                }
+//
+//                if(gp2.wasJustPressed(GamepadKeys.Button.RIGHT_BUMPER)){
+//                    isRight = true;
+//                    bot.turret.runToAutoIntakeRight(bot.getIMU());
+//                    bot.claw.open();
+//                    bot.arm.intakeAuto(index);
+//                    armOuttake = new Thread(() -> {
+//                        sleep(timeIntakeDown);
+//                        bot.horizSlides.runToAutoIntake();
+//                        isConeStack = true;
+//                    });
+//                    armOuttake.start();
+//                }
+//                if(gp2.wasJustPressed(GamepadKeys.Button.LEFT_BUMPER)){
+//                    isRight = false;
+//                    bot.turret.runToAutoIntakeLeft(bot.getIMU());
+//                    bot.claw.open();
+//                    bot.arm.intakeAuto(index);
+//                    armOuttake = new Thread(() -> {
+//                        sleep(timeIntakeDown);
+//                        bot.horizSlides.runToAutoIntake();
+//                        isConeStack = true;
+//                    });
+//                    armOuttake.start();
+//                }
+//                if(isConeStack) {
+//                    if (gp2.wasJustPressed(GamepadKeys.Button.A) || gp2.wasJustPressed(GamepadKeys.Button.B)) {
+//                        bot.claw.close();
+//                        cancelPrevAction = false;
+//                    }
+//                    if (gp2.wasJustPressed(GamepadKeys.Button.X) || gp2.wasJustPressed(GamepadKeys.Button.Y)) {
+//                        bot.claw.open();
+//                        cancelPrevAction = true;
+//                    }
+//                    if (!gp2.getButton(GamepadKeys.Button.A) && !gp2.getButton(GamepadKeys.Button.B)) {
+//                        cancelPrevAction = false;
+//                    }
+//                    if (gp2.wasJustReleased(GamepadKeys.Button.A) || gp2.wasJustReleased(GamepadKeys.Button.B)) {
+//                        if (!cancelPrevAction) {
+//                            if(isRight){
+//                                goToOuttakeRight();
+//                            }else{
+//                                goToOuttakeLeft();
+//                            }
+//                        }
+//                        cancelPrevAction = false;
+//                    }
+//                }
 
                 if (gp2.wasJustPressed(GamepadKeys.Button.DPAD_UP)) {
                     index++;
