@@ -264,14 +264,25 @@ public class MainAutonomous extends LinearOpMode {
         }else{
             bot.turret.runToAutoOuttakeLeft(bot.getIMU());
         }
+        //old ====
+//        bot.slides.runToTop();
+//        sleep(timeSlidesUp);
+//        if(i == 5){
+//            sleep(400);
+//        }
+//        bot.arm.autoOuttake();
+//        sleep(timeOuttake);
+//        bot.arm.autoSecure();
+        //end old, new =====
         bot.slides.runToTop();
+        bot.arm.storage();
         sleep(timeSlidesUp);
         if(i == 5){
             sleep(400);
         }
-        bot.arm.autoOuttake();
+        bot.horizSlides.runToAutoOuttake();
         sleep(timeOuttake);
-        bot.arm.autoSecure();
+        //end new
         bot.claw.open();
         bot.arm.storage();
         sleep(timeConeDrop);

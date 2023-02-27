@@ -16,11 +16,21 @@ public class Slides {
     public final MotorEx motorLeft;
     public final MotorEx motorRight;
     private PIDFController controller;
+
+    enum Position{
+        HIGH,
+        HIGH_DEC,
+        MID,
+        MID_DEC,
+        LOW,
+        GROUND
+    }
+    private Position position = Position.GROUND;
     public static double p = 0.015, i = 0, d = 0, f = 0, staticF = 0.3;
     private final double tolerance = 20, powerUp = 0.1, manualDivide = 1, powerMin = 0.1;
     private double manualPower = 0;
 
-    public static int MAXHEIGHT = -1800, top = -1700, topTeleOp = -1650, mid = -1050, low = -200, ground = 0, inc = 100, dec = 100;
+    public static int MAXHEIGHT = -1800, top = -1700, topTeleOp = -1650, mid = -1050, low = -200, ground = 0, inc = 100, dec = 300;
 
 
     private final OpMode opMode;
@@ -60,18 +70,32 @@ public class Slides {
 
     public void runToTopTeleOp(){
         runTo(topTeleOp);
+        position = Position.HIGH;
+    }
+
+    public void runToTopDec(){
+        runTo(topTeleOp + dec);
+        position = Position.HIGH_DEC;
     }
 
     public void runToMiddle(){
         runTo(mid);
+        position = Position.MID;
+    }
+
+    public void runToMiddleDec() {
+        runTo(mid + dec);
+        position = Position.MID_DEC;
     }
 
     public void runToLow(){
         runTo(low);
+        position = Position.LOW;
     }
 
     public void runToBottom(){
         runTo(ground);
+        position = Position.GROUND;
     }
 
     public void runManual(double manual){
@@ -131,5 +155,8 @@ public class Slides {
 
     public void resetProfiler(){
         profiler = new MotionProfiler(30000, 20000);
+    }
+    public Position getState(){
+        return position;
     }
 }

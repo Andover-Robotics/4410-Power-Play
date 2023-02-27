@@ -17,6 +17,8 @@ public class Bot {
         STORAGE, // arm up, linkage+rail in, used when moving around field
         OUTTAKE, // ready to outtake
         SECURE, // cone secured on junction but not let go
+        BRACE_OUTTAKE,
+        BRACE_SECURE
     }
 
     public static Bot instance;
@@ -107,14 +109,6 @@ public class Bot {
         arm.storage();
         horizSlides.runToFullIn();
     }
-
-    public void storageNotDown(){
-        state = BotState.STORAGE;
-//        slides.runToBottom();
-        arm.storage();
-        horizSlides.runToFullIn();
-    }
-
     public void outtake(){ // must be combined with bot.slide.run___() in MainTeleOp
         state = BotState.OUTTAKE;
         claw.close();
@@ -127,9 +121,28 @@ public class Bot {
         arm.secure();
     }
 
-    public void initTeleOp(){
+    public void braceOuttake(){
+        state = BotState.BRACE_OUTTAKE;
+        claw.close();
+        arm.storage();
+    }
 
+    public void bringSlidesDown(){
+        if(slides.getState() == Slides.Position.HIGH){
+            slides.runToTopDec();
+        }else if(slides.getState() == Slides.Position.MID){
+            slides.runToMiddleDec();
+        }
+        state = BotState.BRACE_SECURE;
+    }
 
+    public void bringSlidesUp(){
+        if(slides.getState() == Slides.Position.HIGH_DEC){
+            slides.runToTopTeleOp();
+        }else if(slides.getState() == Slides.Position.MID_DEC){
+            slides.runToMiddle();
+        }
+        state = BotState.BRACE_OUTTAKE;
     }
 
     public void initializeImus() {
