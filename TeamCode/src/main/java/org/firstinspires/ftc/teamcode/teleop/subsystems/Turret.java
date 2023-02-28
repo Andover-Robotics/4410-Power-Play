@@ -12,7 +12,7 @@ public class Turret {
     private PIDFController controller;
 
     public static double p = 0.07, i = 0, d = 0.003, f = 0;//TODO experiment with increasing P and D to get more precision
-    private double tolerance = 5, powerUp = 0.1, manualDivide = 1.5, manualPower = 0, powerMin = 0.05, veloMin = 10;
+    private double tolerance = 5, powerUp = 0.1, manualDivide = 1.5, manualPower = 0, powerMin = 0.05, veloMin = 200;
     public static double tickToAngle = 3300.0/360, fullRotation = 3300.0;
 
     private boolean isManual = false;
