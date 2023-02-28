@@ -27,13 +27,15 @@ public class Slides {
     }
     private Position position = Position.GROUND;
     public static double p = 0.015, i = 0, d = 0, f = 0, staticF = 0.3;
-    private final double tolerance = 20, powerUp = 0.1, manualDivide = 1, powerMin = 0.1;
+    private final double tolerance = 20, powerUp = 0.1, powerDown = 0.05, manualDivide = 1, powerMin = 0.1;
     private double manualPower = 0;
 
     public static int MAXHEIGHT = -1800, top = -1700, topTeleOp = -1650, mid = -1050, low = -200, ground = 0, inc = 100, dec = 300;
 
 
     private final OpMode opMode;
+    private double target = 0;
+    private boolean goingDown = false;
     private double profile_init_time = 0;
     private MotionProfiler profiler = new MotionProfiler(30000, 20000);
 
@@ -62,6 +64,12 @@ public class Slides {
         resetProfiler();
         profiler.init_new_profile(motorLeft.getCurrentPosition(), t);
         profile_init_time = opMode.time;
+        if(t > target){
+            goingDown = true;
+        }else{
+            goingDown = false;
+        }
+        target = t;
     }
 
     public void runToTop(){
@@ -114,6 +122,9 @@ public class Slides {
         if(!profiler.isOver()) {
             controller.setSetPoint(profiler.motion_profile_pos(dt));
             double power = powerUp * controller.calculate(motorLeft.getCurrentPosition());
+            if(goingDown){
+                power = powerDown * controller.calculate(motorLeft.getCurrentPosition());
+            }
             motorLeft.set(power);
             motorRight.set(power);
         }else {

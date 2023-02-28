@@ -26,7 +26,7 @@ public class MainTeleOp extends LinearOpMode {
 
     private PIDController headingAligner = new PIDController(kp, ki, kd);
 
-    Thread thread;
+    Thread thread, otherThread;
 
     private GamepadEx gp1, gp2;
 
@@ -124,6 +124,11 @@ public class MainTeleOp extends LinearOpMode {
                     }
                     if(gp2.wasJustPressed(GamepadKeys.Button.X)){
                         bot.braceOuttake();
+                        otherThread = new Thread(() -> {
+                            sleep(200);
+                            bot.bringSlidesDown();
+                        });
+                        otherThread.start();
                     }
                     if(gp2.wasJustPressed(GamepadKeys.Button.START)){
                         bot.turret.runToIntake(bot.getIMU());
@@ -168,17 +173,21 @@ public class MainTeleOp extends LinearOpMode {
                 }else if(bot.state == Bot.BotState.BRACE_OUTTAKE || bot.state == Bot.BotState.BRACE_SECURE){
                     if(gp2.wasJustPressed(GamepadKeys.Button.A) || gp2.wasJustPressed(GamepadKeys.Button.B)){
                         bot.bringSlidesUp();
-                        bot.arm.storage();
+                        thread = new Thread(() -> {
+                            sleep(200);
+                            bot.arm.storage();
+                        });
+                        thread.start();
                         cancelPrevAction = true;
                     }
                     if(gp2.wasJustPressed(GamepadKeys.Button.X)){
                         cancelPrevAction = false;
-                    }
-                    if(gp2.getButton(GamepadKeys.Button.X)){
-                        if(!cancelPrevAction) {
-                            bot.braceOuttake();
+                        bot.braceOuttake();
+                        otherThread = new Thread(() -> {
+                            sleep(200);
                             bot.bringSlidesDown();
-                        }
+                        });
+                        otherThread.start();
                     }
                     if(gp2.wasJustReleased(GamepadKeys.Button.X)){
                         if(!cancelPrevAction) {
