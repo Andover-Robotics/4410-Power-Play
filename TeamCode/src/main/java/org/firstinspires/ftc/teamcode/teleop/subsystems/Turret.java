@@ -96,7 +96,7 @@ public class Turret {
 
     public void runManual(double manual){
         if(manual > powerMin || manual < -powerMin){
-            isManual = true;
+//            isManual = true;
             manualPower = manual;
         }else{
             manualPower = 0;
@@ -152,19 +152,20 @@ public class Turret {
                 motor.set(manualPower / manualDivide);
                 controller.setSetPoint(motor.getCurrentPosition());
             } else {
-                if(!isManual) {
-                    motor.set(powerUp * controller.calculate(motor.getCurrentPosition()));
-                }else{
-                    if(Math.abs(motor.getCorrectedVelocity()) > veloMin){
-                        if(motor.getCorrectedVelocity() > 0) {
-                            motor.set(-0.5);
-                        }else{
-                            motor.set(0.5);
-                        }
-                    }else{
-                        isManual = false;
-                    }
-                }
+                motor.set(powerUp * controller.calculate(motor.getCurrentPosition()));
+//                if(!isManual) {
+//                    motor.set(powerUp * controller.calculate(motor.getCurrentPosition()));
+//                }else{
+//                    if(Math.abs(motor.getCorrectedVelocity()) > veloMin){
+//                        if(motor.getCorrectedVelocity() > 0) {
+//                            motor.set(-0.5);
+//                        }else{
+//                            motor.set(0.5);
+//                        }
+//                    }else{
+//                        isManual = false;
+//                    }
+//                }
             }
         }
     }
