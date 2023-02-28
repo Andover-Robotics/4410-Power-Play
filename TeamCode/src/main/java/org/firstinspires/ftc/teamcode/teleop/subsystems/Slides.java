@@ -26,7 +26,7 @@ public class Slides {
         GROUND
     }
     private Position position = Position.GROUND;
-    public static double p = 0.015, i = 0, d = 0, f = 0, staticF = 0.3;
+    public static double p = 0.015, i = 0, d = 0, f = 0, staticF = 0.25;
     private final double tolerance = 20, powerUp = 0.1, powerDown = 0.05, manualDivide = 1, powerMin = 0.1;
     private double manualPower = 0;
 

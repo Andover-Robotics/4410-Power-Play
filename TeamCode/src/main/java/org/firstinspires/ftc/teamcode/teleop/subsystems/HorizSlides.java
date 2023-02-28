@@ -1,7 +1,6 @@
 package org.firstinspires.ftc.teamcode.teleop.subsystems;
 
 import com.acmerobotics.dashboard.config.Config;
-import com.acmerobotics.roadrunner.profile.MotionProfile;
 import com.arcrobotics.ftclib.controller.PIDFController;
 import com.arcrobotics.ftclib.hardware.motors.Motor;
 import com.arcrobotics.ftclib.hardware.motors.MotorEx;
@@ -44,7 +43,7 @@ public class HorizSlides {
         profile_init_time = opMode.time;
     }
 
-    public void saveIntake(){
+    public void saveTeleOpIntake(){
         teleOpIntake = motor.getCurrentPosition();
     }
 

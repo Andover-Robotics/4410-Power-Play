@@ -33,15 +33,6 @@ public class MainTeleOp extends LinearOpMode {
 
     @Override
     public void runOpMode() throws InterruptedException {
-        //TODO EXPERIMENTAL CODE ================= bad
-//        Bot.instance = null;
-//        for (Map.Entry<String, DcMotor> entry : hardwareMap.dcMotor.entrySet()) {
-//            entry.getValue().setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
-////            while (!isStopRequested() && Math.abs(entry.getValue().getCurrentPosition()) > 1) {
-////                idle();
-////            }
-//        }
-        //End experimental code ===================
 
         headingAligner.setTolerance(1);
         headingAligner.setSetPoint(0);
@@ -97,7 +88,7 @@ public class MainTeleOp extends LinearOpMode {
                     if(gp2.wasJustReleased(GamepadKeys.Button.LEFT_BUMPER)){
                         if(!cancelPrevAction){
                             autoMode = true;
-                            bot.horizSlides.saveIntake();
+                            bot.horizSlides.saveTeleOpIntake();
                             bot.turret.saveIntakePosition(bot.getIMU());
                             goToOuttakeLeft();
                         }
@@ -106,7 +97,7 @@ public class MainTeleOp extends LinearOpMode {
                     if(gp2.wasJustReleased(GamepadKeys.Button.RIGHT_BUMPER)){
                         if(!cancelPrevAction){
                             autoMode = true;
-                            bot.horizSlides.saveIntake();
+                            bot.horizSlides.saveTeleOpIntake();
                             bot.turret.saveIntakePosition(bot.getIMU());
                             goToOuttakeRight();
                         }

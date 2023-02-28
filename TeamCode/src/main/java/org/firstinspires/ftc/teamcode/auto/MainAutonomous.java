@@ -57,15 +57,6 @@ public class MainAutonomous extends LinearOpMode {
 
     @Override
     public void runOpMode() throws InterruptedException {
-        //TODO EXPERIMENTAL CODE =================
-//        Bot.instance = null;
-//        for (Map.Entry<String, DcMotor> entry : hardwareMap.dcMotor.entrySet()) {
-//            entry.getValue().setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
-////            while (!isStopRequested() && Math.abs(entry.getValue().getCurrentPosition()) > 1) {
-////                idle();
-////            }
-//        }
-        //End experimental code ===================
 
         telemetry.setAutoClear(true);
         bot = Bot.getInstance(this);
