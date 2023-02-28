@@ -23,12 +23,12 @@ import java.util.Map;
 
 
 @Config
-@Autonomous(name="MainAutonomous")
+@Autonomous(name = "MainAutonomous")
 public class MainAutonomous extends LinearOpMode {
 
     Bot bot;
 
-    enum Side{
+    enum Side {
         RIGHT, LEFT, NULL;
     }
 
@@ -38,7 +38,7 @@ public class MainAutonomous extends LinearOpMode {
 
     public static int driveTime = 2000, timeSlidesUp = 900, timeSlidesDown = 550, timeOuttake = 350, timeConeDrop = 150, timeIntakeDown = 200, timeIntakeOut = 700, timeIntakeClose = 350, timeIntakeUp = 450, timeIntakeIn = 400;//old 400
 
-//    private static int horizIntake = {}
+    //    private static int horizIntake = {}
     static final double FEET_PER_METER = 3.28084;
 
     double fx = 1078.03779;
@@ -73,17 +73,14 @@ public class MainAutonomous extends LinearOpMode {
         AprilTagDetectionPipeline aprilTagDetectionPipeline = new AprilTagDetectionPipeline(tagsize, fx, fy, cx, cy);
 
         camera.setPipeline(aprilTagDetectionPipeline);
-        camera.openCameraDeviceAsync(new OpenCvCamera.AsyncCameraOpenListener()
-        {
+        camera.openCameraDeviceAsync(new OpenCvCamera.AsyncCameraOpenListener() {
             @Override
-            public void onOpened()
-            {
-                camera.startStreaming(1280,720, OpenCvCameraRotation.UPRIGHT);
+            public void onOpened() {
+                camera.startStreaming(1280, 720, OpenCvCameraRotation.UPRIGHT);
             }
 
             @Override
-            public void onError(int errorCode)
-            {
+            public void onError(int errorCode) {
 
             }
         });
@@ -115,19 +112,19 @@ public class MainAutonomous extends LinearOpMode {
 //        telemetry.setMsTransmissionInterval(50);
 
 
-        while(!isStarted()) {
+        while (!isStarted()) {
             gp1.readButtons();
-            if(gp1.wasJustPressed(GamepadKeys.Button.B)){
+            if (gp1.wasJustPressed(GamepadKeys.Button.B)) {
                 side = Side.RIGHT;
             }
-            if(gp1.wasJustPressed(GamepadKeys.Button.X)){
+            if (gp1.wasJustPressed(GamepadKeys.Button.X)) {
                 side = Side.LEFT;
             }
 
-            if(gp1.wasJustPressed(GamepadKeys.Button.A)){
+            if (gp1.wasJustPressed(GamepadKeys.Button.A)) {
                 bot.claw.close();
             }
-            if(gp1.wasJustPressed(GamepadKeys.Button.BACK)){
+            if (gp1.wasJustPressed(GamepadKeys.Button.BACK)) {
                 isTestMode = true;
             }
 
@@ -138,51 +135,37 @@ public class MainAutonomous extends LinearOpMode {
 
             ArrayList<AprilTagDetection> currentDetections = aprilTagDetectionPipeline.getLatestDetections();
 
-            if(currentDetections.size() != 0)
-            {
+            if (currentDetections.size() != 0) {
                 boolean tagFound = false;
 
-                for(AprilTagDetection tag : currentDetections)
-                {
-                    if(tag.id == ID_ONE || tag.id == ID_TWO || tag.id == ID_THREE)
-                    {
+                for (AprilTagDetection tag : currentDetections) {
+                    if (tag.id == ID_ONE || tag.id == ID_TWO || tag.id == ID_THREE) {
                         tagOfInterest = tag;
                         tagFound = true;
                         break;
                     }
                 }
 
-                if(tagFound)
-                {
+                if (tagFound) {
                     telemetry.addLine("Tag of interest is in sight!\n\nLocation data:");
                     tagToTelemetry(tagOfInterest);
-                }
-                else
-                {
+                } else {
                     telemetry.addLine("Don't see tag of interest :(");
 
-                    if(tagOfInterest == null)
-                    {
+                    if (tagOfInterest == null) {
                         telemetry.addLine("(The tag has never been seen)");
-                    }
-                    else
-                    {
+                    } else {
                         telemetry.addLine("\nBut we HAVE seen the tag before; last seen at:");
                         tagToTelemetry(tagOfInterest);
                     }
                 }
 
-            }
-            else
-            {
+            } else {
                 telemetry.addLine("Don't see tag of interest :(");
 
-                if(tagOfInterest == null)
-                {
+                if (tagOfInterest == null) {
                     telemetry.addLine("(The tag has never been seen)");
-                }
-                else
-                {
+                } else {
                     telemetry.addLine("\nBut we HAVE seen the tag before; last seen at:");
                     tagToTelemetry(tagOfInterest);
                 }
@@ -197,7 +180,7 @@ public class MainAutonomous extends LinearOpMode {
         try {
             camera.stopStreaming();
             camera.closeCameraDevice();
-        }catch(OpenCvCameraException e){
+        } catch (OpenCvCameraException e) {
 
         }
         //END CAMERA STUFF ===============
@@ -205,7 +188,7 @@ public class MainAutonomous extends LinearOpMode {
         bot.resetIMU();
 
         waitForStart();
-        if(!isStopRequested()) {
+        if (!isStopRequested()) {
             bot.claw.close();
             bot.arm.autoStorage();
 
@@ -226,12 +209,12 @@ public class MainAutonomous extends LinearOpMode {
                 sleep(3000);
             }
 
-            if(isTestMode){
+            if (isTestMode) {
                 Trajectory goBack = drive.trajectoryBuilder(forward.end())
-                                .lineTo(new Vector2d())
-                                        .build();
+                        .lineTo(new Vector2d())
+                        .build();
                 drive.followTrajectory(goBack);
-            }else {
+            } else {
                 try {
 
                     if (tagOfInterest.id == ID_ONE) {
@@ -249,10 +232,11 @@ public class MainAutonomous extends LinearOpMode {
             periodic.interrupt();
         }
     }
-    private void outtake(int i){
-        if(side==Side.RIGHT) {
+
+    private void outtake(int i) {
+        if (side == Side.RIGHT) {
             bot.turret.runToAutoOuttakeRight(bot.getIMU());
-        }else{
+        } else {
             bot.turret.runToAutoOuttakeLeft(bot.getIMU());
         }
         //old ====
@@ -268,7 +252,7 @@ public class MainAutonomous extends LinearOpMode {
         bot.slides.runToTop();
         bot.arm.brace();
         sleep(timeSlidesUp);
-        if(i == 5){
+        if (i == 5) {
             sleep(400);
         }
         bot.horizSlides.runToAutoOuttake();
@@ -280,20 +264,20 @@ public class MainAutonomous extends LinearOpMode {
         bot.claw.close();
         sleep(timeOuttake);
         bot.slides.runToBottom();
-        if(i > 0) {
+        if (i > 0) {
             if (side == Side.RIGHT) {
                 bot.turret.runToAutoIntakeRight(bot.getIMU());
             } else {
                 bot.turret.runToAutoIntakeLeft(bot.getIMU());
             }
-        }else{
+        } else {
             bot.turret.runToFront();
             bot.arm.preload();
         }
         sleep(timeSlidesDown);
     }
 
-    private void pickUpCone(int i){
+    private void pickUpCone(int i) {
         bot.claw.open();
         bot.arm.intakeAuto(i);
         sleep(timeIntakeDown);
@@ -303,7 +287,7 @@ public class MainAutonomous extends LinearOpMode {
         sleep(timeIntakeClose);
         bot.slides.runToLow();
         bot.arm.autoStorage();
-        if(i > 0) {
+        if (i > 0) {
             sleep(timeIntakeUp);
         }
         bot.horizSlides.runToFullIn();
@@ -311,12 +295,11 @@ public class MainAutonomous extends LinearOpMode {
     }
 
 
-    void tagToTelemetry(AprilTagDetection detection)
-    {
+    void tagToTelemetry(AprilTagDetection detection) {
         telemetry.addLine(String.format("\nDetected tag ID=%d", detection.id));
-        telemetry.addLine(String.format("Translation X: %.2f feet", detection.pose.x*FEET_PER_METER));
-        telemetry.addLine(String.format("Translation Y: %.2f feet", detection.pose.y*FEET_PER_METER));
-        telemetry.addLine(String.format("Translation Z: %.2f feet", detection.pose.z*FEET_PER_METER));
+        telemetry.addLine(String.format("Translation X: %.2f feet", detection.pose.x * FEET_PER_METER));
+        telemetry.addLine(String.format("Translation Y: %.2f feet", detection.pose.y * FEET_PER_METER));
+        telemetry.addLine(String.format("Translation Z: %.2f feet", detection.pose.z * FEET_PER_METER));
         telemetry.addLine(String.format("Rotation Yaw: %.2f degrees", Math.toDegrees(detection.pose.yaw)));
         telemetry.addLine(String.format("Rotation Pitch: %.2f degrees", Math.toDegrees(detection.pose.pitch)));
         telemetry.addLine(String.format("Rotation Roll: %.2f degrees", Math.toDegrees(detection.pose.roll)));

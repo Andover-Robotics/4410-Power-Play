@@ -19,8 +19,8 @@ import org.openftc.easyopencv.OpenCvCameraRotation;
 
 import java.util.ArrayList;
 
-@Config
-@Autonomous(name="Jaiden's Auto")
+//@Config
+//@Autonomous(name="Jaiden's Auto")
 public class AlternateAuto extends LinearOpMode {
 
     Bot bot;

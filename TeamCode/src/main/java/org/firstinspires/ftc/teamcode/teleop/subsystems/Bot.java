@@ -11,7 +11,7 @@ import org.firstinspires.ftc.robotcore.external.navigation.CurrentUnit;
 
 public class Bot {
 
-    public enum BotState{
+    public enum BotState {
         INTAKE_OUT, // linkage fully extended, ready to pick up cone
         INTAKE, // ready to intake, but linkage in
         STORAGE, // arm up, linkage+rail in, used when moving around field
@@ -30,7 +30,7 @@ public class Bot {
     public final Turret turret;
 
     private final MotorEx fl, fr, bl, br;
-//    public final SampleMecanumDrive rr;
+    //    public final SampleMecanumDrive rr;
     public BotState state = BotState.STORAGE;
 
     public OpMode opMode;
@@ -47,7 +47,7 @@ public class Bot {
         return instance;
     }
 
-    public static Bot getInstance(OpMode opMode){
+    public static Bot getInstance(OpMode opMode) {
         if (instance == null) {
             return instance = new Bot(opMode);
         }
@@ -55,16 +55,15 @@ public class Bot {
         return instance;
     }
 
-    private Bot(OpMode opMode){
+    private Bot(OpMode opMode) {
         this.opMode = opMode;
         enableAutoBulkRead();
 
         try {
             this.initializeImus();
-            fieldCentricRunMode=false;
-        }
-        catch(Exception e){
-            imu0=null;
+            fieldCentricRunMode = false;
+        } catch (Exception e) {
+            imu0 = null;
             fieldCentricRunMode = false;
 
         }
@@ -88,7 +87,7 @@ public class Bot {
 
     }
 
-    public void intakeOut(){
+    public void intakeOut() {
         state = BotState.INTAKE_OUT;
         slides.runToBottom();
         arm.intake();
@@ -96,7 +95,7 @@ public class Bot {
         claw.open();
     }
 
-    public void sideStackIntake(int i){
+    public void sideStackIntake(int i) {
         state = BotState.INTAKE_OUT;
         slides.runToBottom();
         arm.intakeAuto(i);
@@ -104,50 +103,52 @@ public class Bot {
         claw.open();
     }
 
-    public void intakeIn(){
+    public void intakeIn() {
         state = BotState.INTAKE;
         slides.runToBottom();
         arm.intake();
         horizSlides.runToFullIn();
         claw.open();
     }
-    public void storage(){
+
+    public void storage() {
         state = BotState.STORAGE;
         slides.runToBottom();
         arm.storage();
         horizSlides.runToFullIn();
     }
-    public void outtake(){ // must be combined with bot.slide.run___() in MainTeleOp
+
+    public void outtake() { // must be combined with bot.slide.run___() in MainTeleOp
         state = BotState.OUTTAKE;
         claw.close();
         arm.outtake();
     }
 
-    public void secure(){
+    public void secure() {
         state = BotState.SECURE;
         claw.close();
         arm.secure();
     }
 
-    public void braceOuttake(){
+    public void braceOuttake() {
         state = BotState.BRACE_OUTTAKE;
         claw.close();
         arm.brace();
     }
 
-    public void bringSlidesDown(){
-        if(slides.getState() == Slides.Position.HIGH){
+    public void bringSlidesDown() {
+        if (slides.getState() == Slides.Position.HIGH) {
             slides.runToTopDec();
-        }else if(slides.getState() == Slides.Position.MID){
+        } else if (slides.getState() == Slides.Position.MID) {
             slides.runToMiddleDec();
         }
         state = BotState.BRACE_SECURE;
     }
 
-    public void bringSlidesUp(){
-        if(slides.getState() == Slides.Position.HIGH_DEC){
+    public void bringSlidesUp() {
+        if (slides.getState() == Slides.Position.HIGH_DEC) {
             slides.runToTopTeleOp();
-        }else if(slides.getState() == Slides.Position.MID_DEC){
+        } else if (slides.getState() == Slides.Position.MID_DEC) {
             slides.runToMiddle();
         }
         state = BotState.BRACE_OUTTAKE;
@@ -168,36 +169,36 @@ public class Bot {
     }
 
 
-    public void fixMotors(){
+    public void fixMotors() {
         fl.setInverted(false);
         fr.setInverted(true);
         bl.setInverted(false);
         br.setInverted(true);
-        
+
         fl.setRunMode(Motor.RunMode.RawPower);
         fr.setRunMode(Motor.RunMode.RawPower);
         bl.setRunMode(Motor.RunMode.RawPower);
         br.setRunMode(Motor.RunMode.RawPower);
-        
+
         fl.setZeroPowerBehavior(Motor.ZeroPowerBehavior.BRAKE);
         fr.setZeroPowerBehavior(Motor.ZeroPowerBehavior.BRAKE);
         bl.setZeroPowerBehavior(Motor.ZeroPowerBehavior.BRAKE);
         br.setZeroPowerBehavior(Motor.ZeroPowerBehavior.BRAKE);
     }
 
-    public void driveRobotCentric(double strafeSpeed, double forwardBackSpeed, double turnSpeed){
+    public void driveRobotCentric(double strafeSpeed, double forwardBackSpeed, double turnSpeed) {
         double[] speeds = {
-                forwardBackSpeed-strafeSpeed-turnSpeed,
-                forwardBackSpeed+strafeSpeed+turnSpeed,
-                forwardBackSpeed+strafeSpeed-turnSpeed,
-                forwardBackSpeed-strafeSpeed+turnSpeed
+                forwardBackSpeed - strafeSpeed - turnSpeed,
+                forwardBackSpeed + strafeSpeed + turnSpeed,
+                forwardBackSpeed + strafeSpeed - turnSpeed,
+                forwardBackSpeed - strafeSpeed + turnSpeed
         };
         double maxSpeed = 0;
-        for(int i = 0; i < 4; i++){
+        for (int i = 0; i < 4; i++) {
             maxSpeed = Math.max(maxSpeed, speeds[i]);
         }
-        if(maxSpeed > 1) {
-            for (int i = 0; i < 4; i++){
+        if (maxSpeed > 1) {
+            for (int i = 0; i < 4; i++) {
                 speeds[i] /= maxSpeed;
             }
         }
@@ -207,7 +208,7 @@ public class Bot {
         br.set(speeds[3]);
     }
 
-    public void driveFieldCentric(double strafeSpeed, double forwardBackSpeed, double turnSpeed, double heading){
+    public void driveFieldCentric(double strafeSpeed, double forwardBackSpeed, double turnSpeed, double heading) {
         double magnitude = Math.sqrt(strafeSpeed * strafeSpeed + forwardBackSpeed * forwardBackSpeed);
         double theta = (Math.atan2(forwardBackSpeed, strafeSpeed) - heading) % (2 * Math.PI);
         double[] speeds = {
@@ -219,19 +220,19 @@ public class Bot {
 
         double maxSpeed = 0;
 
-        for(int i = 0; i < 4; i++){
+        for (int i = 0; i < 4; i++) {
             maxSpeed = Math.max(maxSpeed, speeds[i]);
         }
 
-        if(maxSpeed > 1) {
-            for (int i = 0; i < 4; i++){
+        if (maxSpeed > 1) {
+            for (int i = 0; i < 4; i++) {
                 speeds[i] /= maxSpeed;
             }
         }
 
-    //        for (int i = 0; i < 4; i++) {
-    //            driveTrainMotors[i].set(speeds[i]);
-    //        }
+        //        for (int i = 0; i < 4; i++) {
+        //            driveTrainMotors[i].set(speeds[i]);
+        //        }
         // manually invert the left side
 
         fl.set(speeds[0]);
@@ -246,11 +247,11 @@ public class Bot {
         }
     }
 
-    public double getCurrent(){
+    public double getCurrent() {
         return fl.motorEx.getCurrent(CurrentUnit.MILLIAMPS);
     }
 
-    public void resetEncoder(){
+    public void resetEncoder() {
         fl.resetEncoder();
         fr.resetEncoder();
         bl.resetEncoder();
@@ -260,22 +261,23 @@ public class Bot {
         turret.resetEncoder();
     }
 
-    public void setImuOffset(double offset){
+    public void setImuOffset(double offset) {
         imuOffset += offset;
     }
 
-    public void resetIMU(){
+    public void resetIMU() {
         imuOffset += getIMU();
     }
-    public double getIMU(){
-        double angle = (imu0.getAngularOrientation().toAngleUnit(AngleUnit.DEGREES).firstAngle-imuOffset)%360;
-        if(angle > 180){
+
+    public double getIMU() {
+        double angle = (imu0.getAngularOrientation().toAngleUnit(AngleUnit.DEGREES).firstAngle - imuOffset) % 360;
+        if (angle > 180) {
             angle = angle - 360;
         }
         return angle;
     }
 
-    public void resetProfiler(){
+    public void resetProfiler() {
         slides.resetProfiler();
         horizSlides.resetProfiler();
     }

@@ -16,7 +16,7 @@ public class Arm {
     public static double barStack[] = {0.6, 0.56, 0.52, 0.48, 0.45, barTest};//{0.6, 0.56, 0.53, 0.5, 0.5};
 
 
-    public Arm(OpMode opMode){
+    public Arm(OpMode opMode) {
         armLeft = opMode.hardwareMap.servo.get("armLeft");
         armRight = opMode.hardwareMap.servo.get("armRight");
         armLeft.setDirection(Servo.Direction.FORWARD);
@@ -25,56 +25,56 @@ public class Arm {
         bar.setDirection(Servo.Direction.FORWARD);
     }
 
-    private void setArm(double position){
+    private void setArm(double position) {
         armLeft.setPosition(position);
-        armRight.setPosition(1-position);
+        armRight.setPosition(1 - position);
     }
 
-    private void setBar(double position){
+    private void setBar(double position) {
         bar.setPosition(position);
     }
 
-    public void intake(){
+    public void intake() {
         setBar(barIntake);
         setArm(armIntake);
     }
 
-    public void storage(){
+    public void storage() {
         setArm(armStorage);
         setBar(barAutoOuttakeUp);
     }
 
-    public void outtake(){
+    public void outtake() {
         setArm(armOuttake);
         setBar(barOuttake);
     }
 
-    public void secure(){
+    public void secure() {
         setArm(armSecure);
         setBar(barSecure);
     }
 
-    public void brace(){
+    public void brace() {
         setArm(armStorage);
         setBar(barBrace);
     }
 
-    public void autoStorage(){
+    public void autoStorage() {
         setArm(armAutoStorage);
         setBar(barAutoStorage);
     }
 
-    public void autoStorage2(){
+    public void autoStorage2() {
         setArm(armAutoStorage2);
         setBar(barAutoStorage2);
     }
 
-    public void preload(){
+    public void preload() {
         setArm(armPreload);
         setBar(barPreload);
     }
 
-    public void autoOuttake(){
+    public void autoOuttake() {
         setBar(barAutoOuttakeUp);
         setArm(autoArmOuttake);
     }
@@ -84,14 +84,14 @@ public class Arm {
         setArm(autoArmOuttake);
     }
 
-    public void intakeAuto(int i){
+    public void intakeAuto(int i) {
         barStack[5] = barTest;
         armStack[5] = armTest;
         setBar(barStack[i]);
         setArm(armStack[i]);
     }
 
-    public void updateIntakeAuto(){
+    public void updateIntakeAuto() {
         barStack[5] = barTest;
         armStack[5] = armTest;
     }

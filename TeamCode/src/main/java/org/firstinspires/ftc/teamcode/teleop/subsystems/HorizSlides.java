@@ -22,7 +22,7 @@ public class HorizSlides {
 
     private MotionProfiler profiler = new MotionProfiler(8000, 8000);
 
-    public HorizSlides(OpMode opMode){
+    public HorizSlides(OpMode opMode) {
         motor = new MotorEx(opMode.hardwareMap, "slidesHoriz", Motor.GoBILDA.RPM_1150);
         motor.setInverted(false);
         controller = new PIDFController(p, i, d, f);
@@ -33,7 +33,7 @@ public class HorizSlides {
         this.opMode = opMode;
     }
 
-    public void runTo(int t){
+    public void runTo(int t) {
         controller = new PIDFController(p, i, d, f);
         controller.setTolerance(tolerance);
         motor.setRunMode(Motor.RunMode.RawPower);
@@ -43,68 +43,71 @@ public class HorizSlides {
         profile_init_time = opMode.time;
     }
 
-    public void saveTeleOpIntake(){
+    public void saveTeleOpIntake() {
         teleOpIntake = motor.getCurrentPosition();
     }
 
-    public void saveAutoIntake(){
+    public void saveAutoIntake() {
         autoIntake = motor.getCurrentPosition();
     }
 
-    public void runToFullIn(){
+    public void runToFullIn() {
         runTo(fullIn);
     }
-    public void runToFullOut(){
+
+    public void runToFullOut() {
         runTo(fullOut);
     }
 
     public void runToAutoOuttake() {
         runTo(autoOuttake);
     }
-    public void runToAutoIntake(){
+
+    public void runToAutoIntake() {
         runTo(autoIntake);
     }
-    public void runToTeleOpIntake(){
+
+    public void runToTeleOpIntake() {
         runTo(teleOpIntake);
     }
 
-    public void runManual(double power){
-        if(power > powerMin || power < -powerMin){
+    public void runManual(double power) {
+        if (power > powerMin || power < -powerMin) {
             manualPower = power;
-        }else{
+        } else {
             manualPower = 0;
         }
     }
 
-    public void periodic(){
+    public void periodic() {
         motor.setInverted(false);
         controller.setPIDF(p, i, d, f);
         double dt = opMode.time - profile_init_time;
-        if(!profiler.isOver()) {
+        if (!profiler.isOver()) {
             controller.setSetPoint(profiler.motion_profile_pos(dt));
             motor.set(powerUp * controller.calculate(motor.getCurrentPosition()));
-        }else{
-            if(profiler.isDone()){
+        } else {
+            if (profiler.isDone()) {
                 profiler = new MotionProfiler(3000, 6000);
             }
-            if(manualPower != 0) {
+            if (manualPower != 0) {
                 controller.setSetPoint(motor.getCurrentPosition());
                 motor.set(manualPower / manualDivide);
-            }else{
+            } else {
                 motor.set(powerUp * controller.calculate(motor.getCurrentPosition()));
             }
         }
     }
 
-    public void resetEncoder(){
+    public void resetEncoder() {
         motor.resetEncoder();
     }
 
-    public int getPosition(){
+    public int getPosition() {
         return motor.getCurrentPosition();
     }
 
-    public void resetProfiler(){
+    public void resetProfiler() {
         profiler = new MotionProfiler(3000, 6000);
     }
 

@@ -62,31 +62,31 @@ public class MainTeleOp extends LinearOpMode {
             gp1.readButtons();
             gp2.readButtons();
 
-            if(gp2.wasJustPressed(GamepadKeys.Button.BACK)){
+            if (gp2.wasJustPressed(GamepadKeys.Button.BACK)) {
                 debugMode = !debugMode;
             }
-            if(gp1.wasJustPressed(GamepadKeys.Button.BACK)){
+            if (gp1.wasJustPressed(GamepadKeys.Button.BACK)) {
                 autoAlignForward = !autoAlignForward;
             }
 
-            if(!debugMode) {//finite state
+            if (!debugMode) {//finite state
                 if (bot.state == Bot.BotState.INTAKE || bot.state == Bot.BotState.INTAKE_OUT) {
-                    if(gp2.wasJustPressed(GamepadKeys.Button.A) || gp2.wasJustPressed(GamepadKeys.Button.B) || gp2.wasJustPressed(GamepadKeys.Button.RIGHT_BUMPER) || gp2.wasJustPressed(GamepadKeys.Button.LEFT_BUMPER)){
+                    if (gp2.wasJustPressed(GamepadKeys.Button.A) || gp2.wasJustPressed(GamepadKeys.Button.B) || gp2.wasJustPressed(GamepadKeys.Button.RIGHT_BUMPER) || gp2.wasJustPressed(GamepadKeys.Button.LEFT_BUMPER)) {
                         bot.claw.close();
                         cancelPrevAction = false;
                     }
-                    if(gp2.wasJustPressed(GamepadKeys.Button.X) || gp2.wasJustPressed(GamepadKeys.Button.Y)){
+                    if (gp2.wasJustPressed(GamepadKeys.Button.X) || gp2.wasJustPressed(GamepadKeys.Button.Y)) {
                         bot.claw.open();
                         cancelPrevAction = true;
                     }
-                    if(gp2.wasJustReleased(GamepadKeys.Button.A) || gp2.wasJustReleased(GamepadKeys.Button.B)){
-                        if(!cancelPrevAction){
+                    if (gp2.wasJustReleased(GamepadKeys.Button.A) || gp2.wasJustReleased(GamepadKeys.Button.B)) {
+                        if (!cancelPrevAction) {
                             bot.storage();
                         }
                         cancelPrevAction = false;
                     }
-                    if(gp2.wasJustReleased(GamepadKeys.Button.LEFT_BUMPER)){
-                        if(!cancelPrevAction){
+                    if (gp2.wasJustReleased(GamepadKeys.Button.LEFT_BUMPER)) {
+                        if (!cancelPrevAction) {
                             autoMode = true;
                             bot.horizSlides.saveTeleOpIntake();
                             bot.turret.saveIntakePosition(bot.getIMU());
@@ -94,8 +94,8 @@ public class MainTeleOp extends LinearOpMode {
                         }
                         cancelPrevAction = false;
                     }
-                    if(gp2.wasJustReleased(GamepadKeys.Button.RIGHT_BUMPER)){
-                        if(!cancelPrevAction){
+                    if (gp2.wasJustReleased(GamepadKeys.Button.RIGHT_BUMPER)) {
+                        if (!cancelPrevAction) {
                             autoMode = true;
                             bot.horizSlides.saveTeleOpIntake();
                             bot.turret.saveIntakePosition(bot.getIMU());
@@ -113,7 +113,7 @@ public class MainTeleOp extends LinearOpMode {
                     } else if (gp2.wasJustPressed(GamepadKeys.Button.Y)) {
                         bot.outtake();
                     }
-                    if(gp2.wasJustPressed(GamepadKeys.Button.X)){
+                    if (gp2.wasJustPressed(GamepadKeys.Button.X)) {
                         bot.braceOuttake();
                         otherThread = new Thread(() -> {
                             sleep(200);
@@ -121,29 +121,29 @@ public class MainTeleOp extends LinearOpMode {
                         });
                         otherThread.start();
                     }
-                    if(gp2.wasJustPressed(GamepadKeys.Button.START)){
+                    if (gp2.wasJustPressed(GamepadKeys.Button.START)) {
                         bot.turret.runToIntake(bot.getIMU());
                     }
-                    if(gp2.wasJustPressed(GamepadKeys.Button.RIGHT_BUMPER)){
+                    if (gp2.wasJustPressed(GamepadKeys.Button.RIGHT_BUMPER)) {
                         bot.turret.runToTeleOpOuttakeLeft(bot.getIMU());
-                    }else if(gp2.wasJustPressed(GamepadKeys.Button.LEFT_BUMPER)){
+                    } else if (gp2.wasJustPressed(GamepadKeys.Button.LEFT_BUMPER)) {
                         bot.turret.runToTeleOpOuttakeRight(bot.getIMU());
                     }
                 } else if (bot.state == Bot.BotState.OUTTAKE || bot.state == Bot.BotState.SECURE) {
-                    if(gp2.wasJustPressed(GamepadKeys.Button.A) || gp2.wasJustPressed(GamepadKeys.Button.B)){
+                    if (gp2.wasJustPressed(GamepadKeys.Button.A) || gp2.wasJustPressed(GamepadKeys.Button.B)) {
                         bot.outtake();
                         cancelPrevAction = true;
                     }
-                    if(gp2.wasJustPressed(GamepadKeys.Button.Y)){
+                    if (gp2.wasJustPressed(GamepadKeys.Button.Y)) {
                         cancelPrevAction = false;
                     }
-                    if(gp2.getButton(GamepadKeys.Button.Y)){
-                        if(!cancelPrevAction) {
+                    if (gp2.getButton(GamepadKeys.Button.Y)) {
+                        if (!cancelPrevAction) {
                             bot.secure();
                         }
                     }
-                    if(gp2.wasJustReleased(GamepadKeys.Button.Y)){
-                        if(!cancelPrevAction){
+                    if (gp2.wasJustReleased(GamepadKeys.Button.Y)) {
+                        if (!cancelPrevAction) {
                             bot.claw.open();
                             bot.storage();
                             thread = new Thread(() -> {
@@ -151,18 +151,18 @@ public class MainTeleOp extends LinearOpMode {
                                 bot.turret.runToIntake(bot.getIMU());
                             });
                             thread.start();
-                            if(autoMode){
+                            if (autoMode) {
                                 bot.turret.saveOuttakePosition(bot.getIMU());
                                 autoMode = false;
                             }
                         }
                         cancelPrevAction = false;
                     }
-                    if(gp2.wasJustPressed(GamepadKeys.Button.X)){
+                    if (gp2.wasJustPressed(GamepadKeys.Button.X)) {
                         bot.storage();
                     }
-                }else if(bot.state == Bot.BotState.BRACE_OUTTAKE || bot.state == Bot.BotState.BRACE_SECURE){
-                    if(gp2.wasJustPressed(GamepadKeys.Button.A) || gp2.wasJustPressed(GamepadKeys.Button.B)){
+                } else if (bot.state == Bot.BotState.BRACE_OUTTAKE || bot.state == Bot.BotState.BRACE_SECURE) {
+                    if (gp2.wasJustPressed(GamepadKeys.Button.A) || gp2.wasJustPressed(GamepadKeys.Button.B)) {
                         bot.bringSlidesUp();
                         thread = new Thread(() -> {
                             sleep(200);
@@ -171,7 +171,7 @@ public class MainTeleOp extends LinearOpMode {
                         thread.start();
                         cancelPrevAction = true;
                     }
-                    if(gp2.wasJustPressed(GamepadKeys.Button.X)){
+                    if (gp2.wasJustPressed(GamepadKeys.Button.X)) {
                         cancelPrevAction = false;
                         bot.braceOuttake();
                         otherThread = new Thread(() -> {
@@ -180,8 +180,8 @@ public class MainTeleOp extends LinearOpMode {
                         });
                         otherThread.start();
                     }
-                    if(gp2.wasJustReleased(GamepadKeys.Button.X)){
-                        if(!cancelPrevAction) {
+                    if (gp2.wasJustReleased(GamepadKeys.Button.X)) {
+                        if (!cancelPrevAction) {
                             bot.claw.open();
                             bot.storage();
                             thread = new Thread(() -> {
@@ -191,32 +191,32 @@ public class MainTeleOp extends LinearOpMode {
                             thread.start();
                         }
                     }
-                    if(gp2.wasJustPressed(GamepadKeys.Button.Y)){
+                    if (gp2.wasJustPressed(GamepadKeys.Button.Y)) {
                         bot.storage();
                     }
                 }
                 double rightX = gp2.getRightX(), leftY = gp2.getLeftY();
-                bot.turret.runManual(rightX * Math.abs(rightX) / (1 + bot.horizSlides.getPosition()/580.0));
+                bot.turret.runManual(rightX * Math.abs(rightX) / (1 + bot.horizSlides.getPosition() / 580.0));
                 bot.horizSlides.runManual(leftY * Math.abs(leftY));
                 if (gp2.wasJustPressed(GamepadKeys.Button.DPAD_UP)) {
                     bot.slides.runToTopTeleOp();
                 } else if (gp2.wasJustPressed(GamepadKeys.Button.DPAD_LEFT)) {
                     bot.slides.runToMiddle();
-                }else if (gp2.wasJustPressed(GamepadKeys.Button.DPAD_RIGHT)) {
+                } else if (gp2.wasJustPressed(GamepadKeys.Button.DPAD_RIGHT)) {
                     bot.slides.runToLow();
-                }else if (gp2.wasJustPressed(GamepadKeys.Button.DPAD_DOWN)) {
+                } else if (gp2.wasJustPressed(GamepadKeys.Button.DPAD_DOWN)) {
                     bot.slides.runToBottom();
                 }
-            }else{//debug mode
+            } else {//debug and cone stack mode
                 double rightX = gp2.getRightX(), leftY = gp2.getLeftY(), rightY = -gp2.getRightX();
-                bot.turret.runManual(rightX * Math.abs(rightX) / (1 + bot.horizSlides.getPosition()/580.0));
+                bot.turret.runManual(rightX * Math.abs(rightX) / (1 + bot.horizSlides.getPosition() / 580.0));
                 bot.horizSlides.runManual(leftY * Math.abs(leftY));
                 bot.slides.runManual(rightY * Math.abs(rightY));
 
-                if(gp2.wasJustPressed(GamepadKeys.Button.LEFT_STICK_BUTTON)){
+                if (gp2.wasJustPressed(GamepadKeys.Button.LEFT_STICK_BUTTON)) {
                     bot.resetEncoder();
                 }
-                if(gp2.wasJustPressed(GamepadKeys.Button.START)){
+                if (gp2.wasJustPressed(GamepadKeys.Button.START)) {
                     Bot.instance = null;
                     bot = Bot.getInstance(this);
                     bot.slides.resetProfiler();
@@ -225,23 +225,23 @@ public class MainTeleOp extends LinearOpMode {
 
 
                 if (bot.state == Bot.BotState.INTAKE || bot.state == Bot.BotState.INTAKE_OUT) {
-                    if(gp2.wasJustPressed(GamepadKeys.Button.A) || gp2.wasJustPressed(GamepadKeys.Button.B) || gp2.wasJustPressed(GamepadKeys.Button.RIGHT_BUMPER) || gp2.wasJustPressed(GamepadKeys.Button.LEFT_BUMPER)){
+                    if (gp2.wasJustPressed(GamepadKeys.Button.A) || gp2.wasJustPressed(GamepadKeys.Button.B) || gp2.wasJustPressed(GamepadKeys.Button.RIGHT_BUMPER) || gp2.wasJustPressed(GamepadKeys.Button.LEFT_BUMPER)) {
                         bot.claw.close();
                         cancelPrevAction = false;
                     }
-                    if(gp2.wasJustPressed(GamepadKeys.Button.X) || gp2.wasJustPressed(GamepadKeys.Button.Y)){
+                    if (gp2.wasJustPressed(GamepadKeys.Button.X) || gp2.wasJustPressed(GamepadKeys.Button.Y)) {
                         bot.claw.open();
                         cancelPrevAction = true;
                     }
-                    if(gp2.wasJustReleased(GamepadKeys.Button.A) || gp2.wasJustReleased(GamepadKeys.Button.B)){
-                        if(!cancelPrevAction){
+                    if (gp2.wasJustReleased(GamepadKeys.Button.A) || gp2.wasJustReleased(GamepadKeys.Button.B)) {
+                        if (!cancelPrevAction) {
                             bot.storage();
                             debugMode = false;
                         }
                         cancelPrevAction = false;
                     }
-                    if(gp2.wasJustReleased(GamepadKeys.Button.LEFT_BUMPER) || gp2.wasJustReleased(GamepadKeys.Button.RIGHT_BUMPER)){
-                        if(!cancelPrevAction){
+                    if (gp2.wasJustReleased(GamepadKeys.Button.LEFT_BUMPER) || gp2.wasJustReleased(GamepadKeys.Button.RIGHT_BUMPER)) {
+                        if (!cancelPrevAction) {
                             bot.horizSlides.saveAutoIntake();
                             bot.turret.saveAutoIntake(isRight, bot.getIMU());
                             goToStackOuttake();
@@ -249,7 +249,7 @@ public class MainTeleOp extends LinearOpMode {
                         cancelPrevAction = false;
                     }
                 } else if (bot.state == Bot.BotState.STORAGE) {
-                    if(gp2.wasJustPressed(GamepadKeys.Button.RIGHT_BUMPER)){
+                    if (gp2.wasJustPressed(GamepadKeys.Button.RIGHT_BUMPER)) {
                         isRight = true;
                         bot.turret.runToAutoIntakeRight(bot.getIMU());
                         thread = new Thread(() -> {
@@ -257,7 +257,7 @@ public class MainTeleOp extends LinearOpMode {
                             bot.sideStackIntake(index);
                         });
                         thread.start();
-                    }else if(gp2.wasJustPressed(GamepadKeys.Button.LEFT_BUMPER)){
+                    } else if (gp2.wasJustPressed(GamepadKeys.Button.LEFT_BUMPER)) {
                         isRight = false;
                         bot.turret.runToAutoIntakeLeft(bot.getIMU());
                         thread = new Thread(() -> {
@@ -267,33 +267,33 @@ public class MainTeleOp extends LinearOpMode {
                         thread.start();
                     }
                 } else if (bot.state == Bot.BotState.OUTTAKE || bot.state == Bot.BotState.SECURE) {
-                    if(gp2.wasJustPressed(GamepadKeys.Button.A) || gp2.wasJustPressed(GamepadKeys.Button.B)){
+                    if (gp2.wasJustPressed(GamepadKeys.Button.A) || gp2.wasJustPressed(GamepadKeys.Button.B)) {
                         bot.outtake();
                         cancelPrevAction = true;
                     }
-                    if(gp2.wasJustPressed(GamepadKeys.Button.Y)){
+                    if (gp2.wasJustPressed(GamepadKeys.Button.Y)) {
                         cancelPrevAction = false;
                     }
-                    if(gp2.getButton(GamepadKeys.Button.Y)){
-                        if(!cancelPrevAction) {
+                    if (gp2.getButton(GamepadKeys.Button.Y)) {
+                        if (!cancelPrevAction) {
                             bot.secure();
                         }
                     }
-                    if(gp2.wasJustReleased(GamepadKeys.Button.Y)){
-                        if(!cancelPrevAction){
+                    if (gp2.wasJustReleased(GamepadKeys.Button.Y)) {
+                        if (!cancelPrevAction) {
                             bot.claw.open();
                             bot.storage();
                             bot.turret.saveAutoOuttake(isRight, bot.getIMU());
-                            if(index > 0) {
+                            if (index > 0) {
                                 index--;
                                 goToStackIntake();
-                            }else{
+                            } else {
                                 bot.turret.runToIntake(bot.getIMU());
                             }
                         }
                         cancelPrevAction = false;
                     }
-                    if(gp2.wasJustPressed(GamepadKeys.Button.X)){
+                    if (gp2.wasJustPressed(GamepadKeys.Button.X)) {
                         bot.storage();
                         debugMode = false;
                     }
@@ -330,13 +330,12 @@ public class MainTeleOp extends LinearOpMode {
     }
 
 
-
     //copied from auto
     public static int driveTime = 2200, timeSlidesUp = 850, timeSlidesDown = 550, timeOuttake = 350, timeConeDrop = 150, timeIntakeDown = 200, timeIntakeOut = 700, timeIntakeClose = 150, timeIntakeUp = 500, timeIntakeIn = 400;//old 400
 
 
     private void goToOuttakeRight() {//TODO change values to use the stored values
-        thread = new Thread(() ->{
+        thread = new Thread(() -> {
             bot.storage();
             bot.state = Bot.BotState.OUTTAKE;
             sleep(600);
@@ -351,7 +350,7 @@ public class MainTeleOp extends LinearOpMode {
     }
 
     private void goToOuttakeLeft() {//TODO change values to use the stored values
-        thread = new Thread(() ->{
+        thread = new Thread(() -> {
             bot.storage();
             bot.state = Bot.BotState.OUTTAKE;
             sleep(600);
@@ -368,14 +367,14 @@ public class MainTeleOp extends LinearOpMode {
         thread = new Thread(() -> {
             bot.slides.runToLow();
             bot.arm.autoStorage();
-            if(index > 0) {
+            if (index > 0) {
                 sleep(timeIntakeUp);
             }
             bot.horizSlides.runToFullIn();
             sleep(timeIntakeIn);
-            if(isRight){
+            if (isRight) {
                 bot.turret.runToAutoOuttakeRight(bot.getIMU());
-            }else{
+            } else {
                 bot.turret.runToAutoOuttakeLeft(bot.getIMU());
             }
             bot.slides.runToTop();
@@ -385,12 +384,12 @@ public class MainTeleOp extends LinearOpMode {
         thread.start();
     }
 
-    private void goToStackIntake(){
+    private void goToStackIntake() {
         thread = new Thread(() -> {
             sleep(400);
-            if(isRight) {
+            if (isRight) {
                 bot.turret.runToAutoIntakeRight(bot.getIMU());
-            }else{
+            } else {
                 bot.turret.runToAutoIntakeLeft(bot.getIMU());
             }
             sleep(timeSlidesDown);
@@ -404,9 +403,8 @@ public class MainTeleOp extends LinearOpMode {
     }
 
 
-
     private void drive() {
-        if (gp1.wasJustReleased(GamepadKeys.Button.LEFT_STICK_BUTTON)){
+        if (gp1.wasJustReleased(GamepadKeys.Button.LEFT_STICK_BUTTON)) {
             bot.resetIMU();
         }
         driveSpeed = 1;
@@ -416,14 +414,14 @@ public class MainTeleOp extends LinearOpMode {
         bot.fixMotors();
         Vector2d driveVector = new Vector2d(gp1.getLeftX(), -gp1.getLeftY()),
                 turnVector = new Vector2d(
-                        gp1.getRightX() , 0);
-        if(autoAlignForward) {
+                        gp1.getRightX(), 0);
+        if (autoAlignForward) {
             double power = headingAligner.calculate(bot.getIMU());
             bot.driveRobotCentric(driveVector.getX() * driveSpeed,
                     driveVector.getY() * driveSpeed,
                     -power
             );
-        }else{
+        } else {
             bot.driveRobotCentric(driveVector.getX() * driveSpeed,
                     driveVector.getY() * driveSpeed,
                     turnVector.getX() * driveSpeed / 1.7
