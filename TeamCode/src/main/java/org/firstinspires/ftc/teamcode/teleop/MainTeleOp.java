@@ -284,8 +284,12 @@ public class MainTeleOp extends LinearOpMode {
                             bot.claw.open();
                             bot.storage();
                             bot.turret.saveAutoOuttake(isRight, bot.getIMU());
-                            index--;
-                            goToStackIntake();
+                            if(index > 0) {
+                                index--;
+                                goToStackIntake();
+                            }else{
+                                bot.turret.runToIntake(bot.getIMU());
+                            }
                         }
                         cancelPrevAction = false;
                     }
@@ -307,12 +311,13 @@ public class MainTeleOp extends LinearOpMode {
                         index = 0;
                     }
                 }
+                telemetry.addData("index", index);
             }
 
-            telemetry.addData("drive current", bot.getCurrent());
-            telemetry.addData("slide current", bot.slides.getCurrent());
+//            telemetry.addData("drive current", bot.getCurrent());
+//            telemetry.addData("slide current", bot.slides.getCurrent());
             telemetry.addData("getIMU", bot.getIMU());
-            telemetry.addData("debug", debugMode);
+            telemetry.addData("debug/cone stack", debugMode);
             telemetry.addData("autoalign", autoAlignForward);
             telemetry.addData("state", bot.state.toString());
             telemetry.update();
