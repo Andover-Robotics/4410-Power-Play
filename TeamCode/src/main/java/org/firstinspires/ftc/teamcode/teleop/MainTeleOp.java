@@ -253,7 +253,7 @@ public class MainTeleOp extends LinearOpMode {
                         isRight = true;
                         bot.turret.runToAutoIntakeRight(bot.getIMU());
                         thread = new Thread(() -> {
-                            sleep(400);
+                            sleep(600);
                             bot.sideStackIntake(index);
                         });
                         thread.start();
@@ -261,7 +261,7 @@ public class MainTeleOp extends LinearOpMode {
                         isRight = false;
                         bot.turret.runToAutoIntakeLeft(bot.getIMU());
                         thread = new Thread(() -> {
-                            sleep(400);
+                            sleep(600);
                             bot.sideStackIntake(index);
                         });
                         thread.start();
