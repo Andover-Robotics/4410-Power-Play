@@ -132,7 +132,7 @@ public class Bot {
     public void braceOuttake(){
         state = BotState.BRACE_OUTTAKE;
         claw.close();
-        arm.storage();
+        arm.brace();
     }
 
     public void bringSlidesDown(){

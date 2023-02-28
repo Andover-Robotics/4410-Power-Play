@@ -168,6 +168,7 @@ public class MainTeleOp extends LinearOpMode {
                 }else if(bot.state == Bot.BotState.BRACE_OUTTAKE || bot.state == Bot.BotState.BRACE_SECURE){
                     if(gp2.wasJustPressed(GamepadKeys.Button.A) || gp2.wasJustPressed(GamepadKeys.Button.B)){
                         bot.bringSlidesUp();
+                        bot.arm.storage();
                         cancelPrevAction = true;
                     }
                     if(gp2.wasJustPressed(GamepadKeys.Button.X)){
@@ -175,6 +176,7 @@ public class MainTeleOp extends LinearOpMode {
                     }
                     if(gp2.getButton(GamepadKeys.Button.X)){
                         if(!cancelPrevAction) {
+                            bot.braceOuttake();
                             bot.bringSlidesDown();
                         }
                     }

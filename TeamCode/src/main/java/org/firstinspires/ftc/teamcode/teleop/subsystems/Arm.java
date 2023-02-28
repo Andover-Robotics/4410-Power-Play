@@ -9,7 +9,7 @@ public class Arm {
     private final Servo armLeft, armRight, bar;
 
     public static double armOuttake = 0.60, armSecure = 0.50, armIntake = 0.26, autoArmOuttake = 0.55, armStorage = 0.75, armAutoStorage = 0.70, armAutoStorage2 = 0.75, armPreload = 0.75,
-        barOuttake = 0.55, barSecure = 0.4, barIntake = 0.62, barAutoOuttakeUp = 0.35, autoBarOuttakeDown = 0.36, barPreload = 0.25, barAutoStorage = 0.6, barAutoStorage2 = 0.38;
+        barBrace = 0.27, barOuttake = 0.55, barSecure = 0.4, barIntake = 0.62, barAutoOuttakeUp = 0.35, autoBarOuttakeDown = 0.36, barPreload = 0.25, barAutoStorage = 0.6, barAutoStorage2 = 0.38;
 
     public static double armTest = 0.45, barTest = 0.4;
     public static double armStack[] = {0.28, 0.33, 0.37, 0.4, 0.44, armTest};//{0.4, 0.37, 0.34, 0.3, 0.25};
@@ -52,6 +52,11 @@ public class Arm {
     public void secure(){
         setArm(armSecure);
         setBar(barSecure);
+    }
+
+    public void brace(){
+        setArm(armStorage);
+        setBar(barBrace);
     }
 
     public void autoStorage(){

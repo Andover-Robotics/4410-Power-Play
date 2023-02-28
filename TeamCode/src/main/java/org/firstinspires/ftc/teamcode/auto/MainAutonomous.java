@@ -275,7 +275,7 @@ public class MainAutonomous extends LinearOpMode {
 //        bot.arm.autoSecure();
         //end old, new =====
         bot.slides.runToTop();
-        bot.arm.storage();
+        bot.arm.brace();
         sleep(timeSlidesUp);
         if(i == 5){
             sleep(400);
@@ -284,7 +284,7 @@ public class MainAutonomous extends LinearOpMode {
         sleep(timeOuttake);
         //end new
         bot.claw.open();
-        bot.arm.storage();
+        bot.arm.brace();
         sleep(timeConeDrop);
         bot.claw.close();
         sleep(timeOuttake);
