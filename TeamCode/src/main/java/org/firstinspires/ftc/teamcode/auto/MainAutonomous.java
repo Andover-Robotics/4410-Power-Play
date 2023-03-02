@@ -89,7 +89,7 @@ public class MainAutonomous extends LinearOpMode {
         Pose2d startPose = new Pose2d(0, 0, 0);
         drive.setPoseEstimate(startPose);
         Trajectory forward = drive.trajectoryBuilder(startPose)
-                .lineTo(new Vector2d(52, side == Side.RIGHT ? 0 : -1))
+                .lineTo(new Vector2d(52, side == Side.RIGHT ? -1 : -1))
                 .build();
 
         Trajectory parkLeft = drive.trajectoryBuilder(forward.end())
@@ -240,23 +240,23 @@ public class MainAutonomous extends LinearOpMode {
             bot.turret.runToAutoOuttakeLeft(bot.getIMU());
         }
         //old ====
-//        bot.slides.runToTop();
-//        sleep(timeSlidesUp);
-//        if(i == 5){
-//            sleep(400);
-//        }
-//        bot.arm.autoOuttake();
-//        sleep(timeOuttake);
-//        bot.arm.autoSecure();
-        //end old, new =====
         bot.slides.runToTop();
-        bot.arm.brace();
         sleep(timeSlidesUp);
-        if (i == 5) {
+        if(i == 5){
             sleep(400);
         }
-        bot.horizSlides.runToAutoOuttake();
+        bot.arm.autoOuttake();
         sleep(timeOuttake);
+        bot.arm.autoSecure();
+        //end old, new =====
+//        bot.slides.runToTop();
+//        bot.arm.brace();
+//        sleep(timeSlidesUp);
+//        if (i == 5) {
+//            sleep(400);
+//        }
+//        bot.horizSlides.runToAutoOuttake();
+//        sleep(timeOuttake);
         //end new
         bot.claw.open();
         bot.arm.brace();

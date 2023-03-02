@@ -15,7 +15,7 @@ public class HorizSlides {
     private PIDFController controller;
     private final OpMode opMode;
     public static double p = 0.04, i = 0, d = 0, f = 0;
-    private final double tolerance = 5, powerUp = 0.1, manualDivide = 1.5, powerMin = 0.1;
+    private final double tolerance = 5, powerUp = 0.1, manualDivide = 1.5, powerMin = 0.1, powerHold = 0.2;
     private double manualPower = 0;
     public static int fullOut = 540, fullIn = 0, autoIntake = 540, teleOpIntake = 540, autoOuttake = 100;
     private double profile_init_time = 0;
@@ -94,7 +94,7 @@ public class HorizSlides {
                 controller.setSetPoint(motor.getCurrentPosition());
                 motor.set(manualPower / manualDivide);
             } else {
-                motor.set(powerUp * controller.calculate(motor.getCurrentPosition()));
+                motor.set(powerHold * controller.calculate(motor.getCurrentPosition()));
             }
         }
     }

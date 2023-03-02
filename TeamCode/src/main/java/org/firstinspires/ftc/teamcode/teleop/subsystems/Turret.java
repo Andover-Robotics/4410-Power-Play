@@ -22,7 +22,7 @@ public class Turret {
     }
 
     private Side side = Side.CENTER;
-    private int intake = 1650, turretAutoOuttakeRight = -420, turretAutoIntakeRight = 830, turretAutoOuttakeLeft = 420, turretAutoIntakeLeft = -838, limit = 5400;
+    private int intake = 1650, turretAutoOuttakeRight = -470, turretAutoIntakeRight = 830, turretAutoOuttakeLeft = 420, turretAutoIntakeLeft = -838, limit = 5400;
 
     public Turret(OpMode opMode) {
         motor = new MotorEx(opMode.hardwareMap, "turret", Motor.GoBILDA.RPM_1150);
@@ -60,21 +60,26 @@ public class Turret {
     }
 
     public void runToTeleOpOuttakeRight(double imu) {
-        if (side == Side.LEFT) {
-            runTo(turretAutoOuttakeRight + (int) (imu * tickToAngle));
-        } else {
-            side = Side.RIGHT;
-            runTo(turretAutoOuttakeRight + (int) fullRotation + (int) (imu * tickToAngle));
-        }
+        side = Side.RIGHT;
+        runTo(turretAutoOuttakeRight + (int) fullRotation + (int) (imu * tickToAngle));
+//        if (side == Side.LEFT) {
+//            runTo(turretAutoOuttakeRight + (int) (imu * tickToAngle));
+//        } else {
+//            side = Side.RIGHT;
+//            runTo(turretAutoOuttakeRight + (int) fullRotation + (int) (imu * tickToAngle));
+//        }
     }
 
     public void runToTeleOpOuttakeLeft(double imu) {
-        if (side == Side.RIGHT) {
-            runTo(turretAutoOuttakeLeft + (int) fullRotation + (int) (imu * tickToAngle));
-        } else {
-            side = Side.LEFT;
-            runTo(turretAutoOuttakeLeft + (int) (imu * tickToAngle));
-        }
+
+        runTo(turretAutoOuttakeLeft + (int) (imu * tickToAngle));
+        side = Side.LEFT;
+//        if (side == Side.RIGHT) {
+//            runTo(turretAutoOuttakeLeft + (int) fullRotation + (int) (imu * tickToAngle));
+//        } else {
+//            side = Side.LEFT;
+//              runTo(turretAutoOuttakeLeft + (int) (imu * tickToAngle));
+//        }
     }
 
     public void runToIntake(double imu) {

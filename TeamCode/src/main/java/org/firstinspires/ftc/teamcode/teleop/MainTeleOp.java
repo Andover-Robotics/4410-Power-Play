@@ -20,7 +20,7 @@ public class MainTeleOp extends LinearOpMode {
     private double driveSpeed = 1, cycleTime = 1;
 
     private boolean debugMode = false;
-    private boolean cancelPrevAction = false, autoAlignForward = true, autoMode = false, isRight = false;
+    private boolean cancelPrevAction = false, autoAlignForward = false, autoMode = false, isRight = false;
     private int index = 4;
     public static double kp = 0.025, ki = 0, kd = 0;
 
@@ -103,6 +103,11 @@ public class MainTeleOp extends LinearOpMode {
                         }
                         cancelPrevAction = false;
                     }
+                    if(gp2.wasJustPressed(GamepadKeys.Button.RIGHT_STICK_BUTTON)){
+                        bot.claw.open();
+                    }else if(gp2.wasJustReleased(GamepadKeys.Button.RIGHT_STICK_BUTTON)){
+                        bot.storage();
+                    }
                 } else if (bot.state == Bot.BotState.STORAGE) {
                     if (gp2.wasJustPressed(GamepadKeys.Button.A)) {
                         cancelPrevAction = true;
@@ -128,6 +133,11 @@ public class MainTeleOp extends LinearOpMode {
                         bot.turret.runToTeleOpOuttakeLeft(bot.getIMU());
                     } else if (gp2.wasJustPressed(GamepadKeys.Button.LEFT_BUMPER)) {
                         bot.turret.runToTeleOpOuttakeRight(bot.getIMU());
+                    }
+                    if (gp2.wasJustPressed(GamepadKeys.Button.RIGHT_STICK_BUTTON)) {
+                        bot.state = Bot.BotState.INTAKE;
+                        bot.slides.runToLow();
+                        bot.arm.intake();
                     }
                 } else if (bot.state == Bot.BotState.OUTTAKE || bot.state == Bot.BotState.SECURE) {
                     if (gp2.wasJustPressed(GamepadKeys.Button.A) || gp2.wasJustPressed(GamepadKeys.Button.B)) {
@@ -163,22 +173,12 @@ public class MainTeleOp extends LinearOpMode {
                     }
                 } else if (bot.state == Bot.BotState.BRACE_OUTTAKE || bot.state == Bot.BotState.BRACE_SECURE) {
                     if (gp2.wasJustPressed(GamepadKeys.Button.A) || gp2.wasJustPressed(GamepadKeys.Button.B)) {
-                        bot.bringSlidesUp();
-                        thread = new Thread(() -> {
-                            sleep(200);
-                            bot.arm.storage();
-                        });
-                        thread.start();
+                        bot.arm.storage();
                         cancelPrevAction = true;
                     }
                     if (gp2.wasJustPressed(GamepadKeys.Button.X)) {
                         cancelPrevAction = false;
                         bot.braceOuttake();
-                        otherThread = new Thread(() -> {
-                            sleep(200);
-                            bot.bringSlidesDown();
-                        });
-                        otherThread.start();
                     }
                     if (gp2.wasJustReleased(GamepadKeys.Button.X)) {
                         if (!cancelPrevAction) {
