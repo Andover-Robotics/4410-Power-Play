@@ -107,6 +107,10 @@ public class HorizSlides {
         return motor.getCurrentPosition();
     }
 
+    public double getPercent(){
+        return motor.getCurrentPosition() / 580.0;
+    }
+
     public void resetProfiler() {
         profiler = new MotionProfiler(3000, 6000);
     }

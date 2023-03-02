@@ -94,7 +94,7 @@ public class Turret {
 
     public void saveOuttakePosition(double imu) {
         if (side == Side.RIGHT) {
-            turretAutoOuttakeRight = motor.getCurrentPosition() - (int) (imu * tickToAngle);
+            turretAutoOuttakeRight = motor.getCurrentPosition() - (int) (imu * tickToAngle) - (int)fullRotation;
         } else if (side == Side.LEFT) {
             turretAutoOuttakeLeft = motor.getCurrentPosition() - (int) (imu * tickToAngle);
         }

@@ -71,6 +71,7 @@ public class MainTeleOp extends LinearOpMode {
 
             if (!debugMode) {//finite state
                 if (bot.state == Bot.BotState.INTAKE || bot.state == Bot.BotState.INTAKE_OUT) {
+                    bot.arm.intakeCorrected(bot.horizSlides.getPercent());
                     if (gp2.wasJustPressed(GamepadKeys.Button.A) || gp2.wasJustPressed(GamepadKeys.Button.B) || gp2.wasJustPressed(GamepadKeys.Button.RIGHT_BUMPER) || gp2.wasJustPressed(GamepadKeys.Button.LEFT_BUMPER)) {
                         bot.claw.close();
                         cancelPrevAction = false;
@@ -105,8 +106,12 @@ public class MainTeleOp extends LinearOpMode {
                     }
                     if(gp2.wasJustPressed(GamepadKeys.Button.RIGHT_STICK_BUTTON)){
                         bot.claw.open();
+                        cancelPrevAction = false;
                     }else if(gp2.wasJustReleased(GamepadKeys.Button.RIGHT_STICK_BUTTON)){
-                        bot.storage();
+                        if(!cancelPrevAction) {
+                            bot.storage();
+                        }
+                        cancelPrevAction = false;
                     }
                 } else if (bot.state == Bot.BotState.STORAGE) {
                     if (gp2.wasJustPressed(GamepadKeys.Button.A)) {
@@ -135,6 +140,7 @@ public class MainTeleOp extends LinearOpMode {
                         bot.turret.runToTeleOpOuttakeRight(bot.getIMU());
                     }
                     if (gp2.wasJustPressed(GamepadKeys.Button.RIGHT_STICK_BUTTON)) {
+                        cancelPrevAction = true;
                         bot.state = Bot.BotState.INTAKE;
                         bot.slides.runToLow();
                         bot.arm.intake();
