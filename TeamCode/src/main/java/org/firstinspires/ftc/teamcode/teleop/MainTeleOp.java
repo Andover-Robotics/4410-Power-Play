@@ -125,11 +125,6 @@ public class MainTeleOp extends LinearOpMode {
                     }
                     if (gp2.wasJustPressed(GamepadKeys.Button.X)) {
                         bot.braceOuttake();
-                        otherThread = new Thread(() -> {
-                            sleep(200);
-                            bot.bringSlidesDown();
-                        });
-                        otherThread.start();
                     }
                     if (gp2.wasJustPressed(GamepadKeys.Button.START)) {
                         bot.turret.runToIntake(bot.getIMU());

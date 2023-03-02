@@ -28,6 +28,8 @@ public class MainAutonomous extends LinearOpMode {
 
     Bot bot;
 
+    private double moveDiff = -1;
+
     enum Side {
         RIGHT, LEFT, NULL;
     }
@@ -88,18 +90,7 @@ public class MainAutonomous extends LinearOpMode {
 
         Pose2d startPose = new Pose2d(0, 0, 0);
         drive.setPoseEstimate(startPose);
-        Trajectory forward = drive.trajectoryBuilder(startPose)
-                .lineTo(new Vector2d(52, side == Side.RIGHT ? -1 : -1))
-                .build();
 
-        Trajectory parkLeft = drive.trajectoryBuilder(forward.end())
-                .strafeLeft(24)
-                .build();
-        Trajectory parkRight = drive.trajectoryBuilder(forward.end())
-                .strafeRight(24)
-                .build();
-
-        Thread driveForward = new Thread(() -> drive.followTrajectory(forward));
 
         Thread periodic = new Thread(() -> {
             while (opModeIsActive() && !isStopRequested()) {
@@ -123,15 +114,39 @@ public class MainAutonomous extends LinearOpMode {
 
             if (gp1.wasJustPressed(GamepadKeys.Button.A)) {
                 bot.claw.close();
+            }else if(gp1.wasJustPressed(GamepadKeys.Button.START)){
+                bot.claw.open();
             }
             if (gp1.wasJustPressed(GamepadKeys.Button.BACK)) {
                 isTestMode = true;
             }
+            telemetry.addData("moveDiff (positive is more ???)", moveDiff);
+            if(gp1.wasJustPressed(GamepadKeys.Button.LEFT_BUMPER)){
+                moveDiff -= 0.5;
+            }else if(gp1.wasJustPressed(GamepadKeys.Button.RIGHT_BUMPER)){
+                moveDiff += 0.5;
+            }
+            if(side == Side.LEFT){
+                telemetry.addData("turretOuttakeLeft", bot.turret.turretAutoOuttakeLeft);
+                if(gp1.wasJustPressed(GamepadKeys.Button.DPAD_LEFT)){
+                    bot.turret.turretAutoOuttakeLeft -= 5;
+                }else if(gp1.wasJustPressed(GamepadKeys.Button.DPAD_RIGHT)){
+                    bot.turret.turretAutoOuttakeLeft += 5;
+                }
+            }else if(side == Side.RIGHT) {
+                telemetry.addData("turretOuttakeRight", bot.turret.turretAutoOuttakeRight);
+                if(gp1.wasJustPressed(GamepadKeys.Button.DPAD_LEFT)){
+                    bot.turret.turretAutoOuttakeRight -= 5;
+                }else if(gp1.wasJustPressed(GamepadKeys.Button.DPAD_RIGHT)){
+                    bot.turret.turretAutoOuttakeRight += 5;
+                }
+            }
+
+            telemetry.addData("side?", side.toString());
+            telemetry.addData("testmode", isTestMode);
 
             telemetry.addData("Current FPS:", camera.getFps());
             telemetry.addData("Current Max FPS:", camera.getCurrentPipelineMaxFps());
-            telemetry.addData("side?", side.toString());
-            telemetry.addData("testmode", isTestMode);
 
             ArrayList<AprilTagDetection> currentDetections = aprilTagDetectionPipeline.getLatestDetections();
 
@@ -185,6 +200,18 @@ public class MainAutonomous extends LinearOpMode {
         }
         //END CAMERA STUFF ===============
 
+        Trajectory forward = drive.trajectoryBuilder(startPose)
+                .lineTo(new Vector2d(52, moveDiff))
+                .build();
+
+        Trajectory parkLeft = drive.trajectoryBuilder(forward.end())
+                .strafeLeft(24)
+                .build();
+        Trajectory parkRight = drive.trajectoryBuilder(forward.end())
+                .strafeRight(24)
+                .build();
+
+        Thread driveForward = new Thread(() -> drive.followTrajectory(forward));
         bot.resetIMU();
 
         waitForStart();
