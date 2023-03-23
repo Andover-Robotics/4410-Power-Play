@@ -8,7 +8,7 @@ import com.qualcomm.robotcore.hardware.Servo;
 public class Arm {
     private final Servo armLeft, armRight, bar;
 
-    public static double armOuttake = 0.60, armSecure = 0.50, armIntake = 0.26, autoArmOuttake = 0.55, armStorage = 0.75, armAutoStorage = 0.70, armAutoStorage2 = 0.75, armPreload = 0.75,
+    public static double armOuttake = 0.60, armSecure = 0.50, armIntake = 0.26, autoArmOuttake = 0.55, armStorage = 0.81, armAutoStorage = 0.70, armAutoStorage2 = 0.75, armPreload = 0.75,
             barOuttake = 0.55, barSecure = 0.4, barIntake = 0.585, barAutoOuttakeUp = 0.35, autoBarOuttakeDown = 0.36, barPreload = 0.25, barAutoStorage = 0.6, barAutoStorage2 = 0.38, barBrace = 0.21;
 
     public static double armTest = 0.45, barTest = 0.4;
