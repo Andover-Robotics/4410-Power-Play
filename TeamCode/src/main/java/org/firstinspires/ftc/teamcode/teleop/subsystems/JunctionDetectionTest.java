@@ -36,14 +36,26 @@ public class JunctionDetectionTest extends LinearOpMode {
             }
         });
 
+
         while (!isStarted()){
             telemetry.addData("Junction Status: ", junctionDetectionPipeline.junctionVal);
             telemetry.update();
         }
 
+     /*   while (opModeIsActive() && !isStopRequested()) {
+            telemetry.addData("Junction Status: ", junctionDetectionPipeline.junctionVal);
+            telemetry.update();
+
+        }
+
+      */
         if(isStarted()){
             camera.stopStreaming();
             camera.closeCameraDevice();
         }
+
+
+
+
     }
 }
