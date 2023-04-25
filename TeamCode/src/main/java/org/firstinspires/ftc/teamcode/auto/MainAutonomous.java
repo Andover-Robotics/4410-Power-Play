@@ -205,7 +205,7 @@ public class MainAutonomous extends LinearOpMode {
                 .build();
 
         Trajectory parkLeft = drive.trajectoryBuilder(forward.end())
-                .strafeLeft(24)
+                .strafeLeft(22)
                 .build();
         Trajectory parkRight = drive.trajectoryBuilder(forward.end())
                 .strafeRight(24)

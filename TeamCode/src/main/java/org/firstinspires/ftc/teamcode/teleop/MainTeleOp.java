@@ -17,7 +17,7 @@ import org.firstinspires.ftc.teamcode.teleop.subsystems.Bot;
 public class MainTeleOp extends LinearOpMode {
 
     private Bot bot;
-    private double driveSpeed = 1, cycleTime = 1;
+    private double driveSpeed = 1, cycleTime = 1, turretslidespeed = 1;
 
     private boolean debugMode = false;
     private boolean cancelPrevAction = false, autoAlignForward = false, autoMode = false, isRight = false;
@@ -197,8 +197,10 @@ public class MainTeleOp extends LinearOpMode {
                     }
                 }
                 double rightX = gp2.getRightX(), leftY = gp2.getLeftY();
-                bot.turret.runManual(rightX * Math.abs(rightX) / (1 + bot.horizSlides.getPosition() / 580.0));
-                bot.horizSlides.runManual(leftY * Math.abs(leftY));
+                turretslidespeed = 1;
+                turretslidespeed *= 1 - 0.5 * gp2.getTrigger(GamepadKeys.Trigger.RIGHT_TRIGGER);
+                bot.turret.runManual(rightX * Math.abs(rightX) * turretslidespeed / (1 + bot.horizSlides.getPosition() / 580.0));
+                bot.horizSlides.runManual(leftY * Math.abs(leftY) * turretslidespeed);
                 if (gp2.wasJustPressed(GamepadKeys.Button.DPAD_UP)) {
                     bot.slides.runToTopTeleOp();
                 } else if (gp2.wasJustPressed(GamepadKeys.Button.DPAD_LEFT)) {
@@ -210,9 +212,11 @@ public class MainTeleOp extends LinearOpMode {
                 }
             } else {//debug and cone stack mode
                 double rightX = gp2.getRightX(), leftY = gp2.getLeftY(), rightY = -gp2.getRightX();
-                bot.turret.runManual(rightX * Math.abs(rightX) / (1 + bot.horizSlides.getPosition() / 580.0));
-                bot.horizSlides.runManual(leftY * Math.abs(leftY));
-                bot.slides.runManual(rightY * Math.abs(rightY));
+                turretslidespeed = 1;
+                turretslidespeed *= 1 - 0.5 * gp2.getTrigger(GamepadKeys.Trigger.RIGHT_TRIGGER);
+                bot.turret.runManual(rightX * Math.abs(rightX) * turretslidespeed / (1 + bot.horizSlides.getPosition() / 580.0));
+                bot.horizSlides.runManual(leftY * Math.abs(leftY) * turretslidespeed);
+//                bot.slides.runManual(rightY * Math.abs(rightY));
 
                 if (gp2.wasJustPressed(GamepadKeys.Button.LEFT_STICK_BUTTON)) {
                     bot.resetEncoder();
@@ -393,7 +397,15 @@ public class MainTeleOp extends LinearOpMode {
             } else {
                 bot.turret.runToAutoIntakeLeft(bot.getIMU());
             }
-            sleep(timeSlidesDown);
+            if (isRight) {
+                sleep(timeSlidesDown);//this is what left and right both were before, I split it up to keep left optimized
+            } else {
+                if (index > 3) {
+                    sleep(1100);//changed from timeslidesdown to allow more time before slides shoot out(they were knocking cone stack over)
+                } else {
+                    sleep(timeSlidesDown);
+                    }
+            }
             bot.claw.open();
             bot.arm.intakeAuto(index);
             sleep(timeIntakeDown);
