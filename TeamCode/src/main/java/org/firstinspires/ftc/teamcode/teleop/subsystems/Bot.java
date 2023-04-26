@@ -87,6 +87,16 @@ public class Bot {
 
     }
 
+    public void alignjunction() {
+        while (JunctionDetectionPipeline.junctionVal == JunctionDetectionPipeline.JunctionVal.ONLEFT){
+            turret.runManual(-0.07);
+        }
+        while (JunctionDetectionPipeline.junctionVal == JunctionDetectionPipeline.JunctionVal.ONRIGHT){
+            turret.runManual(0.07);
+        }
+    }
+
+
     public void intakeOut() {
         state = BotState.INTAKE_OUT;
         slides.runToBottom();

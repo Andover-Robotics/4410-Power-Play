@@ -43,15 +43,6 @@ public class Turret {
         controller.setSetPoint(t);
     }
 
-    public void alignjunction() {
-        while (JunctionDetectionPipeline.junctionVal == JunctionDetectionPipeline.JunctionVal.ONLEFT){
-            runManual(-0.07);
-        }
-        while (JunctionDetectionPipeline.junctionVal == JunctionDetectionPipeline.JunctionVal.ONRIGHT){
-            runManual(0.07);
-        }
-    }
-
     public void runToAutoOuttakeRight(double imu) {
         runTo(turretAutoOuttakeRight + (int) (imu * tickToAngle));
     }

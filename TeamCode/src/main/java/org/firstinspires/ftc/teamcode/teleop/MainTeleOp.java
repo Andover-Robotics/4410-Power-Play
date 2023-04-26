@@ -15,6 +15,7 @@ import org.firstinspires.ftc.teamcode.teleop.subsystems.Bot;
 import org.firstinspires.ftc.teamcode.teleop.subsystems.JunctionDetectionPipeline;
 import org.openftc.easyopencv.OpenCvCamera;
 import org.openftc.easyopencv.OpenCvCameraFactory;
+import org.openftc.easyopencv.OpenCvCameraRotation;
 
 @Config
 @TeleOp(name = "MainTeleOp", group = "Competition")
@@ -37,6 +38,23 @@ public class MainTeleOp extends LinearOpMode {
 
     @Override
     public void runOpMode() throws InterruptedException {
+
+        WebcamName camName = hardwareMap.get(WebcamName.class, "Webcam 1");
+        OpenCvCamera camera = OpenCvCameraFactory.getInstance().createWebcam(camName);
+        JunctionDetectionPipeline junctionDetectionPipeline = new JunctionDetectionPipeline(telemetry);
+        camera.setPipeline(junctionDetectionPipeline);
+        camera.openCameraDeviceAsync(new OpenCvCamera.AsyncCameraOpenListener() {
+            @Override
+            public void onOpened() {
+                camera.startStreaming(1280, 720, OpenCvCameraRotation.UPRIGHT);
+            }
+
+            @Override
+            public void onError(int errorCode) {
+                telemetry.addData("Error code:", errorCode);
+            }
+
+        });
 
         headingAligner.setTolerance(1);
         headingAligner.setSetPoint(0);
@@ -144,6 +162,9 @@ public class MainTeleOp extends LinearOpMode {
                         bot.state = Bot.BotState.INTAKE;
                         bot.slides.runToLow();
                         bot.arm.intake();
+                    }
+                    if (gp2.getTrigger(GamepadKeys.Trigger.LEFT_TRIGGER) > 0.2){
+                        bot.alignjunction();
                     }
                 } else if (bot.state == Bot.BotState.OUTTAKE || bot.state == Bot.BotState.SECURE) {
                     if (gp2.wasJustPressed(GamepadKeys.Button.A) || gp2.wasJustPressed(GamepadKeys.Button.B)) {
