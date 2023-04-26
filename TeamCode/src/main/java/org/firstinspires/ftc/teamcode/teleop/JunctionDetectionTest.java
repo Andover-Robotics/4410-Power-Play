@@ -1,4 +1,4 @@
-package org.firstinspires.ftc.teamcode.teleop.subsystems;
+package org.firstinspires.ftc.teamcode.teleop;
 
 
 import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
@@ -42,13 +42,13 @@ public class JunctionDetectionTest extends LinearOpMode {
             telemetry.update();
         }
 
-     /*   while (opModeIsActive() && !isStopRequested()) {
+        while (opModeIsActive() && !isStopRequested()) {
             telemetry.addData("Junction Status: ", junctionDetectionPipeline.junctionVal);
             telemetry.update();
 
         }
 
-      */
+
         if(isStarted()){
             camera.stopStreaming();
             camera.closeCameraDevice();
