@@ -24,11 +24,13 @@ public class JunctionDetectionPipeline extends OpenCvPipeline{
     Mat right = new Mat();
     Mat leftthres = new Mat();
     Mat rightthres = new Mat();
+    Mat HSV = new Mat();
+    Mat outPut = new Mat();
 
     //NEED TO TUNE minwidth, yellowLowHSV, yellowHighHSV
 
-    public int minwidth = 90; //minimum width of closest junction, need to tune
-    public int leftwidth = 0, rightwidth = 0;
+    public static int minwidth = 10; //minimum width of closest junction, need to tune
+    public static int leftwidth = 0, rightwidth = 0;
     public enum JunctionVal{
         ONLEFT,
         ONRIGHT,
@@ -41,11 +43,12 @@ public class JunctionDetectionPipeline extends OpenCvPipeline{
     private final List<MatOfPoint> rightcontours = new ArrayList<>(); //arrays for the contours on each side
     MatOfPoint biggest;
 
-    Mat outPut = new Mat();
     Scalar rectdisplaycolor = new Scalar(255, 0, 0);//green rectangles on each side
 
-    Scalar yellowLowHSV= new Scalar(21,160,50);//grip says to use (21,160,50) low and (33, 255, 255) high
-    Scalar yellowHighHSV = new Scalar(33,255,255); // high and low yellow HSV values
+    public static double lowH = 10, lowS = 160, lowV = 10, highH = 100, highS = 255, highV = 255;
+
+    public static Scalar yellowLowHSV= new Scalar(lowH,lowS,lowV);//grip says to use (21,160,50) low and (33, 255, 255) high
+    public static Scalar yellowHighHSV = new Scalar(highH,highS,highV); // high and low yellow HSV values
     Telemetry telemetry;
 
     public JunctionDetectionPipeline(Telemetry tele){
@@ -54,17 +57,18 @@ public class JunctionDetectionPipeline extends OpenCvPipeline{
 
     @Override
     public Mat processFrame(Mat input) {
-        Imgproc.cvtColor(input, input, Imgproc.COLOR_RGB2HSV); //converting RGB colors to HSV
+        input.copyTo(outPut);
+
+        Imgproc.cvtColor(input, HSV, Imgproc.COLOR_RGB2HSV); //converting RGB colors to HSV
 
         Rect rightrect = new Rect(803, 1, 477, 719);
         Rect leftrect = new Rect(1, 1, 477, 719); // rectangle sizes
 
-        input.copyTo(outPut);
         Imgproc.rectangle(outPut, leftrect, rectdisplaycolor, 5);
         Imgproc.rectangle(outPut, rightrect, rectdisplaycolor, 5);//displays rectangles
 
-        left = input.submat(leftrect);
-        right = input.submat(rightrect);//makes the submats the size of the above rectangles
+        left = HSV.submat(leftrect);
+        right = HSV.submat(rightrect);//makes the submats the size of the above rectangles
 
         Core.inRange(left, yellowLowHSV, yellowHighHSV, leftthres);
         Core.inRange(right, yellowLowHSV, yellowHighHSV, rightthres);
@@ -144,6 +148,7 @@ public class JunctionDetectionPipeline extends OpenCvPipeline{
 
 
         input.release();
+        HSV.release();
         left.release();
         right.release();
         leftthres.release();

@@ -42,7 +42,6 @@ public class MainTeleOp extends LinearOpMode {
         WebcamName camName = hardwareMap.get(WebcamName.class, "Webcam 1");
         OpenCvCamera camera = OpenCvCameraFactory.getInstance().createWebcam(camName);
         JunctionDetectionPipeline junctionDetectionPipeline = new JunctionDetectionPipeline(telemetry);
-        camera.setPipeline(junctionDetectionPipeline);
         camera.openCameraDeviceAsync(new OpenCvCamera.AsyncCameraOpenListener() {
             @Override
             public void onOpened() {
@@ -55,6 +54,8 @@ public class MainTeleOp extends LinearOpMode {
             }
 
         });
+
+        camera.setPipeline(junctionDetectionPipeline);
 
         headingAligner.setTolerance(1);
         headingAligner.setSetPoint(0);
@@ -89,6 +90,7 @@ public class MainTeleOp extends LinearOpMode {
                 debugMode = !debugMode;
             }
             if (gp1.wasJustPressed(GamepadKeys.Button.BACK)) {
+                bot.resetIMU();
                 autoAlignForward = !autoAlignForward;
             }
 
@@ -198,6 +200,9 @@ public class MainTeleOp extends LinearOpMode {
                     if (gp2.wasJustPressed(GamepadKeys.Button.X)) {
                         bot.storage();
                     }
+                    if (gp2.getTrigger(GamepadKeys.Trigger.LEFT_TRIGGER) > 0.2){
+                        bot.alignjunction();
+                    }
                 } else if (bot.state == Bot.BotState.BRACE_OUTTAKE || bot.state == Bot.BotState.BRACE_SECURE) {
                     if (gp2.wasJustPressed(GamepadKeys.Button.A) || gp2.wasJustPressed(GamepadKeys.Button.B)) {
                         bot.arm.storage();
@@ -220,6 +225,9 @@ public class MainTeleOp extends LinearOpMode {
                     }
                     if (gp2.wasJustPressed(GamepadKeys.Button.Y)) {
                         bot.storage();
+                    }
+                    if (gp2.getTrigger(GamepadKeys.Trigger.LEFT_TRIGGER) > 0.2){
+                        bot.alignjunction();
                     }
                 }
                 double rightX = gp2.getRightX(), leftY = gp2.getLeftY();
