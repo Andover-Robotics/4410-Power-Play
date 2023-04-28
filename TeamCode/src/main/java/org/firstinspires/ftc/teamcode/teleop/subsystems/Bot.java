@@ -87,15 +87,23 @@ public class Bot {
 
     }
 
-    public void alignjunction() {
-        while (JunctionDetectionPipeline.junctionVal == JunctionDetectionPipeline.JunctionVal.ONLEFT){
-            turret.runManual(-0.07);
-        }
-        while (JunctionDetectionPipeline.junctionVal == JunctionDetectionPipeline.JunctionVal.ONRIGHT){
-            turret.runManual(0.07);
-        }
-    }
+//    public void alignjunction() {
+//        while (JunctionDetectionPipeline.junctionVal == JunctionDetectionPipeline.JunctionVal.ONLEFT){
+//            turret.runManual(-0.07);
+//        }
+//        while (JunctionDetectionPipeline.junctionVal == JunctionDetectionPipeline.JunctionVal.ONRIGHT){
+//            turret.runManual(0.07);
+//        }
+//    }
 
+
+    public void intakeFallen() {
+        state = BotState.INTAKE;
+        slides.runToBottom();
+        arm.fallenintake();
+        horizSlides.runToFullIn();
+        claw.open();
+    }
 
     public void intakeOut() {
         state = BotState.INTAKE_OUT;

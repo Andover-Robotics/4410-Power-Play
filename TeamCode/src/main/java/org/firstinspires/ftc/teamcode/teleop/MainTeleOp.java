@@ -12,7 +12,7 @@ import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 
 import org.firstinspires.ftc.robotcore.external.hardware.camera.WebcamName;
 import org.firstinspires.ftc.teamcode.teleop.subsystems.Bot;
-import org.firstinspires.ftc.teamcode.teleop.subsystems.JunctionDetectionPipeline;
+import org.firstinspires.ftc.teamcode.teleop.subsystems.v2junctiondetection;
 import org.openftc.easyopencv.OpenCvCamera;
 import org.openftc.easyopencv.OpenCvCameraFactory;
 import org.openftc.easyopencv.OpenCvCameraRotation;
@@ -41,7 +41,7 @@ public class MainTeleOp extends LinearOpMode {
 
         WebcamName camName = hardwareMap.get(WebcamName.class, "Webcam 1");
         OpenCvCamera camera = OpenCvCameraFactory.getInstance().createWebcam(camName);
-        JunctionDetectionPipeline junctionDetectionPipeline = new JunctionDetectionPipeline(telemetry);
+        v2junctiondetection junctionDetectionPipeline = new v2junctiondetection(telemetry);
         camera.openCameraDeviceAsync(new OpenCvCamera.AsyncCameraOpenListener() {
             @Override
             public void onOpened() {
@@ -129,6 +129,9 @@ public class MainTeleOp extends LinearOpMode {
                         }
                         cancelPrevAction = false;
                     }
+                    if (gp2.getTrigger(GamepadKeys.Trigger.LEFT_TRIGGER) > 0.2){
+                        bot.intakeFallen();
+                    }
                     if(gp2.wasJustPressed(GamepadKeys.Button.RIGHT_STICK_BUTTON)){
                         bot.claw.open();
                         cancelPrevAction = false;
@@ -166,8 +169,11 @@ public class MainTeleOp extends LinearOpMode {
                         bot.arm.intake();
                     }
                     if (gp2.getTrigger(GamepadKeys.Trigger.LEFT_TRIGGER) > 0.2){
-                        bot.alignjunction();
+                        bot.intakeFallen();
                     }
+//                    if (gp2.getTrigger(GamepadKeys.Trigger.LEFT_TRIGGER) > 0.2){
+//                        bot.alignjunction();
+//                    }
                 } else if (bot.state == Bot.BotState.OUTTAKE || bot.state == Bot.BotState.SECURE) {
                     if (gp2.wasJustPressed(GamepadKeys.Button.A) || gp2.wasJustPressed(GamepadKeys.Button.B)) {
                         bot.outtake();
@@ -198,11 +204,11 @@ public class MainTeleOp extends LinearOpMode {
                         cancelPrevAction = false;
                     }
                     if (gp2.wasJustPressed(GamepadKeys.Button.X)) {
-                        bot.storage();
+                        bot.braceOuttake();
                     }
-                    if (gp2.getTrigger(GamepadKeys.Trigger.LEFT_TRIGGER) > 0.2){
-                        bot.alignjunction();
-                    }
+//                    if (gp2.getTrigger(GamepadKeys.Trigger.LEFT_TRIGGER) > 0.2){
+//                        bot.alignjunction();
+//                    }
                 } else if (bot.state == Bot.BotState.BRACE_OUTTAKE || bot.state == Bot.BotState.BRACE_SECURE) {
                     if (gp2.wasJustPressed(GamepadKeys.Button.A) || gp2.wasJustPressed(GamepadKeys.Button.B)) {
                         bot.arm.storage();
@@ -226,9 +232,9 @@ public class MainTeleOp extends LinearOpMode {
                     if (gp2.wasJustPressed(GamepadKeys.Button.Y)) {
                         bot.storage();
                     }
-                    if (gp2.getTrigger(GamepadKeys.Trigger.LEFT_TRIGGER) > 0.2){
-                        bot.alignjunction();
-                    }
+//                    if (gp2.getTrigger(GamepadKeys.Trigger.LEFT_TRIGGER) > 0.2){
+//                        bot.alignjunction();
+//                    }
                 }
                 double rightX = gp2.getRightX(), leftY = gp2.getLeftY();
                 turretslidespeed = 1;
