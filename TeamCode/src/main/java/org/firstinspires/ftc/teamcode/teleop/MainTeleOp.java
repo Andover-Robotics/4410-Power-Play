@@ -12,7 +12,7 @@ import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 
 import org.firstinspires.ftc.robotcore.external.hardware.camera.WebcamName;
 import org.firstinspires.ftc.teamcode.teleop.subsystems.Bot;
-import org.firstinspires.ftc.teamcode.teleop.subsystems.v2junctiondetection;
+import org.firstinspires.ftc.teamcode.teleop.subsystems.JunctionDetectionPipeline;
 import org.openftc.easyopencv.OpenCvCamera;
 import org.openftc.easyopencv.OpenCvCameraFactory;
 import org.openftc.easyopencv.OpenCvCameraRotation;
@@ -41,7 +41,7 @@ public class MainTeleOp extends LinearOpMode {
 
         WebcamName camName = hardwareMap.get(WebcamName.class, "Webcam 1");
         OpenCvCamera camera = OpenCvCameraFactory.getInstance().createWebcam(camName);
-        v2junctiondetection junctionDetectionPipeline = new v2junctiondetection(telemetry);
+        JunctionDetectionPipeline junctionDetectionPipeline = new JunctionDetectionPipeline(telemetry);
         camera.openCameraDeviceAsync(new OpenCvCamera.AsyncCameraOpenListener() {
             @Override
             public void onOpened() {
@@ -370,6 +370,7 @@ public class MainTeleOp extends LinearOpMode {
             telemetry.addData("debug/cone stack", debugMode);
             telemetry.addData("autoalign", autoAlignForward);
             telemetry.addData("state", bot.state.toString());
+//            telemetry.addData("Left JoyStick X-Value", gp2.getLeftX());
             telemetry.update();
 
             bot.slides.periodic();

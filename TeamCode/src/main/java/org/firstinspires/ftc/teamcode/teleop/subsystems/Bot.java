@@ -88,10 +88,10 @@ public class Bot {
     }
 
     public void alignjunction() {
-        while (v2junctiondetection.junctionVal == v2junctiondetection.JunctionVal.ONLEFT){
+        while (JunctionDetectionPipeline.junctionVal == JunctionDetectionPipeline.JunctionVal.ONLEFT){
             turret.runManual(-0.07);
         }
-        while (v2junctiondetection.junctionVal == v2junctiondetection.JunctionVal.ONRIGHT){
+        while (JunctionDetectionPipeline.junctionVal == JunctionDetectionPipeline.JunctionVal.ONRIGHT){
             turret.runManual(0.07);
         }
     }
