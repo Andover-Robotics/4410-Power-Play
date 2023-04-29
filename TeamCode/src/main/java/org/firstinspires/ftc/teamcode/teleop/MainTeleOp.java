@@ -130,7 +130,12 @@ public class MainTeleOp extends LinearOpMode {
                         cancelPrevAction = false;
                     }
                     if (gp2.getTrigger(GamepadKeys.Trigger.LEFT_TRIGGER) > 0.2){
-                        bot.intakeFallen();
+                        if (gp2.wasJustPressed(GamepadKeys.Button.A) || gp2.wasJustPressed(GamepadKeys.Button.B)){
+                            bot.intakeFallen();
+                        }
+                        if (gp2.wasJustPressed(GamepadKeys.Button.X) || gp2.wasJustPressed(GamepadKeys.Button.Y)){
+                            bot.alignjunction();
+                        }
                     }
                     if(gp2.wasJustPressed(GamepadKeys.Button.RIGHT_STICK_BUTTON)){
                         bot.claw.open();

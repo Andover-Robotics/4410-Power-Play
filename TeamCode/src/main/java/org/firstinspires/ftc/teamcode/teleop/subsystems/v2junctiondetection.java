@@ -23,7 +23,7 @@ public class v2junctiondetection extends OpenCvPipeline{
 //
 //    NEED TO TUNE minwidth, yellowLowHSV, yellowHighHSV
 
-    public static int minwidth = 10; //minimum width of closest junction, need to tune
+    public static int minwidth = 30; //minimum width of closest junction, need to tune
     public static int width = 0;
     public static int camwidth = 1280;
     public static int camheight = 720;
@@ -86,16 +86,18 @@ public class v2junctiondetection extends OpenCvPipeline{
             if (rect.width > minwidth) {
                 Imgproc.rectangle(input, rect.tl(), rect.br(), new Scalar(255,
                         255, 0), 6);
-                midpoint_rect = rect.width / 2.0;
-
-
-                if (midpoint_rect < (camwidth / 2.0)) {
+//                midpoint_rect = rect.width / 2.0;
+//
+//
+                if ((rect.tl().x + rect.width/2.0) < 477) {
                     junctionVal = JunctionVal.ONLEFT;
-                } else if (midpoint_rect > (camwidth / 2.0)) {
+                } else if ((rect.tl().x + rect.width/2.0) > 703) {
                     junctionVal = JunctionVal.ONRIGHT;
                 } else {
                     junctionVal = JunctionVal.ATJUNCTION;
                 }
+            } else {
+                junctionVal = JunctionVal.NOTDETECTED;
             }
         }
 
