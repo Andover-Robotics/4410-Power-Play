@@ -8,11 +8,14 @@ import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 
 import org.firstinspires.ftc.teamcode.teleop.subsystems.Bot;
+import org.firstinspires.ftc.teamcode.teleop.subsystems.HorizSlides;
 
 @TeleOp(name="all position tester")
 public class AllPositionTester extends LinearOpMode {
 
     private Bot bot;
+
+    private double turretslidespeed = 1;
 
     @Override
     public void runOpMode() throws InterruptedException {
@@ -69,32 +72,14 @@ public class AllPositionTester extends LinearOpMode {
 
             bot.arm.updateIntakeAuto();
 
-//            if (gp2.wasJustPressed(GamepadKeys.Button.DPAD_UP)) {
-////                bot.slides.runToTop();
-//            }else if (gp2.wasJustPressed(GamepadKeys.Button.DPAD_LEFT)) {
-////                bot.slides.runToMiddle();
-//            } else if (gp2.wasJustPressed(GamepadKeys.Button.DPAD_RIGHT)) {
-////                bot.slides.runToLow();
-//            } else if (gp2.wasJustPressed(GamepadKeys.Button.DPAD_DOWN)) {
-////                bot.slides.runToBottom();
-//            }
-//
-//            if (gp2.wasJustPressed(GamepadKeys.Button.RIGHT_BUMPER)) {
-//                bot.slides.goDown();
-//            }
-//
-//            if (gp2.wasJustPressed(GamepadKeys.Button.LEFT_BUMPER)) {
-//
-//            }
 
-//
-//            if(gp2.wasJustPressed(GamepadKeys.Button.LEFT_STICK_BUTTON)){
-//                bot.turret.runToFront();
-//            }
 
-            bot.horizSlides.runManual(-gp2.getRightY());
-            bot.slides.runManual(-gp2.getLeftY());
-            bot.turret.runManual(gp2.getLeftX());
+            double rightX = gp2.getRightX(), leftY = gp2.getLeftY();
+
+            turretslidespeed *= 1 - 0.5 * gp2.getTrigger(GamepadKeys.Trigger.RIGHT_TRIGGER);
+            bot.horizSlides.runManual(leftY * Math.abs(leftY) * turretslidespeed);
+            //bot.slides.runManual(-gp2.getRightY());
+            bot.turret.runManual(rightX * Math.abs(rightX) * turretslidespeed / (1 + bot.horizSlides.getPosition() / 580.0));
             if(gp2.wasJustPressed(GamepadKeys.Button.RIGHT_STICK_BUTTON)){
                 bot.resetEncoder();
             }
@@ -106,7 +91,9 @@ public class AllPositionTester extends LinearOpMode {
             telemetry.addData("turret", bot.turret.getPosition());
             telemetry.addData("vert slides", bot.slides.getPosition());
             telemetry.addData("horiz slides", bot.horizSlides.getPosition());
-            telemetry.addData("slides current", bot.slides.getCurrent());
+            telemetry.addData("vert slides current", bot.slides.getCurrent());
+            telemetry.addData("horiz slides current", bot.horizSlides.getCurrent());
+            telemetry.addData("horiz slides power", bot.horizSlides.manualPower);
             telemetry.addData("arm index", index);
             telemetry.update();
 

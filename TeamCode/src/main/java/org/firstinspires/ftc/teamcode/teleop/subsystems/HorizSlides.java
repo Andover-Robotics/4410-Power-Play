@@ -6,6 +6,7 @@ import com.arcrobotics.ftclib.hardware.motors.Motor;
 import com.arcrobotics.ftclib.hardware.motors.MotorEx;
 import com.qualcomm.robotcore.eventloop.opmode.OpMode;
 
+import org.firstinspires.ftc.robotcore.external.navigation.CurrentUnit;
 import org.firstinspires.ftc.teamcode.util.MotionProfiler;
 
 @Config
@@ -15,8 +16,10 @@ public class HorizSlides {
     private PIDFController controller;
     private final OpMode opMode;
     public static double p = 0.04, i = 0, d = 0, f = 0;
+
+    public double currentthres = 100; /* NEED TO TUNE WITH ALL POS TESTER */
     private final double tolerance = 5, powerUp = 0.1, manualDivide = 1.5, powerMin = 0.1, powerHold = 0.2;
-    private double manualPower = 0;
+    public double manualPower = 0;
     public static int fullOut = 540, fullIn = 0, autoIntake = 540, teleOpIntake = 540, autoOuttake = 100;
     private double profile_init_time = 0;
 
@@ -41,6 +44,10 @@ public class HorizSlides {
         resetProfiler();
         profiler.init_new_profile(motor.getCurrentPosition(), t);
         profile_init_time = opMode.time;
+    }
+
+    public double getCurrent() {
+        return motor.motorEx.getCurrent(CurrentUnit.MILLIAMPS);
     }
 
     public void saveTeleOpIntake() {

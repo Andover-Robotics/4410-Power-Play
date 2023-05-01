@@ -87,7 +87,13 @@ public class Bot {
 
     }
 
-    public void alignjunction() {
+
+    public void slidesalignjunction() {
+        while (horizSlides.getCurrent() > horizSlides.currentthres){
+            horizSlides.runManual(0.15);
+        }
+    }
+    public void turretalignjunction() {
         while (JunctionDetectionPipeline.junctionVal == JunctionDetectionPipeline.JunctionVal.ONLEFT){
             turret.runManual(-0.07);
         }

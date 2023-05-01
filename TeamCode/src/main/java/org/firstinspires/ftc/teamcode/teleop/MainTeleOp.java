@@ -97,6 +97,9 @@ public class MainTeleOp extends LinearOpMode {
             if (!debugMode) {//finite state
                 if (bot.state == Bot.BotState.INTAKE || bot.state == Bot.BotState.INTAKE_OUT) {
                     bot.arm.intakeCorrected(bot.horizSlides.getPercent());
+                    if (gp2.getTrigger(GamepadKeys.Trigger.LEFT_TRIGGER) > 0.2){
+                            bot.intakeFallen();
+                    }
                     if (gp2.wasJustPressed(GamepadKeys.Button.A) || gp2.wasJustPressed(GamepadKeys.Button.B) || gp2.wasJustPressed(GamepadKeys.Button.RIGHT_BUMPER) || gp2.wasJustPressed(GamepadKeys.Button.LEFT_BUMPER)) {
                         bot.claw.close();
                         cancelPrevAction = false;
@@ -129,23 +132,6 @@ public class MainTeleOp extends LinearOpMode {
                         }
                         cancelPrevAction = false;
                     }
-                    if (gp2.getTrigger(GamepadKeys.Trigger.LEFT_TRIGGER) > 0.2){
-                        if (gp2.wasJustPressed(GamepadKeys.Button.A) || gp2.wasJustPressed(GamepadKeys.Button.B)){
-                            bot.intakeFallen();
-                        }
-                        if (gp2.wasJustPressed(GamepadKeys.Button.X) || gp2.wasJustPressed(GamepadKeys.Button.Y)){
-                            bot.alignjunction();
-                        }
-                    }
-                    if(gp2.wasJustPressed(GamepadKeys.Button.RIGHT_STICK_BUTTON)){
-                        bot.claw.open();
-                        cancelPrevAction = false;
-                    }else if(gp2.wasJustReleased(GamepadKeys.Button.RIGHT_STICK_BUTTON)){
-                        if(!cancelPrevAction) {
-                            bot.storage();
-                        }
-                        cancelPrevAction = false;
-                    }
                 } else if (bot.state == Bot.BotState.STORAGE) {
                     if (gp2.wasJustPressed(GamepadKeys.Button.A)) {
                         cancelPrevAction = true;
@@ -155,6 +141,16 @@ public class MainTeleOp extends LinearOpMode {
                         bot.intakeOut();
                     } else if (gp2.wasJustPressed(GamepadKeys.Button.Y)) {
                         bot.outtake();
+                    } else if (gp2.getTrigger(GamepadKeys.Trigger.LEFT_TRIGGER) > 0.2){
+                        if(gp2.wasJustPressed(GamepadKeys.Button.X)){
+                            bot.turretalignjunction();
+                        }
+                        if(gp2.wasJustPressed(GamepadKeys.Button.A) || gp2.wasJustPressed(GamepadKeys.Button.B)){
+                            bot.intakeFallen();
+                        }
+                        if(gp2.wasJustPressed(GamepadKeys.Button.Y)){
+                            bot.slidesalignjunction();
+                        }
                     }
                     if (gp2.wasJustPressed(GamepadKeys.Button.X)) {
                         bot.braceOuttake();
@@ -173,13 +169,16 @@ public class MainTeleOp extends LinearOpMode {
                         bot.slides.runToLow();
                         bot.arm.intake();
                     }
-                    if (gp2.getTrigger(GamepadKeys.Trigger.LEFT_TRIGGER) > 0.2){
-                        bot.intakeFallen();
-                    }
-//                    if (gp2.getTrigger(GamepadKeys.Trigger.LEFT_TRIGGER) > 0.2){
-//                        bot.alignjunction();
-//                    }
+
                 } else if (bot.state == Bot.BotState.OUTTAKE || bot.state == Bot.BotState.SECURE) {
+                    if (gp2.getTrigger(GamepadKeys.Trigger.LEFT_TRIGGER) > 0.2){
+                        if(gp2.wasJustPressed(GamepadKeys.Button.X)){
+                            bot.turretalignjunction();
+                        }
+                        else if(gp2.wasJustPressed(GamepadKeys.Button.Y)){
+                            bot.slidesalignjunction();
+                        }
+                    }
                     if (gp2.wasJustPressed(GamepadKeys.Button.A) || gp2.wasJustPressed(GamepadKeys.Button.B)) {
                         bot.outtake();
                         cancelPrevAction = true;
@@ -211,9 +210,6 @@ public class MainTeleOp extends LinearOpMode {
                     if (gp2.wasJustPressed(GamepadKeys.Button.X)) {
                         bot.braceOuttake();
                     }
-//                    if (gp2.getTrigger(GamepadKeys.Trigger.LEFT_TRIGGER) > 0.2){
-//                        bot.alignjunction();
-//                    }
                 } else if (bot.state == Bot.BotState.BRACE_OUTTAKE || bot.state == Bot.BotState.BRACE_SECURE) {
                     if (gp2.wasJustPressed(GamepadKeys.Button.A) || gp2.wasJustPressed(GamepadKeys.Button.B)) {
                         bot.arm.storage();

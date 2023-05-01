@@ -80,9 +80,9 @@ public class JunctionDetectionPipeline extends OpenCvPipeline{
                 
                 double midpointrect = rect.tl().x + rect.width/2.0; // gets midpoint x of the rectangle
 
-                if (midpointrect > leftrect.x && midpointrect < (leftrect.x+ leftrect.width)) { // checks if within boundaries of left side rectangle
+                if (midpointrect > leftrect.tl().x && midpointrect < (leftrect.br().x)) { // checks if within boundaries of left side rectangle
                     junctionVal = JunctionVal.ONLEFT;
-                } else if (midpointrect > rightrect.x && midpointrect < (rightrect.x+ rightrect.width)) { // checks if within boundaries of right side rectangle
+                } else if (midpointrect > rightrect.tl().x && midpointrect < (rightrect.br().x)) { // checks if within boundaries of right side rectangle
                     junctionVal = JunctionVal.ONRIGHT;
                 } else {
                     junctionVal = JunctionVal.ATJUNCTION; // checks if in middle; means that it is scorable
@@ -95,9 +95,8 @@ public class JunctionDetectionPipeline extends OpenCvPipeline{
         } else {
             junctionVal = JunctionVal.NOTDETECTED;
         }
-
-        telemetry.addLine("countours :"+ contours.size());
-        telemetry.addData("Junction status: ",junctionVal);
+        telemetry.addData("contours: ", contours.size());
+//         telemetry.addData("Junction status: ",junctionVal);   is in test opmode
 
         // Releasing all our mats for the next iteration
         HSV.release();
