@@ -2,7 +2,7 @@ package org.firstinspires.ftc.teamcode.teleop;
 
 
 import com.arcrobotics.ftclib.gamepad.GamepadKeys;
-import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
+import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 
 import com.arcrobotics.ftclib.gamepad.GamepadEx;
@@ -14,10 +14,11 @@ import org.openftc.easyopencv.OpenCvCamera;
 import org.openftc.easyopencv.OpenCvCameraFactory;
 import org.openftc.easyopencv.OpenCvCameraRotation;
 
-@Autonomous(name = "Test Junction Detection", group = "Test")
+@TeleOp(name = "Test Junction Detection", group = "Test")
 public class JunctionDetectionTest extends LinearOpMode {
 
     private Bot bot;
+    private double cycleTime = 1;
 
     @Override
     public void runOpMode() throws InterruptedException {
@@ -28,7 +29,7 @@ public class JunctionDetectionTest extends LinearOpMode {
         camera.openCameraDeviceAsync(new OpenCvCamera.AsyncCameraOpenListener() {
             @Override
             public void onOpened() {
-                camera.startStreaming(1280, 720, OpenCvCameraRotation.UPRIGHT);
+                camera.startStreaming(1280, 720, OpenCvCameraRotation.UPRIGHT); //try 640 and 360
             }
 
             @Override
@@ -38,63 +39,29 @@ public class JunctionDetectionTest extends LinearOpMode {
         });
         camera.setPipeline(junctionDetectionPipeline);
 
+        bot = Bot.getInstance(this);
+
         GamepadEx gp1 = new GamepadEx(gamepad1);
         GamepadEx gp2 = new GamepadEx(gamepad2);
+
+        bot.initializeImus();
+
         waitForStart();
 
         while (opModeIsActive() && !isStopRequested()) {
-
-            //bot.turretalignjunction();
-
-            //bot.slidesalignjunction();
 
             telemetry.addData("Junction Status: ", JunctionDetectionPipeline.junctionVal);
             telemetry.addData("Low: ", JunctionDetectionPipeline.yellowLowHSV);
             telemetry.addData("High: ", JunctionDetectionPipeline.yellowHighHSV);
             telemetry.addData("minwidth = ", JunctionDetectionPipeline.minwidth);
-            telemetry.addLine("UP/DOWN for highH, LEFT/RIGHT for lowH");
-            telemetry.addLine("Y/A for highS, X/B for lowS");
-            telemetry.addLine("Triggers for Minwidth +/- 5");
 
+            bot.turretalignjunction();
 
+            telemetry.addData("cycle", time - cycleTime);
+            cycleTime = time;
 
-            if (gp1.wasJustPressed(GamepadKeys.Button.DPAD_UP)) {
-                JunctionDetectionPipeline.highH += 1;
-            }
-            if (gp1.wasJustPressed(GamepadKeys.Button.DPAD_DOWN)) {
-                JunctionDetectionPipeline.highH -= 1;
-            }
-            if (gp1.wasJustPressed(GamepadKeys.Button.DPAD_LEFT)) {
-                JunctionDetectionPipeline.lowH -= 1;
-            }
-            if (gp1.wasJustPressed(GamepadKeys.Button.DPAD_RIGHT)) {
-                JunctionDetectionPipeline.lowH += 1;
-            }
-            if (gp1.wasJustPressed(GamepadKeys.Button.Y)) {
-                JunctionDetectionPipeline.highS += 1;
-            }
-            if (gp1.wasJustPressed(GamepadKeys.Button.A)) {
-                JunctionDetectionPipeline.highS -= 1;
-            }
-            if (gp1.wasJustPressed(GamepadKeys.Button.X)) {
-                JunctionDetectionPipeline.lowS -= 1;
-            }
-            if (gp1.wasJustPressed(GamepadKeys.Button.B)) {
-                JunctionDetectionPipeline.lowS += 1;
-            }
-            if (gp1.wasJustPressed(GamepadKeys.Button.LEFT_BUMPER)) {
-                JunctionDetectionPipeline.minwidth -= 5;
-            }
-            if (gp1.wasJustPressed(GamepadKeys.Button.RIGHT_BUMPER)) {
-                JunctionDetectionPipeline.minwidth += 5;
-            }
             telemetry.update();
-
-
-
-
-
-
+            bot.turret.periodic();
 
         }
         while (!isStarted()) {
@@ -102,50 +69,20 @@ public class JunctionDetectionTest extends LinearOpMode {
             telemetry.addData("Low: ", JunctionDetectionPipeline.yellowLowHSV);
             telemetry.addData("High: ", JunctionDetectionPipeline.yellowHighHSV);
             telemetry.addData("minwidth = ", JunctionDetectionPipeline.minwidth);
-            telemetry.addLine("UP/DOWN for highH, LEFT/RIGHT for lowH");
-            telemetry.addLine("Y/A for highS, X/B for lowS");
-            telemetry.addLine("Triggers for Minwidth +/- 5");
 
-            if (gp1.wasJustPressed(GamepadKeys.Button.DPAD_UP)) {
-                JunctionDetectionPipeline.highH += 1;
-            }
-            if (gp1.wasJustPressed(GamepadKeys.Button.DPAD_DOWN)) {
-                JunctionDetectionPipeline.highH -= 1;
-            }
-            if (gp1.wasJustPressed(GamepadKeys.Button.DPAD_LEFT)) {
-                JunctionDetectionPipeline.lowH -= 1;
-            }
-            if (gp1.wasJustPressed(GamepadKeys.Button.DPAD_RIGHT)) {
-                JunctionDetectionPipeline.lowH += 1;
-            }
-            if (gp1.wasJustPressed(GamepadKeys.Button.Y)) {
-                JunctionDetectionPipeline.highS += 1;
-            }
-            if (gp1.wasJustPressed(GamepadKeys.Button.A)) {
-                JunctionDetectionPipeline.highS -= 1;
-            }
-            if (gp1.wasJustPressed(GamepadKeys.Button.X)) {
-                JunctionDetectionPipeline.lowS -= 1;
-            }
-            if (gp1.wasJustPressed(GamepadKeys.Button.B)) {
-                JunctionDetectionPipeline.lowS += 1;
-            }
-            if (gp1.wasJustPressed(GamepadKeys.Button.LEFT_BUMPER)) {
-                JunctionDetectionPipeline.minwidth -= 5;
-            }
-            if (gp1.wasJustPressed(GamepadKeys.Button.RIGHT_BUMPER)) {
-                JunctionDetectionPipeline.minwidth += 5;
-            }
+
             telemetry.update();
+
+            bot.turret.periodic();
+
         }
+
+
 
         if (isStarted()) {
 //            camera.stopStreaming();
             camera.closeCameraDevice();
         }
-
-
-
 
     }
 }

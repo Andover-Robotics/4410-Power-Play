@@ -8,6 +8,7 @@ import com.qualcomm.robotcore.eventloop.opmode.OpMode;
 
 import org.firstinspires.ftc.robotcore.external.navigation.AngleUnit;
 import org.firstinspires.ftc.robotcore.external.navigation.CurrentUnit;
+import org.firstinspires.ftc.teamcode.teleop.JunctionDetectionTest;
 
 public class Bot {
 
@@ -88,17 +89,21 @@ public class Bot {
     }
 
 
+
+
     public void slidesalignjunction() {
         while (horizSlides.getCurrent() > horizSlides.currentthres){
-            horizSlides.runManual(0.15);
+            horizSlides.runManual(0.35);
         }
     }
     public void turretalignjunction() {
-        while (JunctionDetectionPipeline.junctionVal == JunctionDetectionPipeline.JunctionVal.ONLEFT){
-            turret.runManual(-0.07);
+        if (JunctionDetectionPipeline.junctionVal == JunctionDetectionPipeline.JunctionVal.ONLEFT){
+            turret.runManual(-0.2);
         }
-        while (JunctionDetectionPipeline.junctionVal == JunctionDetectionPipeline.JunctionVal.ONRIGHT){
-            turret.runManual(0.07);
+        else if (JunctionDetectionPipeline.junctionVal == JunctionDetectionPipeline.JunctionVal.ONRIGHT){
+            turret.runManual(0.2);
+        } else if (JunctionDetectionPipeline.junctionVal == JunctionDetectionPipeline.JunctionVal.NOTDETECTED || JunctionDetectionPipeline.junctionVal == JunctionDetectionPipeline.JunctionVal.ATJUNCTION) {
+            turret.runManual(0);
         }
     }
 

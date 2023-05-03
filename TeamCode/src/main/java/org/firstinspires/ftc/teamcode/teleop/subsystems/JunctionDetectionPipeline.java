@@ -26,10 +26,10 @@ public class JunctionDetectionPipeline extends OpenCvPipeline{
     Mat HSV = new Mat();
     MatOfPoint biggest;
 
-    public static int minwidth = 30; //minimum width of closest junction, need to tune
+    public static int minwidth = 90; //try 45
     public static int width = 0;
-    public static int camwidth = 1280;
-    public static int camheight = 720;
+    public static int camwidth = 1280;//try 640
+    public static int camheight = 720;//try 360
     public enum JunctionVal{
         ONLEFT,
         ONRIGHT,
@@ -38,7 +38,7 @@ public class JunctionDetectionPipeline extends OpenCvPipeline{
     }
     public static JunctionVal junctionVal = JunctionVal.NOTDETECTED; // for monitoring our junction detection status; default is NOTDETECTED
 
-    public static double lowH = 21, lowS = 112, lowV = 100, highH = 64, highS = 203, highV = 255;
+    public static double lowH = 21, lowS = 112, lowV = 100, highH = 33, highS = 203, highV = 255;
 
     public static Scalar yellowLowHSV= new Scalar(lowH,lowS,lowV); // high and low yellow HSV values
     public static Scalar yellowHighHSV = new Scalar(highH,highS,highV); //grip says to use (21,160,50) low and (33, 255, 255) high
@@ -52,8 +52,8 @@ public class JunctionDetectionPipeline extends OpenCvPipeline{
     public Mat processFrame(Mat input) {
         Imgproc.cvtColor(input, HSV, Imgproc.COLOR_RGB2HSV); //converting RGB colors to HSV
 
-        Rect rightrect = new Rect(803, 1, 477, 719);
-        Rect leftrect = new Rect(1, 1, 477, 719); // rectangle sizes
+        Rect rightrect = new Rect(853, 1, 427, 719); // try 426, 1, 214, 359
+        Rect leftrect = new Rect(1, 1, 577, 719); // rectangle sizes //try 1, 1, 288, 359
 
         Imgproc.rectangle(input, leftrect, new Scalar(255, 0, 0), 5); //displays rectangles with red color
         Imgproc.rectangle(input, rightrect, new Scalar(255, 0, 0), 5);
@@ -76,26 +76,26 @@ public class JunctionDetectionPipeline extends OpenCvPipeline{
             Rect rect = Imgproc.boundingRect(biggest); // turns biggest contour into a rectangle
 
             if (rect.width > minwidth) { // rectangle is bigger than 10 pixels
-                Imgproc.rectangle(input, rect.tl(), rect.br(), new Scalar(0, 100, 100), 6); // puts border around contours with a cyan shade
-                
+                Imgproc.rectangle(input, rect.tl(), rect.br(), new Scalar(0, 255, 0), 6); // puts border around contours with a green shade
+
                 double midpointrect = rect.tl().x + rect.width/2.0; // gets midpoint x of the rectangle
 
-                if (midpointrect > leftrect.tl().x && midpointrect < (leftrect.br().x)) { // checks if within boundaries of left side rectangle
+                if (midpointrect > leftrect.tl().x && midpointrect < leftrect.br().x) { // checks if within boundaries of left side rectangle
                     junctionVal = JunctionVal.ONLEFT;
-                } else if (midpointrect > rightrect.tl().x && midpointrect < (rightrect.br().x)) { // checks if within boundaries of right side rectangle
+                } else if (midpointrect > rightrect.tl().x && midpointrect < rightrect.br().x) { // checks if within boundaries of right side rectangle
                     junctionVal = JunctionVal.ONRIGHT;
-                } else {
+                } else if (midpointrect < rightrect.tl().x && midpointrect > leftrect.br().x){
                     junctionVal = JunctionVal.ATJUNCTION; // checks if in middle; means that it is scorable
                 }
-
-                telemetry.addLine("Midpoint of Bounding Box :"+ midpointrect);
+//
+//                telemetry.addLine("Midpoint of Bounding Box :"+ midpointrect);
             } else {
                 junctionVal = JunctionVal.NOTDETECTED;
             }
         } else {
             junctionVal = JunctionVal.NOTDETECTED;
         }
-        telemetry.addData("contours: ", contours.size());
+//        telemetry.addData("contours: ", contours.size());
 //         telemetry.addData("Junction status: ",junctionVal);   is in test opmode
 
         // Releasing all our mats for the next iteration

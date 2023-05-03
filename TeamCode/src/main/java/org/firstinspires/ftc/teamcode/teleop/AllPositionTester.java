@@ -72,11 +72,8 @@ public class AllPositionTester extends LinearOpMode {
 
             bot.arm.updateIntakeAuto();
 
-
-
             double rightX = gp2.getRightX(), leftY = gp2.getLeftY();
 
-            turretslidespeed *= 1 - 0.5 * gp2.getTrigger(GamepadKeys.Trigger.RIGHT_TRIGGER);
             bot.horizSlides.runManual(leftY * Math.abs(leftY) * turretslidespeed);
             //bot.slides.runManual(-gp2.getRightY());
             bot.turret.runManual(rightX * Math.abs(rightX) * turretslidespeed / (1 + bot.horizSlides.getPosition() / 580.0));
