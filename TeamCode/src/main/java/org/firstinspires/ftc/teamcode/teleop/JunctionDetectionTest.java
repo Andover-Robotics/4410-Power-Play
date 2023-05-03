@@ -57,8 +57,7 @@ public class JunctionDetectionTest extends LinearOpMode {
             telemetry.addData("High: ", JunctionDetectionPipeline.yellowHighHSV);
             telemetry.addData("minwidth = ", JunctionDetectionPipeline.minwidth);
 
-
-                bot.turretalignjunction();
+            bot.turretalignjunction();
 
             telemetry.addData("cycle", time - cycleTime);
             cycleTime = time;

@@ -36,14 +36,6 @@ public class MainTeleOp extends LinearOpMode {
 
     private GamepadEx gp1, gp2;
 
-//    TriggerReader righttriggerReader = new TriggerReader(
-//            gp2, GamepadKeys.Trigger.RIGHT_TRIGGER
-//    );
-//
-//    TriggerReader lefttriggerReader = new TriggerReader(
-//            gp2, GamepadKeys.Trigger.LEFT_TRIGGER
-//    );
-
     @Override
     public void runOpMode() throws InterruptedException {
 
@@ -75,12 +67,20 @@ public class MainTeleOp extends LinearOpMode {
         gp2 = new GamepadEx(gamepad2);
         gp1 = new GamepadEx(gamepad1);
 
+//        TriggerReader righttriggerReader = new TriggerReader(
+//                gp2, GamepadKeys.Trigger.RIGHT_TRIGGER
+//        );
+//
+//        TriggerReader lefttriggerReader = new TriggerReader(
+//                gp2, GamepadKeys.Trigger.LEFT_TRIGGER
+//        );
+
         bot.resetProfiler();
 
         bot.state = Bot.BotState.STORAGE;
         bot.arm.storage();
         bot.claw.open();
-
+        bot.initializeImus();
         waitForStart();
         bot.resetIMU();
         bot.turret.runToIntake(bot.getIMU());
@@ -142,9 +142,9 @@ public class MainTeleOp extends LinearOpMode {
                         cancelPrevAction = false;
                     }
                 } else if (bot.state == Bot.BotState.STORAGE) {
-//                    if (lefttriggerReader.isDown()){
-//                        bot.turretalignjunction();
-//                    }
+                    if (gp2.getTrigger(GamepadKeys.Trigger.LEFT_TRIGGER)>0.1){
+                        bot.turretalignjunction();
+                    }
                     if (gp2.wasJustPressed(GamepadKeys.Button.LEFT_STICK_BUTTON)) {
                         bot.intakeFallen();
                     }
@@ -174,6 +174,8 @@ public class MainTeleOp extends LinearOpMode {
                         bot.slides.runToLow();
                         bot.arm.intake();
                     }
+
+                    bot.turret.periodic();
 
                 } else if (bot.state == Bot.BotState.OUTTAKE || bot.state == Bot.BotState.SECURE) {
 //                    if (lefttriggerReader.isDown()){
@@ -370,7 +372,7 @@ public class MainTeleOp extends LinearOpMode {
             telemetry.update();
 
             bot.slides.periodic();
-            bot.turret.periodic();
+            // bot.turret.periodic();
             bot.horizSlides.periodic();
             drive();
         }
