@@ -2,6 +2,7 @@ package org.firstinspires.ftc.teamcode.teleop;
 
 
 import com.arcrobotics.ftclib.gamepad.GamepadKeys;
+import com.arcrobotics.ftclib.gamepad.TriggerReader;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 
@@ -44,6 +45,7 @@ public class JunctionDetectionTest extends LinearOpMode {
         GamepadEx gp1 = new GamepadEx(gamepad1);
         GamepadEx gp2 = new GamepadEx(gamepad2);
 
+
         bot.initializeImus();
 
         waitForStart();
@@ -55,7 +57,8 @@ public class JunctionDetectionTest extends LinearOpMode {
             telemetry.addData("High: ", JunctionDetectionPipeline.yellowHighHSV);
             telemetry.addData("minwidth = ", JunctionDetectionPipeline.minwidth);
 
-            bot.turretalignjunction();
+
+                bot.turretalignjunction();
 
             telemetry.addData("cycle", time - cycleTime);
             cycleTime = time;
@@ -72,8 +75,6 @@ public class JunctionDetectionTest extends LinearOpMode {
 
 
             telemetry.update();
-
-            bot.turret.periodic();
 
         }
 

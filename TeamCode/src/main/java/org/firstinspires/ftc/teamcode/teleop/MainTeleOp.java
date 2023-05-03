@@ -36,13 +36,13 @@ public class MainTeleOp extends LinearOpMode {
 
     private GamepadEx gp1, gp2;
 
-    TriggerReader righttriggerReader = new TriggerReader(
-            gp2, GamepadKeys.Trigger.RIGHT_TRIGGER
-    );
-
-    TriggerReader lefttriggerReader = new TriggerReader(
-            gp2, GamepadKeys.Trigger.LEFT_TRIGGER
-    );
+//    TriggerReader righttriggerReader = new TriggerReader(
+//            gp2, GamepadKeys.Trigger.RIGHT_TRIGGER
+//    );
+//
+//    TriggerReader lefttriggerReader = new TriggerReader(
+//            gp2, GamepadKeys.Trigger.LEFT_TRIGGER
+//    );
 
     @Override
     public void runOpMode() throws InterruptedException {
@@ -142,9 +142,9 @@ public class MainTeleOp extends LinearOpMode {
                         cancelPrevAction = false;
                     }
                 } else if (bot.state == Bot.BotState.STORAGE) {
-                    if (lefttriggerReader.wasJustPressed()){
-                        bot.turretalignjunction();
-                    }
+//                    if (lefttriggerReader.isDown()){
+//                        bot.turretalignjunction();
+//                    }
                     if (gp2.wasJustPressed(GamepadKeys.Button.LEFT_STICK_BUTTON)) {
                         bot.intakeFallen();
                     }
@@ -176,9 +176,9 @@ public class MainTeleOp extends LinearOpMode {
                     }
 
                 } else if (bot.state == Bot.BotState.OUTTAKE || bot.state == Bot.BotState.SECURE) {
-                    if (lefttriggerReader.wasJustPressed()){
-                        bot.turretalignjunction();
-                    }
+//                    if (lefttriggerReader.isDown()){
+//                            bot.turretalignjunction();
+//                    }
                     if (gp2.wasJustPressed(GamepadKeys.Button.A) || gp2.wasJustPressed(GamepadKeys.Button.B)) {
                         bot.outtake();
                         cancelPrevAction = true;
@@ -215,6 +215,9 @@ public class MainTeleOp extends LinearOpMode {
                         bot.arm.storage();
                         cancelPrevAction = true;
                     }
+//                    if (lefttriggerReader.isDown()){
+//                        bot.turretalignjunction();
+//                    }
                     if (gp2.wasJustPressed(GamepadKeys.Button.X)) {
                         cancelPrevAction = false;
                         bot.braceOuttake();
@@ -233,9 +236,6 @@ public class MainTeleOp extends LinearOpMode {
                     if (gp2.wasJustPressed(GamepadKeys.Button.Y)) {
                         bot.storage();
                     }
-//                    if (gp2.getTrigger(GamepadKeys.Trigger.LEFT_TRIGGER) > 0.2){
-//                        bot.alignjunction();
-//                    }
                 }
                 double rightX = gp2.getRightX(), leftY = gp2.getLeftY();
                 turretslidespeed = 1;

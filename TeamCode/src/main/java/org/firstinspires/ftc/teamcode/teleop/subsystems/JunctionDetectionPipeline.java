@@ -26,7 +26,7 @@ public class JunctionDetectionPipeline extends OpenCvPipeline{
     Mat HSV = new Mat();
     MatOfPoint biggest;
 
-    public static int minwidth = 90; //try 45
+    public static int minwidth = 90, minheight = 50; //try 45 and 25
     public static int width = 0;
     public static int camwidth = 1280;//try 640
     public static int camheight = 720;//try 360
@@ -38,7 +38,7 @@ public class JunctionDetectionPipeline extends OpenCvPipeline{
     }
     public static JunctionVal junctionVal = JunctionVal.NOTDETECTED; // for monitoring our junction detection status; default is NOTDETECTED
 
-    public static double lowH = 21, lowS = 112, lowV = 100, highH = 33, highS = 203, highV = 255;
+    public static double lowH = 19, lowS = 170, lowV = 130, highH = 26, highS = 255, highV = 255;
 
     public static Scalar yellowLowHSV= new Scalar(lowH,lowS,lowV); // high and low yellow HSV values
     public static Scalar yellowHighHSV = new Scalar(highH,highS,highV); //grip says to use (21,160,50) low and (33, 255, 255) high
