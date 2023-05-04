@@ -98,13 +98,13 @@ public class Bot {
     }
     public void turretalignjunction() {
         if (JunctionDetectionPipeline.junctionVal == JunctionDetectionPipeline.JunctionVal.ONLEFT){
-            turret.runManual(-0.3);
+            turret.runRawPower(-0.3);
         }
         if (JunctionDetectionPipeline.junctionVal == JunctionDetectionPipeline.JunctionVal.ONRIGHT){
-            turret.runManual(0.3);
+            turret.runRawPower(0.3);
         }
         if (JunctionDetectionPipeline.junctionVal == JunctionDetectionPipeline.JunctionVal.NOTDETECTED || JunctionDetectionPipeline.junctionVal == JunctionDetectionPipeline.JunctionVal.ATJUNCTION) {
-            turret.runManual(0);
+            turret.runRawPower(0);
         }
     }
 
