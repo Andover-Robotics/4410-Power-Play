@@ -96,11 +96,12 @@ public class Bot {
             horizSlides.runManual(0.35);
         }
     }
+
     public void turretalignjunction() {
-        if (JunctionDetectionPipeline.junctionVal == JunctionDetectionPipeline.JunctionVal.ONLEFT){
+        if (JunctionDetectionPipeline.junctionVal == JunctionDetectionPipeline.JunctionVal.ONLEFT) {
             turret.runRawPower(-0.3);
         }
-        if (JunctionDetectionPipeline.junctionVal == JunctionDetectionPipeline.JunctionVal.ONRIGHT){
+        if (JunctionDetectionPipeline.junctionVal == JunctionDetectionPipeline.JunctionVal.ONRIGHT) {
             turret.runRawPower(0.3);
         }
         if (JunctionDetectionPipeline.junctionVal == JunctionDetectionPipeline.JunctionVal.NOTDETECTED || JunctionDetectionPipeline.junctionVal == JunctionDetectionPipeline.JunctionVal.ATJUNCTION) {
