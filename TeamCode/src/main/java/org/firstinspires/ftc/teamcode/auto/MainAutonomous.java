@@ -12,6 +12,7 @@ import com.qualcomm.robotcore.hardware.DcMotor;
 
 import org.firstinspires.ftc.robotcore.external.hardware.camera.WebcamName;
 import org.firstinspires.ftc.teamcode.teleop.subsystems.Bot;
+import org.firstinspires.ftc.teamcode.teleop.subsystems.JunctionDetectionPipeline;
 import org.openftc.apriltag.AprilTagDetection;
 import org.openftc.easyopencv.OpenCvCamera;
 import org.openftc.easyopencv.OpenCvCameraException;
@@ -29,6 +30,7 @@ public class MainAutonomous extends LinearOpMode {
     Bot bot;
 
     private double moveDiff = -1;
+    private boolean autoaim = false;
 
     enum Side {
         RIGHT, LEFT, NULL;
@@ -120,6 +122,12 @@ public class MainAutonomous extends LinearOpMode {
             if (gp1.wasJustPressed(GamepadKeys.Button.BACK)) {
                 isTestMode = true;
             }
+            if (gp1.wasJustPressed(GamepadKeys.Button.LEFT_STICK_BUTTON)) {
+                autoaim = true;
+            }
+            if (gp1.wasJustPressed(GamepadKeys.Button.RIGHT_STICK_BUTTON)) {
+                autoaim = false;
+            }
             telemetry.addData("moveDiff (positive is more ???)", moveDiff);
             if(gp1.wasJustPressed(GamepadKeys.Button.LEFT_BUMPER)){
                 moveDiff -= 0.5;
@@ -144,6 +152,7 @@ public class MainAutonomous extends LinearOpMode {
 
             telemetry.addData("side?", side.toString());
             telemetry.addData("testmode", isTestMode);
+            telemetry.addData("AutoAim", autoaim);
 
             telemetry.addData("Current FPS:", camera.getFps());
             telemetry.addData("Current Max FPS:", camera.getCurrentPipelineMaxFps());
@@ -323,7 +332,7 @@ public class MainAutonomous extends LinearOpMode {
 
 
     void tagToTelemetry(AprilTagDetection detection) {
-        telemetry.addLine(String.format("\nDetected tag ID=%d", detection.id));
+        telemetry.addLine(String.format("Detected tag ID=%d", detection.id));
         telemetry.addLine(String.format("Translation X: %.2f feet", detection.pose.x * FEET_PER_METER));
         telemetry.addLine(String.format("Translation Y: %.2f feet", detection.pose.y * FEET_PER_METER));
         telemetry.addLine(String.format("Translation Z: %.2f feet", detection.pose.z * FEET_PER_METER));

@@ -15,6 +15,7 @@ public class Bot {
     public enum BotState {
         INTAKE_OUT, // linkage fully extended, ready to pick up cone
         INTAKE, // ready to intake, but linkage in
+        INTAKE_FALLEN,
         STORAGE, // arm up, linkage+rail in, used when moving around field
         OUTTAKE, // ready to outtake
         SECURE, // cone secured on junction but not let go
@@ -99,9 +100,16 @@ public class Bot {
 
     public void turretalignjunction() {
         if (JunctionDetectionPipeline.junctionVal == JunctionDetectionPipeline.JunctionVal.ONLEFT) {
-            turret.runRawPower(-0.3);
+            if (JunctionDetectionPipeline.width > 100) {
+                turret.runRawPower(-0.4);
+            } else {
+                turret.runRawPower(-0.3);
+            }
         }
         if (JunctionDetectionPipeline.junctionVal == JunctionDetectionPipeline.JunctionVal.ONRIGHT) {
+            if (JunctionDetectionPipeline.width > 100){
+                turret.runRawPower(0.4);
+            }
             turret.runRawPower(0.3);
         }
         if (JunctionDetectionPipeline.junctionVal == JunctionDetectionPipeline.JunctionVal.NOTDETECTED || JunctionDetectionPipeline.junctionVal == JunctionDetectionPipeline.JunctionVal.ATJUNCTION) {
@@ -111,7 +119,7 @@ public class Bot {
 
 
     public void intakeFallen() {
-        state = BotState.INTAKE;
+        state = BotState.INTAKE_FALLEN;
         slides.runToBottom();
         arm.fallenintake();
         horizSlides.runToFullIn();

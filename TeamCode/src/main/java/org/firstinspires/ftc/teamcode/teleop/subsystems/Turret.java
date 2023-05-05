@@ -115,7 +115,9 @@ public class Turret {
         }
     }
 
-    public void runRawPower(double manual) {manualPower = manual;}
+    public void runRawPower(double manual) {
+        manualPower = manual;
+    }
 
     public void saveAutoIntake(boolean isRight, double imu) {
         if (isRight) {

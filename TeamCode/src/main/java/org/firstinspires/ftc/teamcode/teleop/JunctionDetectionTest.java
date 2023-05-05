@@ -56,6 +56,7 @@ public class JunctionDetectionTest extends LinearOpMode {
             telemetry.addData("Low: ", JunctionDetectionPipeline.yellowLowHSV);
             telemetry.addData("High: ", JunctionDetectionPipeline.yellowHighHSV);
             telemetry.addData("minwidth = ", JunctionDetectionPipeline.minwidth);
+            telemetry.addData("width: ", JunctionDetectionPipeline.width);
 
             bot.turretalignjunction();
 
@@ -71,6 +72,7 @@ public class JunctionDetectionTest extends LinearOpMode {
             telemetry.addData("Low: ", JunctionDetectionPipeline.yellowLowHSV);
             telemetry.addData("High: ", JunctionDetectionPipeline.yellowHighHSV);
             telemetry.addData("minwidth = ", JunctionDetectionPipeline.minwidth);
+            telemetry.addData("width: ", JunctionDetectionPipeline.width);
 
 
             telemetry.update();

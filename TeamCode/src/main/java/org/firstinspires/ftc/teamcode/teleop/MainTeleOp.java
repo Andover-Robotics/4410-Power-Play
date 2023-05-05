@@ -7,7 +7,6 @@ import com.acmerobotics.roadrunner.geometry.Vector2d;
 import com.arcrobotics.ftclib.controller.PIDController;
 import com.arcrobotics.ftclib.gamepad.GamepadEx;
 import com.arcrobotics.ftclib.gamepad.GamepadKeys;
-import com.arcrobotics.ftclib.gamepad.TriggerReader;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 
@@ -67,13 +66,7 @@ public class MainTeleOp extends LinearOpMode {
         gp2 = new GamepadEx(gamepad2);
         gp1 = new GamepadEx(gamepad1);
 
-//        TriggerReader righttriggerReader = new TriggerReader(
-//                gp2, GamepadKeys.Trigger.RIGHT_TRIGGER
-//        );
-//
-//        TriggerReader lefttriggerReader = new TriggerReader(
-//                gp2, GamepadKeys.Trigger.LEFT_TRIGGER
-//        );
+
 
         bot.resetProfiler();
 
@@ -103,7 +96,7 @@ public class MainTeleOp extends LinearOpMode {
             }
 
             if (!debugMode) {//finite state
-                if (bot.state == Bot.BotState.INTAKE || bot.state == Bot.BotState.INTAKE_OUT) {
+                if (bot.state == Bot.BotState.INTAKE || bot.state == Bot.BotState.INTAKE_OUT || bot.state == Bot.BotState.INTAKE_FALLEN) {
                     bot.arm.intakeCorrected(bot.horizSlides.getPercent());
 
                     if (gp2.wasJustPressed(GamepadKeys.Button.LEFT_STICK_BUTTON)) {
@@ -141,6 +134,11 @@ public class MainTeleOp extends LinearOpMode {
                         }
                         cancelPrevAction = false;
                     }
+
+                    bot.slides.periodic();
+                    bot.turret.periodic();
+                    bot.horizSlides.periodic();
+
                 } else if (bot.state == Bot.BotState.STORAGE) {
                     if (gp2.getTrigger(GamepadKeys.Trigger.LEFT_TRIGGER)>0.1){
                         bot.turretalignjunction();
@@ -175,12 +173,14 @@ public class MainTeleOp extends LinearOpMode {
                         bot.arm.intake();
                     }
 
+                    bot.slides.periodic();
                     bot.turret.periodic();
+                    bot.horizSlides.periodic();
 
                 } else if (bot.state == Bot.BotState.OUTTAKE || bot.state == Bot.BotState.SECURE) {
-//                    if (lefttriggerReader.isDown()){
-//                            bot.turretalignjunction();
-//                    }
+                    if (gp2.getTrigger(GamepadKeys.Trigger.LEFT_TRIGGER)>0.1){
+                        bot.turretalignjunction();
+                    }
                     if (gp2.wasJustPressed(GamepadKeys.Button.A) || gp2.wasJustPressed(GamepadKeys.Button.B)) {
                         bot.outtake();
                         cancelPrevAction = true;
@@ -212,14 +212,19 @@ public class MainTeleOp extends LinearOpMode {
                     if (gp2.wasJustPressed(GamepadKeys.Button.X)) {
                         bot.braceOuttake();
                     }
+
+                    bot.slides.periodic();
+                    bot.turret.periodic();
+                    bot.horizSlides.periodic();
+
                 } else if (bot.state == Bot.BotState.BRACE_OUTTAKE || bot.state == Bot.BotState.BRACE_SECURE) {
                     if (gp2.wasJustPressed(GamepadKeys.Button.A) || gp2.wasJustPressed(GamepadKeys.Button.B)) {
                         bot.arm.storage();
                         cancelPrevAction = true;
                     }
-//                    if (lefttriggerReader.isDown()){
-//                        bot.turretalignjunction();
-//                    }
+                    if (gp2.getTrigger(GamepadKeys.Trigger.LEFT_TRIGGER)>0.1){
+                        bot.turretalignjunction();
+                    }
                     if (gp2.wasJustPressed(GamepadKeys.Button.X)) {
                         cancelPrevAction = false;
                         bot.braceOuttake();
@@ -238,6 +243,11 @@ public class MainTeleOp extends LinearOpMode {
                     if (gp2.wasJustPressed(GamepadKeys.Button.Y)) {
                         bot.storage();
                     }
+
+                    bot.slides.periodic();
+                    bot.turret.periodic();
+                    bot.horizSlides.periodic();
+
                 }
                 double rightX = gp2.getRightX(), leftY = gp2.getLeftY();
                 turretslidespeed = 1;
@@ -372,7 +382,7 @@ public class MainTeleOp extends LinearOpMode {
             telemetry.update();
 
             bot.slides.periodic();
-            // bot.turret.periodic();
+            bot.turret.periodic();
             bot.horizSlides.periodic();
             drive();
         }
