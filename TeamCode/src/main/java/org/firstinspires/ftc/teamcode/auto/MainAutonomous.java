@@ -22,6 +22,8 @@ import org.openftc.easyopencv.OpenCvCameraRotation;
 import java.util.ArrayList;
 import java.util.Map;
 
+import java.util.Timer;
+import java.util.TimerTask;
 
 @Config
 @Autonomous(name = "MainAutonomous")
@@ -231,6 +233,11 @@ public class MainAutonomous extends LinearOpMode {
             periodic.start();
 
             driveForward.start();
+            if (side == Side.RIGHT) {
+                bot.turret.runToAutoIntakeRight(bot.getIMU());
+            } else if (side == Side.LEFT) {
+                bot.turret.runToAutoOuttakeLeft(bot.getIMU());
+            }
             sleep(driveTime);
 
             if (side != Side.NULL) {
@@ -269,14 +276,17 @@ public class MainAutonomous extends LinearOpMode {
         }
     }
 
-    private void startJunctionDetection(boolean isRunning) {
-        while(true) {
+    class AlignJunction extends TimerTask {
+        public void run() {
             bot.turretalignjunction();
-            if (!isRunning) {break;}
         }
     }
 
     private void outtake(int i) {
+
+        Timer timer = new Timer();
+        TimerTask alignJunction = new AlignJunction();
+
         if (side == Side.RIGHT) {
             bot.turret.runToAutoOuttakeRight(bot.getIMU());
         } else {
@@ -284,9 +294,12 @@ public class MainAutonomous extends LinearOpMode {
         }
         //old ====
         bot.slides.runToTop();
-        sleep(timeSlidesUp);
+        //sleep(timeSlidesUp);
         if(i == 5){
-            sleep(400);
+            // sleep(400);
+            timer.schedule(alignJunction, 0, timeSlidesUp);
+        } else {
+            sleep(timeSlidesUp);
         }
         bot.arm.autoOuttake();
         sleep(timeOuttake);
@@ -294,12 +307,10 @@ public class MainAutonomous extends LinearOpMode {
         //start new
         bot.slides.runToTop();
         bot.arm.brace();
-        startJunctionDetection(true);
         sleep(timeSlidesUp);
         if (i == 5) {
             sleep(400);
         }
-        startJunctionDetection(false);
         bot.horizSlides.runToAutoOuttake();
         sleep(timeOuttake);
         //end new

@@ -281,6 +281,10 @@ public class MainTeleOp extends LinearOpMode {
                     bot.horizSlides.resetProfiler();
                 }
 
+                if (gp2.getTrigger(GamepadKeys.Trigger.LEFT_TRIGGER) > 0.1) {
+                    bot.turretalignjunction();
+                }
+
 
                 if (bot.state == Bot.BotState.INTAKE || bot.state == Bot.BotState.INTAKE_OUT) {
                     if (gp2.wasJustPressed(GamepadKeys.Button.A) || gp2.wasJustPressed(GamepadKeys.Button.B) || gp2.wasJustPressed(GamepadKeys.Button.RIGHT_BUMPER) || gp2.wasJustPressed(GamepadKeys.Button.LEFT_BUMPER)) {
