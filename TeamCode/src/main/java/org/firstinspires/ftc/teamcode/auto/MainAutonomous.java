@@ -269,6 +269,13 @@ public class MainAutonomous extends LinearOpMode {
         }
     }
 
+    private void startJunctionDetection(boolean isRunning) {
+        while(true) {
+            bot.turretalignjunction();
+            if (!isRunning) {break;}
+        }
+    }
+
     private void outtake(int i) {
         if (side == Side.RIGHT) {
             bot.turret.runToAutoOuttakeRight(bot.getIMU());
@@ -284,15 +291,17 @@ public class MainAutonomous extends LinearOpMode {
         bot.arm.autoOuttake();
         sleep(timeOuttake);
         bot.arm.autoSecure();
-        //end old, new =====
-//        bot.slides.runToTop();
-//        bot.arm.brace();
-//        sleep(timeSlidesUp);
-//        if (i == 5) {
-//            sleep(400);
-//        }
-//        bot.horizSlides.runToAutoOuttake();
-//        sleep(timeOuttake);
+        //start new
+        bot.slides.runToTop();
+        bot.arm.brace();
+        startJunctionDetection(true);
+        sleep(timeSlidesUp);
+        if (i == 5) {
+            sleep(400);
+        }
+        startJunctionDetection(false);
+        bot.horizSlides.runToAutoOuttake();
+        sleep(timeOuttake);
         //end new
         bot.claw.open();
         bot.arm.brace();
