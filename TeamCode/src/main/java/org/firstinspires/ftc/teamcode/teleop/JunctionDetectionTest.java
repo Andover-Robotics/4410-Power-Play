@@ -30,7 +30,7 @@ public class JunctionDetectionTest extends LinearOpMode {
         camera.openCameraDeviceAsync(new OpenCvCamera.AsyncCameraOpenListener() {
             @Override
             public void onOpened() {
-                camera.startStreaming(1280, 720, OpenCvCameraRotation.UPRIGHT); //try 640 and 360
+                camera.startStreaming(1280, 720, OpenCvCameraRotation.UPRIGHT);
             }
 
             @Override
@@ -50,6 +50,8 @@ public class JunctionDetectionTest extends LinearOpMode {
 
         waitForStart();
 
+
+
         while (opModeIsActive() && !isStopRequested()) {
 
             telemetry.addData("Junction Status: ", JunctionDetectionPipeline.junctionVal);
@@ -59,6 +61,8 @@ public class JunctionDetectionTest extends LinearOpMode {
             telemetry.addData("width: ", JunctionDetectionPipeline.width);
 
             bot.turretalignjunction();
+
+
 
             telemetry.addData("cycle", time - cycleTime);
             cycleTime = time;

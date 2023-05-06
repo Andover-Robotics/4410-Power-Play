@@ -26,10 +26,10 @@ public class JunctionDetectionPipeline extends OpenCvPipeline{
     Mat HSV = new Mat();
     MatOfPoint biggest;
 
-    public static int minwidth = 60, minheight = 50; //try 45 and 25
+    public static int minwidth = 60;
     public static int width = 0;
-    public static int camwidth = 1280;//try 640
-    public static int camheight = 720;//try 360
+    public static int camwidth = 1280;
+    public static int camheight = 720;
     public enum JunctionVal{
         ONLEFT,
         ONRIGHT,
@@ -38,7 +38,7 @@ public class JunctionDetectionPipeline extends OpenCvPipeline{
     }
     public static JunctionVal junctionVal = JunctionVal.NOTDETECTED; // for monitoring our junction detection status; default is NOTDETECTED
 
-    public static double lowH = 19, lowS = 125, lowV = 100, highH = 28, highS = 255, highV = 255;
+    public static double lowH = 19, lowS = 145, lowV = 100, highH = 28, highS = 255, highV = 255;
 
     public static Scalar yellowLowHSV= new Scalar(lowH,lowS,lowV); // high and low yellow HSV values
     public static Scalar yellowHighHSV = new Scalar(highH,highS,highV); //grip says to use (21,160,50) low and (33, 255, 255) high
@@ -52,8 +52,8 @@ public class JunctionDetectionPipeline extends OpenCvPipeline{
     public Mat processFrame(Mat input) {
         Imgproc.cvtColor(input, HSV, Imgproc.COLOR_RGB2HSV); //converting RGB colors to HSV
 
-        Rect rightrect = new Rect(750, 1, 529, 719); // try 426, 1, 214, 359
-        Rect leftrect = new Rect(1, 1, 479, 719); // rectangle sizes //try 1, 1, 288, 359
+        Rect rightrect = new Rect(750, 1, 529, 719);
+        Rect leftrect = new Rect(1, 1, 479, 719); // rectangle sizes
 
         Imgproc.rectangle(input, leftrect, new Scalar(255, 0, 0), 5); //displays rectangles with red color
         Imgproc.rectangle(input, rightrect, new Scalar(255, 0, 0), 5);

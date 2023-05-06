@@ -23,7 +23,7 @@ public class Turret {
     }
 
     private Side side = Side.CENTER;
-    public int intake = 1650, turretAutoOuttakeRight = -470, turretAutoIntakeRight = 830, turretAutoOuttakeLeft = 420, turretAutoIntakeLeft = -838, limit = 5400;
+    public int intake = 1650, turretAutoOuttakeRight = -430, turretAutoIntakeRight = 830, turretAutoOuttakeLeft = 420, turretAutoIntakeLeft = -838, limit = 5400;
 
     public Turret(OpMode opMode) {
         motor = new MotorEx(opMode.hardwareMap, "turret", Motor.GoBILDA.RPM_1150);

@@ -274,6 +274,9 @@ public class MainTeleOp extends LinearOpMode {
                 if (gp2.wasJustPressed(GamepadKeys.Button.LEFT_STICK_BUTTON)) {
                     bot.resetEncoder();
                 }
+                if (gp2.getTrigger(GamepadKeys.Trigger.LEFT_TRIGGER)>0.1){
+                    bot.turretalignjunction();
+                }
                 if (gp2.wasJustPressed(GamepadKeys.Button.START)) {
                     Bot.instance = null;
                     bot = Bot.getInstance(this);

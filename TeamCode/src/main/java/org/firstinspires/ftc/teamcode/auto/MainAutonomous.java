@@ -9,6 +9,7 @@ import com.arcrobotics.ftclib.gamepad.GamepadKeys;
 import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.hardware.DcMotor;
+import com.qualcomm.robotcore.util.ElapsedTime;
 
 import org.firstinspires.ftc.robotcore.external.hardware.camera.WebcamName;
 import org.firstinspires.ftc.teamcode.teleop.subsystems.Bot;
@@ -32,7 +33,7 @@ public class MainAutonomous extends LinearOpMode {
     Bot bot;
 
     private double moveDiff = -1;
-    private boolean autoaim = false;
+    private boolean autoaim = false, isRight = false;
 
     enum Side {
         RIGHT, LEFT, NULL;
@@ -77,6 +78,8 @@ public class MainAutonomous extends LinearOpMode {
         WebcamName camName = hardwareMap.get(WebcamName.class, "Webcam 1");
         OpenCvCamera camera = OpenCvCameraFactory.getInstance().createWebcam(camName);
         AprilTagDetectionPipeline aprilTagDetectionPipeline = new AprilTagDetectionPipeline(tagsize, fx, fy, cx, cy);
+
+        JunctionDetectionPipeline junctionDetectionPipeline = new JunctionDetectionPipeline(telemetry);
 
         camera.setPipeline(aprilTagDetectionPipeline);
         camera.openCameraDeviceAsync(new OpenCvCamera.AsyncCameraOpenListener() {
@@ -203,12 +206,12 @@ public class MainAutonomous extends LinearOpMode {
 
         }
 
-        try {
-            camera.stopStreaming();
-            camera.closeCameraDevice();
-        } catch (OpenCvCameraException e) {
-
-        }
+//        try {
+//            camera.stopStreaming();
+//            camera.closeCameraDevice();
+//        } catch (OpenCvCameraException e) {
+//
+//        }
         //END CAMERA STUFF ===============
 
         Trajectory forward = drive.trajectoryBuilder(startPose)
@@ -227,17 +230,17 @@ public class MainAutonomous extends LinearOpMode {
 
         waitForStart();
         if (!isStopRequested()) {
+
+
+            camera.setPipeline(junctionDetectionPipeline);
+
             bot.claw.close();
             bot.arm.autoStorage();
 
             periodic.start();
 
-            driveForward.start();
-            if (side == Side.RIGHT) {
-                bot.turret.runToAutoIntakeRight(bot.getIMU());
-            } else if (side == Side.LEFT) {
-                bot.turret.runToAutoOuttakeLeft(bot.getIMU());
-            }
+            //driveForward.start();
+
             sleep(driveTime);
 
             if (side != Side.NULL) {
@@ -247,6 +250,11 @@ public class MainAutonomous extends LinearOpMode {
                     telemetry.update();
                     pickUpCone(i);
                     outtake(i);
+                }
+                if (side == Side.LEFT){
+                    bot.turret.turretAutoOuttakeLeft = 420;
+                } else if (side == Side.RIGHT){
+                    bot.turret.turretAutoOuttakeRight = -430;
                 }
             } else {
                 sleep(3000);
@@ -273,6 +281,12 @@ public class MainAutonomous extends LinearOpMode {
             }
             driveForward.interrupt();
             periodic.interrupt();
+
+            try {
+            camera.stopStreaming();
+            camera.closeCameraDevice();
+            } catch (OpenCvCameraException e) {}
+
         }
     }
 
@@ -282,11 +296,9 @@ public class MainAutonomous extends LinearOpMode {
         }
     }
 
+
+
     private void outtake(int i) {
-
-        Timer timer = new Timer();
-        TimerTask alignJunction = new AlignJunction();
-
         if (side == Side.RIGHT) {
             bot.turret.runToAutoOuttakeRight(bot.getIMU());
         } else {
@@ -294,31 +306,43 @@ public class MainAutonomous extends LinearOpMode {
         }
         //old ====
         bot.slides.runToTop();
-        //sleep(timeSlidesUp);
-        if(i == 5){
-            // sleep(400);
-            timer.schedule(alignJunction, 0, timeSlidesUp);
+        sleep(100);
+//        sleep(timeSlidesUp);
+//        if(i == 5){
+//            sleep(400);
+//        }
+
+        if(autoaim) {
+            if (i==5) {
+                ElapsedTime autoaimtime = new ElapsedTime();
+                while (autoaimtime.milliseconds() <= timeSlidesUp + 300) {
+                    bot.turretalignjunction();
+                }
+                if(side == Side.RIGHT) {
+                    isRight = true;
+                } else if(side == Side.LEFT) {
+                    isRight = false;
+                }
+            } else {
+                sleep(timeSlidesUp);
+            }
         } else {
             sleep(timeSlidesUp);
+        }
+        if (i==5 && !autoaim) {
+            sleep(300);
+        }
+        if(JunctionDetectionPipeline.junctionVal == JunctionDetectionPipeline.JunctionVal.ATJUNCTION) {
+            bot.turret.saveAutoOuttake(isRight, bot.getIMU());
         }
         bot.arm.autoOuttake();
         sleep(timeOuttake);
         bot.arm.autoSecure();
-        //start new
-        bot.slides.runToTop();
-        bot.arm.brace();
-        sleep(timeSlidesUp);
-        if (i == 5) {
-            sleep(400);
-        }
-        bot.horizSlides.runToAutoOuttake();
-        sleep(timeOuttake);
-        //end new
         bot.claw.open();
         bot.arm.brace();
         sleep(timeConeDrop);
         bot.claw.close();
-        sleep(timeOuttake);
+        //sleep(timeOuttake);
         bot.slides.runToBottom();
         if (i > 0) {
             if (side == Side.RIGHT) {

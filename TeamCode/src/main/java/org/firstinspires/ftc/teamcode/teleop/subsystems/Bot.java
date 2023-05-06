@@ -98,6 +98,7 @@ public class Bot {
         }
     }
 
+
     public void turretalignjunction() {
         if (JunctionDetectionPipeline.junctionVal == JunctionDetectionPipeline.JunctionVal.ONLEFT) {
             if (JunctionDetectionPipeline.width > 100) {
