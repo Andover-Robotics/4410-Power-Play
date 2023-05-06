@@ -117,7 +117,17 @@ public class Bot {
             turret.runRawPower(0);
         }
     }
-
+    public void slowturretalignjunction() {
+        if (JunctionDetectionPipeline.junctionVal == JunctionDetectionPipeline.JunctionVal.ONLEFT) {
+                turret.runRawPower(-0.2);
+        }
+        if (JunctionDetectionPipeline.junctionVal == JunctionDetectionPipeline.JunctionVal.ONRIGHT) {
+            turret.runRawPower(0.2);
+        }
+        if (JunctionDetectionPipeline.junctionVal == JunctionDetectionPipeline.JunctionVal.NOTDETECTED || JunctionDetectionPipeline.junctionVal == JunctionDetectionPipeline.JunctionVal.ATJUNCTION) {
+            turret.runRawPower(0);
+        }
+    }
 
     public void intakeFallen() {
         state = BotState.INTAKE_FALLEN;

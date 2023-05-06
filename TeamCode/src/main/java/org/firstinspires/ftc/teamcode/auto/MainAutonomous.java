@@ -239,7 +239,7 @@ public class MainAutonomous extends LinearOpMode {
 
             periodic.start();
 
-            //driveForward.start();
+            driveForward.start();
 
             sleep(driveTime);
 
@@ -306,7 +306,7 @@ public class MainAutonomous extends LinearOpMode {
         }
         //old ====
         bot.slides.runToTop();
-        sleep(100);
+        sleep(200);
 //        sleep(timeSlidesUp);
 //        if(i == 5){
 //            sleep(400);
@@ -315,13 +315,17 @@ public class MainAutonomous extends LinearOpMode {
         if(autoaim) {
             if (i==5) {
                 ElapsedTime autoaimtime = new ElapsedTime();
-                while (autoaimtime.milliseconds() <= timeSlidesUp + 300) {
-                    bot.turretalignjunction();
+                while (autoaimtime.milliseconds() <= timeSlidesUp + 300 + 700) {
+                    bot.slowturretalignjunction();
                 }
                 if(side == Side.RIGHT) {
                     isRight = true;
                 } else if(side == Side.LEFT) {
                     isRight = false;
+                }
+                sleep(100);
+                if(JunctionDetectionPipeline.junctionVal == JunctionDetectionPipeline.JunctionVal.ATJUNCTION) {
+                    bot.turret.saveAutoOuttake(isRight, bot.getIMU());
                 }
             } else {
                 sleep(timeSlidesUp);
@@ -332,16 +336,13 @@ public class MainAutonomous extends LinearOpMode {
         if (i==5 && !autoaim) {
             sleep(300);
         }
-        if(JunctionDetectionPipeline.junctionVal == JunctionDetectionPipeline.JunctionVal.ATJUNCTION) {
-            bot.turret.saveAutoOuttake(isRight, bot.getIMU());
-        }
         bot.arm.autoOuttake();
         sleep(timeOuttake);
         bot.arm.autoSecure();
         bot.claw.open();
         bot.arm.brace();
-        sleep(timeConeDrop);
-        bot.claw.close();
+        //sleep(timeConeDrop);
+//        bot.claw.close();
         //sleep(timeOuttake);
         bot.slides.runToBottom();
         if (i > 0) {

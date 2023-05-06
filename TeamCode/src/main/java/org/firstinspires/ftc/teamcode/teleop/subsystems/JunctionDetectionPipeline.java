@@ -38,7 +38,7 @@ public class JunctionDetectionPipeline extends OpenCvPipeline{
     }
     public static JunctionVal junctionVal = JunctionVal.NOTDETECTED; // for monitoring our junction detection status; default is NOTDETECTED
 
-    public static double lowH = 19, lowS = 145, lowV = 100, highH = 28, highS = 255, highV = 255;
+    public static double lowH = 19, lowS = 125, lowV = 100, highH = 28, highS = 255, highV = 255;
 
     public static Scalar yellowLowHSV= new Scalar(lowH,lowS,lowV); // high and low yellow HSV values
     public static Scalar yellowHighHSV = new Scalar(highH,highS,highV); //grip says to use (21,160,50) low and (33, 255, 255) high
